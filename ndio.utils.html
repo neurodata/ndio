@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ndio.utils package &mdash; ndio 0.0.16 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.16',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="ndio 0.0.16 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ndio-utils-package">
+<h1>ndio.utils package<a class="headerlink" href="#ndio-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ndio.utils.parallel">
+<span id="ndio-utils-parallel-module"></span><h2>ndio.utils.parallel module<a class="headerlink" href="#module-ndio.utils.parallel" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ndio.utils.parallel.block_compute">
+<code class="descclassname">ndio.utils.parallel.</code><code class="descname">block_compute</code><span class="sig-paren">(</span><em>x_start</em>, <em>x_stop</em>, <em>y_start</em>, <em>y_stop</em>, <em>z_start</em>, <em>z_stop</em>, <em>origin=(0</em>, <em>0</em>, <em>1)</em>, <em>block_size=(256</em>, <em>256</em>, <em>16)</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.utils.parallel.block_compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get bounding box coordinates (in 3D) of small cutouts to request in
+order to reconstitute a larger cutout.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Q_start:</th><td class="field-body"><code class="docutils literal"><span class="pre">int</span></code> The lower bound of dimension &#8216;Q&#8217;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Q_stop:</th><td class="field-body"><code class="docutils literal"><span class="pre">int</span></code> The upper bound of dimension &#8216;Q&#8217;</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">[((x_start, x_stop), (y_start, y_stop), (z_start, z_stop)), ... ]:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ndio.utils.parallel.snap_to_cube">
+<code class="descclassname">ndio.utils.parallel.</code><code class="descname">snap_to_cube</code><span class="sig-paren">(</span><em>q_start</em>, <em>q_stop</em>, <em>chunk_depth=16</em>, <em>q_index=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.utils.parallel.snap_to_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>For any q in {x, y, z, t}
+Takes in a q-range and returns a 1D bound that starts at a cube
+boundary and ends at another cube boundary and includes the volume
+inside the bounds. For instance, snap_to_cube(2, 3) = (1, 17)</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">q_start:</th><td class="field-body"><cite>int</cite> The lower bound of the q bounding box of volume</td>
+</tr>
+<tr class="field-even field"><th class="field-name">q_stop:</th><td class="field-body"><cite>int</cite> The upper bound of the q bounding box of volume</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">chunk_depth:</th><td class="field-body"><cite>int : CHUNK_DEPTH</cite> The size of the chunk in this volume (use <code class="docutils literal"><span class="pre">get_info()</span></code>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">q_index:</th><td class="field-body"><cite>int : 1</cite> The starting index of the volume (in q)</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">2-tuple:</th><td class="field-body"><code class="docutils literal"><span class="pre">(lo,</span> <span class="pre">hi)</span></code> bounding box for the volume</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ndio.utils.stats">
+<span id="ndio-utils-stats-module"></span><h2>ndio.utils.stats module<a class="headerlink" href="#module-ndio.utils.stats" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ndio.utils.stats.connected_components">
+<code class="descclassname">ndio.utils.stats.</code><code class="descname">connected_components</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.utils.stats.connected_components" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ndio.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ndio.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ndio.utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ndio.utils.parallel">ndio.utils.parallel module</a></li>
+<li><a class="reference internal" href="#module-ndio.utils.stats">ndio.utils.stats module</a></li>
+<li><a class="reference internal" href="#module-ndio.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ndio.utils.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, NeuroData.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/ndio.utils.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
