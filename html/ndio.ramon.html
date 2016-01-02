@@ -161,7 +161,7 @@
 <span id="ndio-ramon-ramonsegment-module"></span><h2>ndio.ramon.RAMONSegment module<a class="headerlink" href="#module-ndio.ramon.RAMONSegment" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ndio.ramon.RAMONSegment.RAMONSegment">
-<em class="property">class </em><code class="descclassname">ndio.ramon.RAMONSegment.</code><code class="descname">RAMONSegment</code><span class="sig-paren">(</span><em>segment_class=0</em>, <em>neuron=0</em>, <em>synapses=None</em>, <em>organelles=None</em>, <em>xyz_offset=(0</em>, <em>0</em>, <em>0)</em>, <em>resolution=0</em>, <em>cutout=None</em>, <em>voxels=None</em>, <em>id=-1</em>, <em>confidence=0</em>, <em>dynamic_metadata={}</em>, <em>status=0</em>, <em>author=''</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.RAMONSegment.RAMONSegment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ndio.ramon.RAMONSegment.</code><code class="descname">RAMONSegment</code><span class="sig-paren">(</span><em>segment_class=0</em>, <em>neuron=0</em>, <em>synapses=[]</em>, <em>organelles=[]</em>, <em>xyz_offset=(0</em>, <em>0</em>, <em>0)</em>, <em>resolution=0</em>, <em>cutout=None</em>, <em>voxels=None</em>, <em>id=-1</em>, <em>confidence=0</em>, <em>dynamic_metadata={}</em>, <em>status=0</em>, <em>author=''</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.RAMONSegment.RAMONSegment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ndio.ramon.RAMONVolume.RAMONVolume" title="ndio.ramon.RAMONVolume.RAMONVolume"><code class="xref py py-class docutils literal"><span class="pre">ndio.ramon.RAMONVolume.RAMONVolume</span></code></a></p>
 <p>RAMONSegment Object for storing neuroscience data with a voxel volume</p>
 </dd></dl>
@@ -207,8 +207,14 @@
 <dd></dd></dl>
 
 </div>
-<div class="section" id="ndio-ramon-errors-module">
-<h2>ndio.ramon.errors module<a class="headerlink" href="#ndio-ramon-errors-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ndio.ramon.errors">
+<span id="ndio-ramon-errors-module"></span><h2>ndio.ramon.errors module<a class="headerlink" href="#module-ndio.ramon.errors" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="ndio.ramon.errors.InvalidRAMONError">
+<em class="property">exception </em><code class="descclassname">ndio.ramon.errors.</code><code class="descname">InvalidRAMONError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.errors.InvalidRAMONError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-ndio.ramon">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ndio.ramon" title="Permalink to this headline">¶</a></h2>
@@ -261,6 +267,11 @@
 <dd></dd></dl>
 
 <dl class="staticmethod">
+<dt id="ndio.ramon.AnnotationType.get_int">
+<em class="property">static </em><code class="descname">get_int</code><span class="sig-paren">(</span><em>type</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.AnnotationType.get_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
 <dt id="ndio.ramon.AnnotationType.get_str">
 <em class="property">static </em><code class="descname">get_str</code><span class="sig-paren">(</span><em>type</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.AnnotationType.get_str" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -272,22 +283,46 @@
 <code class="descclassname">ndio.ramon.</code><code class="descname">hdf5_to_ramon</code><span class="sig-paren">(</span><em>hdf5</em>, <em>anno_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.hdf5_to_ramon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an HDF5 file to a RAMON object. Returns an object that is a child-
 -class of RAMON (though it&#8217;s determined at run-time what type is returned).</p>
-<p>Accessing multiple IDs from the same file is not supported, because it&#8217;s not
-dramatically faster to access every item in the hdf5 file at the same time.
-It&#8217;s semantically and computationally easier to run this function several
-times on the same file.</p>
+<p>Accessing multiple IDs from the same file is not supported, because it&#8217;s
+not dramatically faster to access each item in the hdf5 file at the same
+time It&#8217;s semantically and computationally easier to run this function
+several times on the same file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>hdf5</strong> (<em>h5py.File</em>) &#8211; A h5py File object that holds RAMON data</li>
-<li><strong>anno_id</strong> (<em>int</em>) &#8211; The ID of the RAMON object to extract from the file. This
-defaults to the first one (sorted numerically) if none is specified.</li>
+<li><strong>anno_id</strong> (<em>int</em>) &#8211; The ID of the RAMON obj to extract from the file. This
+defaults to the first one (sorted) if none is specified.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ndio.RAMON object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ndio.ramon.ramon_to_hdf5">
+<code class="descclassname">ndio.ramon.</code><code class="descname">ramon_to_hdf5</code><span class="sig-paren">(</span><em>ramon</em>, <em>hdf5=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.ramon_to_hdf5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports a RAMON object to an HDF5 file object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ramon</strong> (<em>RAMON</em>) &#8211; A subclass of RAMONBase</li>
+<li><strong>hdf5</strong> (<em>str</em>) &#8211; Export filename</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">hdf5.File</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>InvalidRAMONError if you pass a non-RAMON object</strong> &#8211;</p>
 </td>
 </tr>
 </tbody>

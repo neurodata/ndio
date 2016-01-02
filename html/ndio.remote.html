@@ -139,6 +139,25 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ndio.remote.OCP.OCP.__repr__">
+<code class="descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representation that can be used to reproduce this
+instance. <cite>eval(repr(this))</cite> should return an identical copy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Representation of reproducible instance.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ndio.remote.OCP.OCP.create_channel">
 <code class="descname">create_channel</code><span class="sig-paren">(</span><em>token</em>, <em>name</em>, <em>channel_type</em>, <em>dtype</em>, <em>readonly</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.create_channel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new channel on the Remote, using channel_data.</p>
@@ -203,9 +222,28 @@ If the upload fails for some reason.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_channels">
+<code class="descname">get_channels</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps get_proj_info to return a dictionary of just the channels of
+a given project.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<em>str</em>) &#8211; Token to return channels for</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dictionary of channels.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">JSON</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ndio.remote.OCP.OCP.get_cutout">
 <code class="descname">get_cutout</code><span class="sig-paren">(</span><em>token</em>, <em>channel</em>, <em>x_start</em>, <em>x_stop</em>, <em>y_start</em>, <em>y_stop</em>, <em>z_start</em>, <em>z_stop</em>, <em>resolution=1</em>, <em>block_size=(256</em>, <em>256</em>, <em>16)</em>, <em>crop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_cutout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get data from the OCP server.</p>
+<dd><p>Get volumetric cutout data from the OCP server.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -238,31 +276,7 @@ If you try to crop... Sorry :(</p>
 <dl class="method">
 <dt id="ndio.remote.OCP.OCP.get_image">
 <code class="descname">get_image</code><span class="sig-paren">(</span><em>token</em>, <em>channel</em>, <em>x_start</em>, <em>x_stop</em>, <em>y_start</em>, <em>y_stop</em>, <em>z_index</em>, <em>resolution=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a binary-encoded, decompressed image. You should probably
-check to see that your token has an <cite>image</cite> channel before running this,
-or it won&#8217;t do anything interesting.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>token</strong> (<em>str</em>) &#8211; Token to identify data to download</li>
-<li><strong>channel</strong> (<em>str</em>) &#8211; Channel</li>
-<li><strong>resolution</strong> (<em>int</em>) &#8211; Resolution level</li>
-<li><strong>Q_start</strong> (<em>int</em>) &#8211; ` The lower bound of dimension &#8216;Q&#8217;</li>
-<li><strong>Q_stop</strong> (<em>int</em>) &#8211; The upper bound of dimension &#8216;Q&#8217;</li>
-<li><strong>z_index</strong> (<em>int</em>) &#8211; The z-slice to image</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">binary image data</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
-</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Alias for the <cite>get_xy_slice</cite> function for backwards compatibility.</p>
 </dd></dl>
 
 <dl class="method">
@@ -284,6 +298,45 @@ or it won&#8217;t do anything interesting.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_public_datasets">
+<code class="descname">get_public_datasets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_public_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>NOTE: VERY SLOW!
+Gets a list of public datasets. Different than public tokens!</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of public datasets</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_public_datasets_and_tokens">
+<code class="descname">get_public_datasets_and_tokens</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_public_datasets_and_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>NOTE: VERY SLOW!
+Gets a dictionary relating key:dataset to value:[tokens] that rely
+on that dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">relating key:dataset to value:[tokens]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ndio.remote.OCP.OCP.get_public_tokens">
 <code class="descname">get_public_tokens</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_public_tokens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of public tokens available on this server.</p>
@@ -293,7 +346,9 @@ or it won&#8217;t do anything interesting.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong> &#8211; </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str[]</cite> list of public tokens</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of public tokens</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
 </tr>
 </tbody>
 </table>
@@ -312,7 +367,7 @@ or it won&#8217;t do anything interesting.</p>
 <li><strong>channel</strong> (<em>str</em>) &#8211; The channel to use</li>
 <li><strong>anno_id</strong> (<em>int, str</em>) &#8211; The ID of a RAMON object to gather. Coerced str</li>
 <li><strong>resolution</strong> (<em>int</em>) &#8211; Resolution (if not working, try a higher num)</li>
-<li><strong>metadata_only</strong> (<em>bool</em>) &#8211; If true, returns <cite>get_ramon_metadata</cite> instead</li>
+<li><strong>metadata_only</strong> (<em>bool</em>) &#8211; True = returns <cite>get_ramon_metadata</cite> instead</li>
 </ul>
 </td>
 </tr>
@@ -361,7 +416,8 @@ If the channel or token is not found</p>
 <code class="descname">get_ramon_metadata</code><span class="sig-paren">(</span><em>token</em>, <em>channel</em>, <em>anno_id</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_ramon_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download a RAMON object by ID. <cite>anno_id</cite> can be a string <cite>&#8220;123&#8221;</cite>, an
 int <cite>123</cite>, an array of ints <cite>[123, 234, 345]</cite>, an array of strings
-<cite>[&#8220;123&#8221;, &#8220;234&#8221;, &#8220;345&#8221;]</cite>, or a comma-separated string list <cite>&#8220;123,234,345&#8221;</cite>.</p>
+<cite>[&#8220;123&#8221;, &#8220;234&#8221;, &#8220;345&#8221;]</cite>, or a comma-separated string list
+<cite>&#8220;123,234,345&#8221;</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -373,14 +429,101 @@ int <cite>123</cite>, an array of ints <cite>[123, 234, 345]</cite>, an array of
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">JSON. If you pass a single id in str or int, returns a single datum.
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">JSON. If you pass a single id in str or int, returns a single datum
 If you pass a list of int or str or a comma-separated string, will
-return a dict with keys from the list and the values are the server-
-returned JSON.</p>
+return a dict with keys from the list and the values are the JSON
+returned from the server.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RemoteDataNotFoundError</span></code> &#8211;
 If the data cannot be found on the Remote</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_token_dataset">
+<code class="descname">get_token_dataset</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_token_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dataset for a given token.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> (<em>str</em>) &#8211; The token to inspect</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The name of the dataset</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_token_info">
+<code class="descname">get_token_info</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_token_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>An alias for get_proj_info.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_volume">
+<code class="descname">get_volume</code><span class="sig-paren">(</span><em>token</em>, <em>channel</em>, <em>x_start</em>, <em>x_stop</em>, <em>y_start</em>, <em>y_stop</em>, <em>z_start</em>, <em>z_stop</em>, <em>resolution=1</em>, <em>block_size=(256</em>, <em>256</em>, <em>16)</em>, <em>crop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a RAMONVolume volumetric cutout from the OCP server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>token</strong> (<em>str</em>) &#8211; Token to identify data to download</li>
+<li><strong>channel</strong> (<em>str</em>) &#8211; Channel</li>
+<li><strong>resolution</strong> (<em>int</em>) &#8211; Resolution level</li>
+<li><strong>Q_start</strong> (<em>int</em>) &#8211; ` The lower bound of dimension &#8216;Q&#8217;</li>
+<li><strong>Q_stop</strong> (<em>int</em>) &#8211; The upper bound of dimension &#8216;Q&#8217;</li>
+<li><strong>block_size</strong> (<em>int[3]</em>) &#8211; Block size of this dataset</li>
+<li><strong>crop</strong> (<em>bool</em>) &#8211; whether or not to crop the volume before returning it</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Downloaded data.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="ndio.ramon.html#module-ndio.ramon.RAMONVolume" title="ndio.ramon.RAMONVolume">ndio.ramon.RAMONVolume</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code> &#8211;
+If you try to crop... Sorry :(</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_xy_slice">
+<code class="descname">get_xy_slice</code><span class="sig-paren">(</span><em>token</em>, <em>channel</em>, <em>x_start</em>, <em>x_stop</em>, <em>y_start</em>, <em>y_stop</em>, <em>z_index</em>, <em>resolution=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_xy_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a binary-encoded, decompressed 2d image. You should
+specify a &#8216;token&#8217; and &#8216;channel&#8217; pair.  For image data, users
+should use the channel &#8216;image.&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>token</strong> (<em>str</em>) &#8211; Token to identify data to download</li>
+<li><strong>channel</strong> (<em>str</em>) &#8211; Channel</li>
+<li><strong>resolution</strong> (<em>int</em>) &#8211; Resolution level</li>
+<li><strong>Q_start</strong> (<em>int</em>) &#8211; ` The lower bound of dimension &#8216;Q&#8217;</li>
+<li><strong>Q_stop</strong> (<em>int</em>) &#8211; The upper bound of dimension &#8216;Q&#8217;</li>
+<li><strong>z_index</strong> (<em>int</em>) &#8211; The z-slice to image</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">binary image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -407,8 +550,8 @@ If the data cannot be found on the Remote</p>
 <li><strong>(int)</strong> &#8211; </li>
 <li><strong>data</strong> &#8211; A numpy array of data. Pass in (x, y, z)</li>
 <li><strong>resolution</strong> &#8211; Default resolution of the data</li>
-<li><strong>roll_axis</strong> &#8211; Default True. Pass False if you&#8217;re supplying data in
-(z, x, y) order.</li>
+<li><strong>roll_axis</strong> &#8211; Default True. Pass False if you&#8217;re supplying data
+in (z, x, y) order.</li>
 <li><strong>dtype</strong> &#8211; Pass in datatype if you know it. Otherwise we&#8217;ll
 check the projinfo.</li>
 </ul>
@@ -425,6 +568,35 @@ check the projinfo.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndio.remote.OCP.OCP.post_ramon">
+<code class="descname">post_ramon</code><span class="sig-paren">(</span><em>token</em>, <em>channel</em>, <em>r</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.post_ramon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Posts a RAMON object to the Remote.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>token</strong> (<em>str</em>) &#8211; Project to use</li>
+<li><strong>channel</strong> (<em>str</em>) &#8211; The channel to use</li>
+<li><strong>ramon</strong> (<em>RAMON</em>) &#8211; The annotation to upload</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Success = True</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Throws:</dt>
+<dd>RemoteDataUploadError if something goes wrong</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -471,8 +643,8 @@ old metadata. Archived metadata is still stored by the LIMS system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>token</strong> &#8211; Token of the datum to set</li>
-<li><strong>data</strong> &#8211; A dictionary to insert as metadata. Can include <cite>secret</cite>.</li>
+<li><strong>token</strong> (<em>str</em>) &#8211; Token of the datum to set</li>
+<li><strong>data</strong> (<em>str</em>) &#8211; A dictionary to insert as metadata. Include <cite>secret</cite>.</li>
 </ul>
 </td>
 </tr>
@@ -535,64 +707,8 @@ old metadata. Archived metadata is still stored by the LIMS system.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-ndio.remote.Request">
-<span id="ndio-remote-request-module"></span><h2>ndio.remote.Request module<a class="headerlink" href="#module-ndio.remote.Request" title="Permalink to this headline">¶</a></h2>
-<dl class="exception">
-<dt id="ndio.remote.Request.DataSizeError">
-<em class="property">exception </em><code class="descclassname">ndio.remote.Request.</code><code class="descname">DataSizeError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.Request.DataSizeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
-<p>An exception to raise when a dataset mismatches its Request,
-or more data is posted than there is &#8216;space&#8217; for in the Request.
-Often a result of requesting data and failing with a broken pipe,
-or trying to POST 2D data into a 3D Request.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="ndio.remote.Request.Request">
-<em class="property">class </em><code class="descclassname">ndio.remote.Request.</code><code class="descname">Request</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.Request.Request" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>A OCPRequest holds an absolute URL that can be used
-to access a unique datum. Requests can be thought of as
-a Python class wrapper for a RESTful endpoint.</p>
-<dl class="method">
-<dt id="ndio.remote.Request.Request.to_filename">
-<code class="descname">to_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.Request.Request.to_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output a filename that can be used to save data from this
-request and can later be used to create a new Request (using
-the _init_from_filename constructor) to download identical
-data. In that regard, we can use a filename as a unique
-&#8216;hash&#8217; of its data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None.</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">str</span></code> Suggested filename for data that has been
-downloaded by this Request.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ndio.remote.Request.Request.to_url">
-<code class="descname">to_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.Request.Request.to_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output a URL that can be used to execute this Request.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None.</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">str</span></code> RESTful endpoint URL.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="ndio-remote-request-module">
+<h2>ndio.remote.Request module<a class="headerlink" href="#ndio-remote-request-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-ndio.remote.errors">
 <span id="ndio-remote-errors-module"></span><h2>ndio.remote.errors module<a class="headerlink" href="#module-ndio.remote.errors" title="Permalink to this headline">¶</a></h2>
