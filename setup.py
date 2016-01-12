@@ -44,5 +44,11 @@ setup(
         'fMRI',
         'calcium'
     ],
-    classifiers = [],
+    classifiers = [
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Healthcare Industry",
+        "License :: OSI Approved :: Apache Software License",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.5"
+    ],
 )
