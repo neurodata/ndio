@@ -213,6 +213,7 @@
 <dt id="ndio.ramon.errors.InvalidRAMONError">
 <em class="property">exception </em><code class="descclassname">ndio.ramon.errors.</code><code class="descname">InvalidRAMONError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.ramon.errors.InvalidRAMONError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+<p>Raised when an invalid RAMON object is referenced or created.</p>
 </dd></dl>
 
 </div>
@@ -322,7 +323,8 @@ defaults to the first one (sorted) if none is specified.</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">hdf5.File</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>InvalidRAMONError if you pass a non-RAMON object</strong> &#8211;</p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">InvalidRAMONError</span></code> &#8211;
+if you pass a non-RAMON object</p>
 </td>
 </tr>
 </tbody>
