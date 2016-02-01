@@ -15,6 +15,7 @@ python setup.py sdist upload -r pypi
 """
 
 from distutils.core import setup
+from setuptools import setup
 setup(
     name = 'ndio',
     packages = [
@@ -49,6 +50,16 @@ setup(
         'MRI',
         'fMRI',
         'calcium'
+    ],
+    install_requires = [
+        'pillow',
+        'numpy',
+        'h5py',
+        'requests',
+        'networkx',
+        'scipy',
+        'pymcubes',
+        'json-spec'
     ],
     classifiers = [],
 )
