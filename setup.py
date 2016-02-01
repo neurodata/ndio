@@ -50,9 +50,7 @@ setup(
         'numpy',
         'h5py',
         'requests',
-        'networkx',
         'scipy',
-        'pymcubes',
         'json-spec'
     ],
     classifiers = [],
