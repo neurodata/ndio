@@ -44,6 +44,14 @@ ndio.remote.m2g module
     :undoc-members:
     :show-inheritance:
 
+ndio.remote.neurodata module
+----------------------------
+
+.. automodule:: ndio.remote.neurodata
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
