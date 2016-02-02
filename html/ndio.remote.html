@@ -280,6 +280,64 @@ If you try to crop... Sorry :(</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_image_offset">
+<code class="descname">get_image_offset</code><span class="sig-paren">(</span><em>token</em>, <em>resolution=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_image_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the image offset for a given token at a given resolution. For
+instance, the <cite>kasthuri11</cite> dataset starts at (0, 0, 1), so its 1850th
+slice is slice 1850, not 1849. When downloading a full dataset, the
+result of this function should be your x/y/z starts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>token</strong> (<em>str</em>) &#8211; The token to inspect</li>
+<li><strong>resolution</strong> (<em>int : 0</em>) &#8211; The resolution at which to gather the offset</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The origin of the dataset, as a list</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int[3]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndio.remote.OCP.OCP.get_image_size">
+<code class="descname">get_image_size</code><span class="sig-paren">(</span><em>token</em>, <em>resolution=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_image_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size of the volume (3D). Convenient for when you want
+to download the entirety of a dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>token</strong> (<em>str</em>) &#8211; The token for which to find the dataset image bounds</li>
+<li><strong>resolution</strong> (<em>int : 0</em>) &#8211; The resolution at which to get image bounds.
+Defaults to 0, to get the largest area available.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The size of the bounds. Should == get_volume.shape</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">int[3]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RemoteDataNotFoundError</span></code> &#8211;
+If the token is invalid, or if the
+metadata at that resolution is unavailable in projinfo.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ndio.remote.OCP.OCP.get_proj_info">
 <code class="descname">get_proj_info</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#ndio.remote.OCP.OCP.get_proj_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the project info for a given token.</p>
@@ -762,7 +820,7 @@ to ndio Remotes.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, NeuroData.
+        &copy; Copyright 2016, NeuroData.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
