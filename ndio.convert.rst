@@ -4,38 +4,12 @@ ndio.convert package
 Submodules
 ----------
 
-ndio.convert.convert module
----------------------------
+.. toctree::
 
-.. automodule:: ndio.convert.convert
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.convert.hdf5 module
-------------------------
-
-.. automodule:: ndio.convert.hdf5
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.convert.png module
------------------------
-
-.. automodule:: ndio.convert.png
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.convert.tiff module
-------------------------
-
-.. automodule:: ndio.convert.tiff
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   ndio.convert.convert
+   ndio.convert.hdf5
+   ndio.convert.png
+   ndio.convert.tiff
 
 Module contents
 ---------------

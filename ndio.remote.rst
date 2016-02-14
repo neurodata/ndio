@@ -4,54 +4,14 @@ ndio.remote package
 Submodules
 ----------
 
-ndio.remote.OCP module
-----------------------
+.. toctree::
 
-.. automodule:: ndio.remote.OCP
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.remote.OCPMeta module
---------------------------
-
-.. automodule:: ndio.remote.OCPMeta
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.remote.Remote module
--------------------------
-
-.. automodule:: ndio.remote.Remote
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.remote.errors module
--------------------------
-
-.. automodule:: ndio.remote.errors
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.remote.m2g module
-----------------------
-
-.. automodule:: ndio.remote.m2g
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ndio.remote.neurodata module
-----------------------------
-
-.. automodule:: ndio.remote.neurodata
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   ndio.remote.OCP
+   ndio.remote.OCPMeta
+   ndio.remote.Remote
+   ndio.remote.errors
+   ndio.remote.m2g
+   ndio.remote.neurodata
 
 Module contents
 ---------------
