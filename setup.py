@@ -57,7 +57,8 @@ setup(
         'h5py',
         'requests',
         'scipy',
-        'json-spec'
+        'json-spec',
+        'blosc'
     ],
     classifiers = [],
 )
