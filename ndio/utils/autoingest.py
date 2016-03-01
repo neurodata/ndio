@@ -193,7 +193,7 @@ class AutoIngest:
             None
         """
         self.channels[
-            channel_name] = [channel_name, datatype, channel_type, data_url,
+            channel_name] = [channel_name.strip().replace(" ", ""), datatype, channel_type.lower(), data_url,
                              file_format, file_type, exceptions, resolution,
                              windowrange, readonly]
 
@@ -216,13 +216,14 @@ class AutoIngest:
         Returns:
             None
         """
-
-        self.project = (project_name, token_name, public)
+        
+        # UA TODO We have to assume that the user is totally and completely STUPID(trust me they are). They cannot follow our instructions at all. Here we santize the input as much possible before it reaches the schema-validation. For example, remove any white spaces, convert everything in channle type to lower case and so on.
+        self.project = (project_name.strip().replace(" ", ""), token_name.strip().replace(" ", ""), public)
 
     def add_dataset(self, dataset_name, imagesize, voxelres,
                     offset=(0, 0, 0), timerange=(0, 0), scalinglevels=0,
                     scaling=0):
-        self.dataset = (dataset_name, imagesize, voxelres,
+        self.dataset = (dataset_name.strip().replace(" ", ""), imagesize, voxelres,
                         offset, timerange, scalinglevels, scaling)
         """
         Arguments:
@@ -468,7 +469,7 @@ exist".format(token_name))
                 CHANNEL_SCHEMA.validate(channel_object)
             except:
                 self.output_json('/tmp/ND_{}.json'.format(channel_names[i]))
-                raise ValueError('Check inputted variables. Dumping to /tmp/')
+                raise ValueError('Check input variables for channel schema. Dumping to /tmp/')
             names.append(channel_object["channel_name"])
         # Dataset
         dataset_object = data["dataset"]
@@ -476,7 +477,7 @@ exist".format(token_name))
             DATASET_SCHEMA.validate(dataset_object)
         except:
             self.output_json('/tmp/ND_dataset.json')
-            raise ValueError("Check inputted variables. Dumping to /tmp/")
+            raise ValueError("Check input variables for dataset schema. Dumping to /tmp/")
         names.append(dataset_object["dataset_name"])
 
         # Project
@@ -485,20 +486,24 @@ exist".format(token_name))
             PROJECT_SCHEMA.validate(project_object)
         except:
             self.output_json('/tmp/ND_project.json')
-            raise ValueError("Check inputted variables. Dumping to /tmp/")
+            raise ValueError("Check input variables for project schema. Dumping to /tmp/")
         names.append(project_object["project_name"])
 
-        #Check if names contain bad chars
-        spec_chars = re.compile(".*[$&+,:;=?@#|'<>._^*()%!-].*")
-        for i in names:
-            if(spec_chars.match(i)):
-                raise ValueError("No special characters allowed including:\
-                        $&+,:;=?@#|'<>._^*()%!-].*\" in names")
+        # Check if names contain bad chars. Underscore is allowed
+        spec_chars = re.compile(".*[$&+,:;=?@#|'<>.^*()%!-].*")
+        
+        # TODO UA I want exception handling for each error in this format. print e.args gives the user only the message and not the whole trace. The user here is a neuroscience major who does not care about the traceback only about the error.
+        try:
+          for i in names:
+              if(spec_chars.match(i)):
+                raise ValueError("Error. No special characters allowed including: $&+,:;=?@#|'<>.^*()%!-].* in dataset, project, channel or token names")
+        except ValueError as e:
+          print e.args
 
 
     def put_data(self, data, site_host, dev):
         # try to post data to the server
-        #import pdb; pdb.set_trace()
+        return
 
         if dev:
             URLPath = "{}/ca/autoIngest/".format(site_host)
@@ -508,11 +513,11 @@ exist".format(token_name))
         try:
             response = requests.post(URLPath, data=json.dumps(data))
             assert(response.status_code == 200)
+            print("From ndio: {}".format(response.content))
         except:
             raise IOError("Error in posting JSON file {}\
 ".format(reponse.status_code))
-        finally:
-            print("From ndio: {}".format(response.content))
+
 
     def post_data(self,
         site_host=SITE_HOST,
