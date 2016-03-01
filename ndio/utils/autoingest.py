@@ -19,6 +19,8 @@ from jsonspec.validators import load
 import re
 import shutil
 
+# UA TODO HOST_NAME from neurodata folder. /ocp should be read from here not baked into the URL.
+SITE_HOST = 'http://openconnecto.me/ocp'
 VERIFY_BY_FOLDER = 'Folder'
 VERIFY_BY_SLICE = 'Slice'
 
@@ -354,6 +356,18 @@ class AutoIngest:
 
         project_dict['public'] = public
         return project_dict
+    
+    def identify_imagetype(self, data):
+      """Identify the image type here with some parameters"""
+      # UA TODO Implement what we will discuss here
+      pass
+      return NotImplemented
+
+    def identify_imagesize(self, data):
+      """Identify the image size usging the data location and other parameters"""
+      # UA TODO Implement what we will discuss here
+      pass
+      return NotImplemented
 
     def verify_path(self, data, site_host, verifytype):
         # Insert try and catch blocks
@@ -361,8 +375,9 @@ class AutoIngest:
             token_name = data["project"]["token_name"]
         except:
             token_name = data["project"]["project_name"]
-        #Check if token exists
-        URLPath = "{}/ocp/ca/{}/info/".format(site_host, token_name)
+        # UA TODO Here the check has to be extensive, what if the user is adding a channel to an exisitng project, then this will fail which is incorrect
+        # Check if token exists
+        URLPath = "{}/ca/{}/info/".format(site_host, token_name)
 
         try:
             response = requests.post(URLPath, data=json.dumps(data))
@@ -488,7 +503,7 @@ exist".format(token_name))
         if dev:
             URLPath = "{}/ca/autoIngest/".format(site_host)
         else:
-            URLPath = "{}/ocp/ca/autoIngest/".format(site_host)
+            URLPath = "{}/ca/autoIngest/".format(site_host)
 
         try:
             response = requests.post(URLPath, data=json.dumps(data))
@@ -500,7 +515,7 @@ exist".format(token_name))
             print("From ndio: {}".format(response.content))
 
     def post_data(self,
-        site_host='http://openconnecto.me',
+        site_host=SITE_HOST,
         file_name=None, dev=False, verifytype=VERIFY_BY_FOLDER):
         """
         Arguements:
@@ -533,8 +548,9 @@ exist".format(token_name))
                     data = json.load(data_file)
             except:
                 raise IOError("Error opening file")
-
-        self.verify_path(data, site_host, verifytype)
+        
+        # UA TODO You need to check if the token properties returned match with the properties which already exists here. You cannot do a blanket check. We can talk more about this in person.
+        # self.verify_path(data, site_host, verifytype)
         self.verify_json(data)
 
         self.put_data(data, site_host, dev)
