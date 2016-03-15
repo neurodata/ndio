@@ -192,8 +192,11 @@ class AutoIngest:
         Returns:
             None
         """
+        if channel_type:
+          channel_type.lower()
+
         self.channels[
-            channel_name] = [channel_name.strip().replace(" ", ""), datatype, channel_type.lower(), data_url,
+            channel_name] = [ channel_name.strip().replace(" ", ""), datatype, channel_type, data_url,
                              file_format, file_type, exceptions, resolution,
                              windowrange, readonly]
 
@@ -218,7 +221,7 @@ class AutoIngest:
         """
         
         # UA TODO We have to assume that the user is totally and completely STUPID(trust me they are). They cannot follow our instructions at all. Here we santize the input as much possible before it reaches the schema-validation. For example, remove any white spaces, convert everything in channle type to lower case and so on.
-        self.project = (project_name.strip().replace(" ", ""), token_name.strip().replace(" ", ""), public)
+        self.project = (project_name.strip().replace(" ", ""), token_name.strip().replace(" ", "") if token_name else token_name, public)
 
     def add_dataset(self, dataset_name, imagesize, voxelres,
                     offset=None, timerange=None, scalinglevels=None,
@@ -355,7 +358,8 @@ class AutoIngest:
         else:
             project_dict['token_name'] = project_name
 
-        project_dict['public'] = public
+        if public is not None:
+          project_dict['public'] = public
         return project_dict
     
     def identify_imagetype(self, data):
@@ -554,7 +558,7 @@ exist".format(token_name))
         
         # UA TODO You need to check if the token properties returned match with the properties which already exists here. You cannot do a blanket check. We can talk more about this in person.
         # self.verify_path(data, site_host, verifytype)
-        self.verify_json(data)
+        # self.verify_json(data)
 
         self.put_data(data, site_host, dev)
 
