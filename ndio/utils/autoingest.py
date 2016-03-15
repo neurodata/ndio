@@ -20,7 +20,7 @@ import re
 import shutil
 
 # UA TODO HOST_NAME from neurodata folder. /ocp should be read from here not baked into the URL.
-SITE_HOST = 'http://openconnecto.me/ocp'
+SITE_HOST = 'http://localhost:8000'
 VERIFY_BY_FOLDER = 'Folder'
 VERIFY_BY_SLICE = 'Slice'
 
@@ -142,8 +142,8 @@ class AutoIngest:
 
     def add_channel(
         self, channel_name, datatype, channel_type, data_url, file_format,
-            file_type, exceptions=0, resolution=0,
-            windowrange=None, readonly=0):
+            file_type, exceptions=None, resolution=None,
+            windowrange=None, readonly=None):
         """
         Arguments:
             channel_name (str): Channel Name is the specific name of a
@@ -197,7 +197,7 @@ class AutoIngest:
                              file_format, file_type, exceptions, resolution,
                              windowrange, readonly]
 
-    def add_project(self, project_name, token_name='', public=0):
+    def add_project(self, project_name, token_name=None, public=None):
         """
         Arguments:
             project_name (str): Project name is the specific project within
@@ -221,8 +221,8 @@ class AutoIngest:
         self.project = (project_name.strip().replace(" ", ""), token_name.strip().replace(" ", ""), public)
 
     def add_dataset(self, dataset_name, imagesize, voxelres,
-                    offset=(0, 0, 0), timerange=(0, 0), scalinglevels=0,
-                    scaling=0):
+                    offset=None, timerange=None, scalinglevels=None,
+                    scaling=None):
         self.dataset = (dataset_name.strip().replace(" ", ""), imagesize, voxelres,
                         offset, timerange, scalinglevels, scaling)
         """
@@ -503,7 +503,6 @@ exist".format(token_name))
 
     def put_data(self, data, site_host, dev):
         # try to post data to the server
-        return
 
         if dev:
             URLPath = "{}/ca/autoIngest/".format(site_host)
@@ -515,8 +514,7 @@ exist".format(token_name))
             assert(response.status_code == 200)
             print("From ndio: {}".format(response.content))
         except:
-            raise IOError("Error in posting JSON file {}\
-".format(reponse.status_code))
+            raise IOError("Error in posting JSON file {}".format(response.status_code))
 
 
     def post_data(self,
@@ -529,7 +527,7 @@ exist".format(token_name))
 
             file_name(str): The file name of the json file to post (optional).
             If this is left unspecified it is assumed the data is in the
-            AutoIngets object.
+            AutoIngest object.
 
             dev(bool): If pushing to a microns dev branch server set this
             to True, if not leave False.
@@ -541,7 +539,7 @@ exist".format(token_name))
         Returns:
             None
         """
-
+        
         if (file_name is None):
             complete_example = (
                 self.dataset, self.project, self.channels, self.metadata)
