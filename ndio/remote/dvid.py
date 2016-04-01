@@ -37,8 +37,40 @@ class dvid(Remote):
             self.protocol
         )
 
+    def url(self, suffix=""):
+        """
+        Returns a constructed URL, appending an optional suffix (uri path).
+
+        Arguments:
+            suffix (str : ""): The suffix to append to the end of the URL
+
+        Returns:
+            str: The complete URL
+        """
+        return super(dvid, self).url('{}/node/'.format(self._ext) + suffix)
+
+    def get_data_info(self, uuid, dataname):
+        """
+        Gets DVID data for the specified dataname.
+
+        Arguments:
+            uuid (str): Hexidecimal to uniquely identify a version node
+            dataname (str): Name of labelvoldata
+
+        Returns:
+            json
+        """
+        res = requests.get(self.url('{}/{}/info'.format(uuid, dataname)))
+        return res.json()
+
     def get_cutout(self):
         raise NotImplementedError
 
     def post_cutout(self):
+        raise NotImplementedError
+
+    def get_label(self):
+        raise NotImplementedError
+
+    def post_label(self):
         raise NotImplementedError
