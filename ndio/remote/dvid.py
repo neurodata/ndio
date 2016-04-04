@@ -63,8 +63,30 @@ class dvid(Remote):
         res = requests.get(self.url('{}/{}/info'.format(uuid, dataname)))
         return res.json()
 
-    def get_cutout(self):
-        raise NotImplementedError
+    def get_cutout(self, uuid, dataname, label, options={}):
+        """
+        Gets a cutout and populates a dense numpy.ndarray. For a sparse voxel
+        list, use ndio.remote.dvid#get_voxel_list().
+
+        Arguments:
+            uuid (str): Hexidecimal to uniquely identify a version node
+            dataname (str): Name of labelvoldata
+            label (str): The label to download
+            options (dict): Options to pass to the GET url. See the docs at
+                https://goo.gl/qatye6 (DVID repo on GitHub) for values.
+
+        Returns:
+            numpy.ndarray
+        """
+        url = self.url('{}/{}/sparsevol/{}'.format(uuid, dataname, label))
+        
+        # Add options after a '?'
+        url += "?" + "&".join(
+            ["{}={}".format(str(k), str(v)) for k, v in six.iteritems(options)]
+        )
+
+        res = requests.get(url)
+
 
     def post_cutout(self):
         raise NotImplementedError
