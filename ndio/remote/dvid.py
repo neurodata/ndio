@@ -50,7 +50,50 @@ class dvid(Remote):
         Returns:
             str: The complete URL
         """
-        return super(dvid, self).url('{}/node/'.format(self._ext) + suffix)
+        return super(dvid, self).url('{}/'.format(self._ext) + suffix)
+
+    def get_repositories(self, deep=False):
+        """
+        Gets a list of repositories on this server.
+
+        Arguments:
+            deep (bool : False): Pass True to get the full JSON instead of
+                just the keys.
+
+        Returns:
+            list of UUIDs
+        """
+        res = requests.get(self.url("repos/info"))
+        if res.status_code != 200:
+            raise RemoteDataNotFoundError("Failed to connect to DVID.")
+
+        if deep:
+            return res.json()
+
+        return res.json().keys()
+
+    def get_repos(self, deep=False):
+        """
+        Alias for get_repositories
+        """
+        return self.get_repositories(deep)
+
+    def get_repository_info(self, uuid):
+        """
+        Returns JSON information about a particular repository.
+
+        Arguments:
+            uuid (str): A unique identifier for a repo
+
+        Returns:
+            JSON
+        """
+        res = requests.get(self.url("repo/{}/info".format(uuid)))
+
+        if res.status_code != 200:
+            raise RemoteDataNotFoundError("Can't find UUID {}.".format(uuid))
+
+        return res.json()
 
     def get_data_info(self, uuid, dataname):
         """
@@ -81,15 +124,15 @@ class dvid(Remote):
         Returns:
             numpy.ndarray
         """
+        raise NotImplementedError
         url = self.url('{}/{}/sparsevol/{}'.format(uuid, dataname, label))
-        
+
         # Add options after a '?'
         url += "?" + "&".join(
             ["{}={}".format(str(k), str(v)) for k, v in six.iteritems(options)]
         )
 
         res = requests.get(url)
-
 
     def post_cutout(self):
         raise NotImplementedError
