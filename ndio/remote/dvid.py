@@ -19,6 +19,9 @@ class dvid(Remote):
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL, **kwargs):
 
+        self._ext = "api"
+        if hostname == "":
+            raise ValueError("You must specify a hostname.")
         super(dvid, self).__init__(hostname, protocol)
 
     def __repr__(self):
