@@ -95,6 +95,18 @@ class dvid(Remote):
 
         return res.json()
 
+    def get_repository_nodes(self, uuid):
+        """
+        Returns a list of node UUIDs for a given repository.
+
+        Arguments:
+            uuid (str): The repo identifier
+
+        Returns:
+            list (str)
+        """
+        return self.get_repository_info(uuid)['DAG']['Nodes'].keys()
+
     def get_data_info(self, uuid, dataname):
         """
         Gets DVID data for the specified dataname.
@@ -106,7 +118,21 @@ class dvid(Remote):
         Returns:
             json
         """
-        res = requests.get(self.url('{}/{}/info'.format(uuid, dataname)))
+        res = requests.get(self.url('node/{}/{}/info'.format(uuid, dataname)))
+        return res.json()
+
+    def get_data_metadata(self, uuid, dataname):
+        """
+        Gets DVID metadata for the specified dataname.
+
+        Arguments:
+            uuid (str): Hexidecimal to uniquely identify a version node
+            dataname (str): Name of labelvoldata
+
+        Returns:
+            json
+        """
+        res = requests.get(self.url('node/{}/{}/metadata'.format(uuid, dataname)))
         return res.json()
 
     def get_cutout(self, uuid, dataname, label, options={}):
@@ -124,8 +150,7 @@ class dvid(Remote):
         Returns:
             numpy.ndarray
         """
-        raise NotImplementedError
-        url = self.url('{}/{}/sparsevol/{}'.format(uuid, dataname, label))
+        url = self.url('node/{}/{}/sparsevol/{}'.format(uuid, dataname, label))
 
         # Add options after a '?'
         url += "?" + "&".join(
@@ -133,6 +158,7 @@ class dvid(Remote):
         )
 
         res = requests.get(url)
+        import pdb; pdb.set_trace()
 
     def post_cutout(self):
         raise NotImplementedError
