@@ -1,9 +1,18 @@
 # Changelog
 
+- **1.0.1**
+    - Add converters for voxel lists and ndarrays
+- **1.0.0**
+    - This changelog prepares ndio to be stable.
+    - All APIs are now static until the next breaking version (2.\*.\*).
+    - We now follow Semantic Versioning.
+- **0.1.18**
+    - Standardize converter names in the `convert` module
+    - Fix post cutout's zyx bug
+    - Use blosc whenever possible for `post_upload`
 - **0.1.17**
     - Standardize RAMON converter function names in `__init__`
     - Fix RAMON uploads to incorporate kvpairs
-    - Standardize converter names in the `convert` module
 - **0.1.16**
     - Fix `synapse_type` keyerror bug.
     - Un-nest RAMON metadata

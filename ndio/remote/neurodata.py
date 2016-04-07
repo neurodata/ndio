@@ -601,6 +601,7 @@ class neurodata(Remote):
 
     # SECTION:
     # Data Upload
+
     @_check_token
     def post_cutout(self, token, channel,
                     x_start,
@@ -635,12 +636,12 @@ class neurodata(Remote):
         data = numpy.rollaxis(data, 1)
         data = numpy.rollaxis(data, 2)
 
-        if six.PY2:
-            ul_func = self._post_cutout_no_chunking
-        elif six.PY3:
-            ul_func = self._post_cutout_no_chunking
+        if six.PY3 or data.nbytes > 1.5e9:
+            ul_func = self._post_cutout_no_chunking_npz
+        elif six.PY2:
+            ul_func = self._post_cutout_no_chunking_blosc
         else:
-            raise ValueError("Invalid Python version.")
+            raise OSError("Check yo version of Python!")
 
         if data.size < self._chunk_threshold:
             return ul_func(token, channel, x_start,
@@ -664,9 +665,9 @@ class neurodata(Remote):
 
         return True
 
-    def _post_cutout_no_chunking(self, token, channel,
-                                 x_start, y_start, z_start,
-                                 data, resolution):
+    def _post_cutout_no_chunking_npz(self, token, channel,
+                                     x_start, y_start, z_start,
+                                     data, resolution):
 
         data = numpy.expand_dims(data, axis=0)
         tempfile = BytesIO()
@@ -676,12 +677,39 @@ class neurodata(Remote):
         url = self.url("{}/{}/npz/{}/{},{}/{},{}/{},{}/".format(
             token, channel,
             resolution,
-            x_start, x_start + data.shape[0],
-            y_start, y_start + data.shape[1],
-            z_start, z_start + data.shape[2]
+            x_start, x_start + data.shape[3],
+            y_start, y_start + data.shape[2],
+            z_start, z_start + data.shape[1]
         ))
 
         req = requests.post(url, data=compressed, headers={
+            'Content-Type': 'application/octet-stream'
+        })
+
+        if req.status_code is not 200:
+            raise RemoteDataUploadError(req.text)
+        else:
+            return True
+
+    def _post_cutout_no_chunking_blosc(self, token, channel,
+                                       x_start, y_start, z_start,
+                                       data, resolution):
+        """
+        Accepts data in zyx. !!!
+        """
+
+        data = numpy.expand_dims(data, axis=0)
+        blosc_data = blosc.pack_array(data)
+
+        url = self.url("{}/{}/blosc/{}/{},{}/{},{}/{},{}/".format(
+            token, channel,
+            resolution,
+            x_start, x_start + data.shape[3],
+            y_start, y_start + data.shape[2],
+            z_start, z_start + data.shape[1]
+        ))
+
+        req = requests.post(url, data=blosc_data, headers={
             'Content-Type': 'application/octet-stream'
         })
 
@@ -694,14 +722,50 @@ class neurodata(Remote):
     # RAMON Download
 
     @_check_token
-    def get_ramon_ids(self, token, channel='annotation', ramon_type=None):
+    def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
+        """
+        Get the bounding box for a RAMON object (specified by ID).
+
+        Arguments:
+            token (str): Project to use
+            channel (str): Channel to use
+            r_id (int): Which ID to get a bounding box
+            resolution (int : 0): The resolution at which to download
+
+        Returns:
+            (x_start, x_stop, y_start, y_stop, z_start, z_stop) ints
+        """
+        url = self.url('{}/{}/{}/boundingbox/{}/'.format(token, channel,
+                                                         r_id, resolution))
+
+        r_id = str(r_id)
+        res = requests.get(url)
+
+        if res.status_code != 200:
+            rt = self.get_ramon_metadata(token, channel, r_id)[r_id]['type']
+            if rt in ['neuron']:
+                raise ValueError("ID {} is of type '{}'".format(r_id, rt))
+            raise RemoteDataNotFoundError("No such ID {}".format(r_id))
+
+        with tempfile.NamedTemporaryFile() as tmpfile:
+            tmpfile.write(res.content)
+            tmpfile.seek(0)
+            h5file = h5py.File(tmpfile.name, "r")
+            origin = h5file["{}/XYZOFFSET".format(r_id)][()]
+            size = h5file["{}/XYZDIMENSION".format(r_id)][()]
+            return (origin[0], origin[0] + size[0],
+                    origin[1], origin[1] + size[1],
+                    origin[2], origin[2] + size[2])
+
+    @_check_token
+    def get_ramon_ids(self, token, channel, ramon_type=None):
         """
         Return a list of all IDs available for download from this token and
         channel.
 
         Arguments:
             token (str): Project to use
-            channel (str): Channel to use (default 'annotation')
+            channel (str): Channel to use
             ramon_type (int : None): Optional. If set, filters IDs and only
                 returns those of RAMON objects of the requested type.
         Returns:
@@ -727,12 +791,14 @@ class neurodata(Remote):
                 tmpfile.write(req.content)
                 tmpfile.seek(0)
                 h5file = h5py.File(tmpfile.name, "r")
+                if 'ANNOIDS' not in h5file:
+                    return []
                 return [i for i in h5file['ANNOIDS']]
             raise IOError("Could not successfully mock HDF5 file for parsing.")
 
     @_check_token
     def get_ramon(self, token, channel, ids, resolution=None,
-                  metadata_only=False, sieve=None, batch_size=100):
+                  include_cutout=False, sieve=None, batch_size=100):
         """
         Download a RAMON object by ID.
 
@@ -744,7 +810,7 @@ class neurodata(Remote):
                 (["3", "4", "5"]).
             resolution (int : None): Resolution. Defaults to the most granular
                 resolution (0 for now)
-            metadata_only (bool : False):  If True, returns get_ramon_metadata
+            include_cutout (bool : False):  If True, r.cutout is populated
             sieve (function : None): A function that accepts a single ramon
                 and returns True or False depending on whether you want that
                 ramon object to be included in your response or not.
@@ -777,9 +843,6 @@ class neurodata(Remote):
 
         mdata = self.get_ramon_metadata(token, channel, ids)
 
-        if metadata_only:
-            return mdata
-
         if resolution is None:
             resolution = 0
             # probably should be dynamic...
@@ -805,11 +868,35 @@ class neurodata(Remote):
         else:
             rs = self._get_ramon_batch(token, channel, ids, resolution)
 
+        if sieve is not None:
+            rs = [r for r in rs if sieve(r)]
+
+        if include_cutout:
+            for r in rs:
+                if 'cutout' not in dir(r):
+                    continue
+                origin = r.xyz_offset
+                # Get the bounding box (cube-aligned)
+                bbox = self.get_ramon_bounding_box(token, channel,
+                                                   r.id, resolution=resolution)
+                # Get the cutout (cube-aligned)
+                cutout = self.get_cutout(token, channel,
+                                         *bbox, resolution=resolution)
+                cutout[cutout != int(r.id)] = 0
+
+                # Compute upper offset and crop
+                bounds = numpy.argwhere(cutout)
+                mins = [min([i[dim] for i in bounds]) for dim in range(3)]
+                maxs = [max([i[dim] for i in bounds]) for dim in range(3)]
+
+                r.cutout = cutout[
+                    mins[0]:maxs[0],
+                    mins[1]:maxs[1],
+                    mins[2]:maxs[2]
+                ]
+
         if _return_first_only:
             return rs[0]
-
-        if sieve is not None:
-            return [r for r in rs if sieve(r)]
         return rs
 
     def _get_ramon_batch(self, token, channel, ids, resolution):
@@ -874,7 +961,7 @@ class neurodata(Remote):
                            "{}/{}/{}/json/".format(token, channel, anno_id))
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('No data for id {}.'.format(anno_id))
-        return ramon.from_json(req.json())[0]
+        return req.json()
 
     @_check_token
     def delete_ramon(self, token, channel, anno):
@@ -949,16 +1036,30 @@ class neurodata(Remote):
             for i in r:
                 tmpfile = ramon.to_hdf5(i, tmpfile)
 
-            url = self.url("{}/{}/".format(token, channel))
-            files = {'file': ('ramon.hdf5', open(tmpfile.name, 'rb'))}
-            res = requests.post(url, files=files)
+            url = self.url("{}/{}/overwrite/".format(token, channel))
+            req = urllib2.Request(url, tmpfile.read())
+            res = urllib2.urlopen(req)
 
-            if res.status_code == 404:
+            if res.code == 404:
                 raise RemoteDataUploadError('[400] Could not upload {}'
                                             .format(str(r)))
-            if res.status_code == 500:
+            if res.code == 500:
                 raise RemoteDataUploadError('[500] Could not upload {}'
                                             .format(str(r)))
+
+            rets = res.read()
+            if six.PY3:
+                rets = rets.decode()
+            return_ids = [int(rid) for rid in rets.split(',')]
+
+            # Now post the cutout separately:
+            for ri in r:
+                if 'cutout' in dir(ri) and ri.cutout is not None:
+                    orig = ri.xyz_offset
+                    self.post_cutout(token, channel,
+                                     orig[0], orig[1], orig[2],
+                                     ri.cutout, resolution=r.resolution)
+            return return_ids
         return True
 
     # SECTION:
