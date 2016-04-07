@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>ndio API documentation</title>
+    <title>ndio.remote.Remote API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1036,24 +1036,24 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
+
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#ndio.remote.Remote.Remote">Remote</a></span>
+        
+          
   <ul>
-    <li class="mono"><a href="#ndio.version">version</a></li>
+    <li class="mono"><a href="#ndio.remote.Remote.Remote.__init__">__init__</a></li>
+    <li class="mono"><a href="#ndio.remote.Remote.Remote.ping">ping</a></li>
+    <li class="mono"><a href="#ndio.remote.Remote.Remote.url">url</a></li>
   </ul>
 
-    </li>
-
-
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="convert/index.html">ndio.convert</a></li>
-        <li class="mono"><a href="ramon/index.html">ndio.ramon</a></li>
-        <li class="mono"><a href="remote/index.html">ndio.remote</a></li>
-        <li class="mono"><a href="utils/index.html">ndio.utils</a></li>
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1065,12 +1065,50 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">ndio</span> module</h1>
+  <h1 class="title"><span class="name">ndio.remote.Remote</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio', this);">Show source &equiv;</a></p>
-  <div id="source-ndio" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.18&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.remote.Remote', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.remote.Remote" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="k">class</span> <span class="nc">Remote</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">protocol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            `hostname`:     Hostname (e.g. google.com)</span>
+<span class="sd">            `protocol`:     HTTP protocol (e.g. https)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="n">protocol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+
+    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the base URL of the Remote.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            `str` base URL</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">+</span> <span class="s2">&quot;://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">+</span> <span class="n">endpoint</span>
+
+    <span class="k">def</span> <span class="nf">ping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ping the server to make sure that you can access the base URL.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            `boolean` Successful access of server (or status code)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span>
 </pre></div>
 
   </div>
@@ -1078,43 +1116,188 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="ndio.version" class="name">var <span class="ident">version</span></p>
+
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
       
+      <div class="item">
+      <p id="ndio.remote.Remote.Remote" class="name">class <span class="ident">Remote</span></p>
+      
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.remote.Remote.Remote', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.remote.Remote.Remote" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Remote</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">protocol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            `hostname`:     Hostname (e.g. google.com)</span>
+<span class="sd">            `protocol`:     HTTP protocol (e.g. https)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="n">protocol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+
+    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the base URL of the Remote.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            `str` base URL</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">+</span> <span class="s2">&quot;://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">+</span> <span class="n">endpoint</span>
+
+    <span class="k">def</span> <span class="nf">ping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ping the server to make sure that you can access the base URL.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            `boolean` Successful access of server (or status code)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#ndio.remote.Remote.Remote">Remote</a></li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="ndio.remote.Remote.Remote.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, hostname, protocol)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Arguments:
+<code>hostname</code>:     Hostname (e.g. google.com)
+<code>protocol</code>:     HTTP protocol (e.g. https)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.remote.Remote.Remote.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.remote.Remote.Remote.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        `hostname`:     Hostname (e.g. google.com)</span>
+<span class="sd">        `protocol`:     HTTP protocol (e.g. https)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="n">protocol</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="ndio.remote.Remote.Remote.ping">
+    <p>def <span class="ident">ping</span>(</p><p>self, endpoint=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Ping the server to make sure that you can access the base URL.</p>
+<p>Arguments:
+    None
+Returns:
+    <code>boolean</code> Successful access of server (or status code)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.remote.Remote.Remote.ping', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.remote.Remote.Remote.ping" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ping the server to make sure that you can access the base URL.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        None</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        `boolean` Successful access of server (or status code)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="ndio.remote.Remote.Remote.url">
+    <p>def <span class="ident">url</span>(</p><p>self, endpoint=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the base URL of the Remote.</p>
+<p>Arguments:
+    None
+Returns:
+    <code>str</code> base URL</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.remote.Remote.Remote.url', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.remote.Remote.Remote.url" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the base URL of the Remote.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        None</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        `str` base URL</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">+</span> <span class="s2">&quot;://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">+</span> <span class="n">endpoint</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="ndio.remote.Remote.Remote.hostname" class="name">var <span class="ident">hostname</span></p>
+            
+
+            
   
   <div class="source_cont">
 </div>
 
-      </div>
+            </div>
+            <div class="item">
+            <p id="ndio.remote.Remote.Remote.protocol" class="name">var <span class="ident">protocol</span></p>
+            
 
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
-      <div class="item">
-      <p class="name"><a href="convert/index.html">ndio.convert</a></p>
-      
+            
   
+  <div class="source_cont">
+</div>
 
+            </div>
       </div>
-      <div class="item">
-      <p class="name"><a href="ramon/index.html">ndio.ramon</a></p>
-      
-  
+      </div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="remote/index.html">ndio.remote</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="utils/index.html">ndio.utils</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>

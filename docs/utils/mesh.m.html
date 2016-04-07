@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>ndio API documentation</title>
+    <title>ndio.utils.mesh API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1036,24 +1036,18 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#ndio.version">version</a></li>
+    <li class="mono"><a href="#ndio.utils.mesh.export_dae">export_dae</a></li>
+    <li class="mono"><a href="#ndio.utils.mesh.export_obj">export_obj</a></li>
+    <li class="mono"><a href="#ndio.utils.mesh.export_ply">export_ply</a></li>
   </ul>
 
     </li>
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="convert/index.html">ndio.convert</a></li>
-        <li class="mono"><a href="ramon/index.html">ndio.ramon</a></li>
-        <li class="mono"><a href="remote/index.html">ndio.remote</a></li>
-        <li class="mono"><a href="utils/index.html">ndio.utils</a></li>
-      </ul>
-    </li>
     </ul>
   </div>
 
@@ -1065,12 +1059,91 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">ndio</span> module</h1>
+  <h1 class="title"><span class="name">ndio.utils.mesh</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio', this);">Show source &equiv;</a></p>
-  <div id="source-ndio" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.18&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.utils.mesh', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.utils.mesh" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">mcubes</span>
+
+
+<span class="k">def</span> <span class="nf">export_dae</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a dense annotation to a DAE, using Marching Cubes (PyMCubes).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename (str): The filename to write out to</span>
+<span class="sd">        cutout (numpy.ndarray): The dense annotation</span>
+<span class="sd">        level (int): The level at which to run mcubes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        boolean success</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.dae&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.dae&quot;</span>
+
+    <span class="n">vs</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">mcubes</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span><span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">mcubes</span><span class="o">.</span><span class="n">export_mesh</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;ndioexport&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">export_obj</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a dense annotation to a obj, using Marching Cubes (PyMCubes).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename (str): The filename to write out to</span>
+<span class="sd">        cutout (numpy.ndarray): The dense annotation</span>
+<span class="sd">        level (int): The level at which to run mcubes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        boolean success</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.obj&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.obj&quot;</span>
+
+    <span class="n">vs</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">mcubes</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span><span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">mcubes</span><span class="o">.</span><span class="n">export_obj</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">export_ply</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a dense annotation to a .PLY, using Marching Cubes (PyMCubes).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename (str): The filename to write out to</span>
+<span class="sd">        cutout (numpy.ndarray): The dense annotation</span>
+<span class="sd">        level (int): The level at which to run mcubes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        boolean success</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.ply&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.ply&quot;</span>
+
+    <span class="n">vs</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">mcubes</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span><span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ply&quot;</span>
+            <span class="s2">&quot;format ascii 1.0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;comment generated by ndio&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;element vertex &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vs</span><span class="p">)),</span>
+            <span class="s2">&quot;property float32 x&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;property float32 y&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;property float32 z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;element face &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="p">)),</span>
+            <span class="s2">&quot;property list uint8 int32 vertex_index&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;end_header&quot;</span>
+        <span class="p">]</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vs</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;{} {} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;3 {} {} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 </pre></div>
 
   </div>
@@ -1078,43 +1151,160 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="ndio.version" class="name">var <span class="ident">version</span></p>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
+  <div class="item">
+    <div class="name def" id="ndio.utils.mesh.export_dae">
+    <p>def <span class="ident">export_dae</span>(</p><p>filename, cutout, level=0)</p>
+    </div>
+    
+
+    
   
+    <div class="desc"><p>Converts a dense annotation to a DAE, using Marching Cubes (PyMCubes).</p>
+<p>Arguments:
+    filename (str): The filename to write out to
+    cutout (numpy.ndarray): The dense annotation
+    level (int): The level at which to run mcubes</p>
+<p>Returns:
+    boolean success</p></div>
   <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.utils.mesh.export_dae', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.utils.mesh.export_dae" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">export_dae</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a dense annotation to a DAE, using Marching Cubes (PyMCubes).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename (str): The filename to write out to</span>
+<span class="sd">        cutout (numpy.ndarray): The dense annotation</span>
+<span class="sd">        level (int): The level at which to run mcubes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        boolean success</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.dae&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.dae&quot;</span>
+
+    <span class="n">vs</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">mcubes</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span><span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">mcubes</span><span class="o">.</span><span class="n">export_mesh</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;ndioexport&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
 </div>
 
-      </div>
-
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
-      <div class="item">
-      <p class="name"><a href="convert/index.html">ndio.convert</a></p>
+  </div>
+  
       
+  <div class="item">
+    <div class="name def" id="ndio.utils.mesh.export_obj">
+    <p>def <span class="ident">export_obj</span>(</p><p>filename, cutout, level=0)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Converts a dense annotation to a obj, using Marching Cubes (PyMCubes).</p>
+<p>Arguments:
+    filename (str): The filename to write out to
+    cutout (numpy.ndarray): The dense annotation
+    level (int): The level at which to run mcubes</p>
+<p>Returns:
+    boolean success</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.utils.mesh.export_obj', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.utils.mesh.export_obj" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">export_obj</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a dense annotation to a obj, using Marching Cubes (PyMCubes).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename (str): The filename to write out to</span>
+<span class="sd">        cutout (numpy.ndarray): The dense annotation</span>
+<span class="sd">        level (int): The level at which to run mcubes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        boolean success</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.obj&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.obj&quot;</span>
+
+    <span class="n">vs</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">mcubes</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span><span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">mcubes</span><span class="o">.</span><span class="n">export_obj</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="ndio.utils.mesh.export_ply">
+    <p>def <span class="ident">export_ply</span>(</p><p>filename, cutout, level=0)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Converts a dense annotation to a .PLY, using Marching Cubes (PyMCubes).</p>
+<p>Arguments:
+    filename (str): The filename to write out to
+    cutout (numpy.ndarray): The dense annotation
+    level (int): The level at which to run mcubes</p>
+<p>Returns:
+    boolean success</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.utils.mesh.export_ply', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.utils.mesh.export_ply" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">export_ply</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a dense annotation to a .PLY, using Marching Cubes (PyMCubes).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename (str): The filename to write out to</span>
+<span class="sd">        cutout (numpy.ndarray): The dense annotation</span>
+<span class="sd">        level (int): The level at which to run mcubes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        boolean success</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.ply&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.ply&quot;</span>
+
+    <span class="n">vs</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">mcubes</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span><span class="n">cutout</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ply&quot;</span>
+            <span class="s2">&quot;format ascii 1.0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;comment generated by ndio&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;element vertex &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vs</span><span class="p">)),</span>
+            <span class="s2">&quot;property float32 x&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;property float32 y&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;property float32 z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;element face &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="p">)),</span>
+            <span class="s2">&quot;property list uint8 int32 vertex_index&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;end_header&quot;</span>
+        <span class="p">]</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vs</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;{} {} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;3 {} {} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
   
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="ramon/index.html">ndio.ramon</a></p>
-      
-  
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="remote/index.html">ndio.remote</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="utils/index.html">ndio.utils</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>

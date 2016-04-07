@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>ndio API documentation</title>
+    <title>ndio.utils.stats API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1036,24 +1036,16 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#ndio.version">version</a></li>
+    <li class="mono"><a href="#ndio.utils.stats.connected_components">connected_components</a></li>
   </ul>
 
     </li>
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="convert/index.html">ndio.convert</a></li>
-        <li class="mono"><a href="ramon/index.html">ndio.ramon</a></li>
-        <li class="mono"><a href="remote/index.html">ndio.remote</a></li>
-        <li class="mono"><a href="utils/index.html">ndio.utils</a></li>
-      </ul>
-    </li>
     </ul>
   </div>
 
@@ -1065,12 +1057,24 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">ndio</span> module</h1>
+  <h1 class="title"><span class="name">ndio.utils.stats</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio', this);">Show source &equiv;</a></p>
-  <div id="source-ndio" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.18&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.utils.stats', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.utils.stats" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
+
+
+<span class="k">def</span> <span class="nf">connected_components</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a jank implementation of connected-components on a bit of</span>
+<span class="sd">    data. Probably shouldn&#39;t live here but it does for now.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">data</span> <span class="o">&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">label_im</span><span class="p">,</span> <span class="n">nb_labels</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">label_im</span><span class="p">,</span> <span class="n">nb_labels</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1078,43 +1082,39 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="ndio.version" class="name">var <span class="ident">version</span></p>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
+  <div class="item">
+    <div class="name def" id="ndio.utils.stats.connected_components">
+    <p>def <span class="ident">connected_components</span>(</p><p>data)</p>
+    </div>
+    
+
+    
   
+    <div class="desc"><p>Run a jank implementation of connected-components on a bit of
+data. Probably shouldn't live here but it does for now.</p></div>
   <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.utils.stats.connected_components', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.utils.stats.connected_components" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">connected_components</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a jank implementation of connected-components on a bit of</span>
+<span class="sd">    data. Probably shouldn&#39;t live here but it does for now.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">data</span> <span class="o">&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">label_im</span><span class="p">,</span> <span class="n">nb_labels</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">label_im</span><span class="p">,</span> <span class="n">nb_labels</span><span class="p">)</span>
+</pre></div>
+
+  </div>
 </div>
 
-      </div>
-
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
-      <div class="item">
-      <p class="name"><a href="convert/index.html">ndio.convert</a></p>
-      
+  </div>
   
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="ramon/index.html">ndio.ramon</a></p>
-      
-  
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="remote/index.html">ndio.remote</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="utils/index.html">ndio.utils</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>

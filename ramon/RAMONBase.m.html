@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>ndio API documentation</title>
+    <title>ndio.ramon.RAMONBase API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1039,21 +1039,30 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#ndio.version">version</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONBase.DEFAULT_AUTHOR">DEFAULT_AUTHOR</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONBase.DEFAULT_CONFIDENCE">DEFAULT_CONFIDENCE</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONBase.DEFAULT_DYNAMIC_METADATA">DEFAULT_DYNAMIC_METADATA</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONBase.DEFAULT_ID">DEFAULT_ID</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONBase.DEFAULT_STATUS">DEFAULT_STATUS</a></li>
   </ul>
 
     </li>
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="convert/index.html">ndio.convert</a></li>
-        <li class="mono"><a href="ramon/index.html">ndio.ramon</a></li>
-        <li class="mono"><a href="remote/index.html">ndio.remote</a></li>
-        <li class="mono"><a href="utils/index.html">ndio.utils</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#ndio.ramon.RAMONBase.RAMONBase">RAMONBase</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#ndio.ramon.RAMONBase.RAMONBase.__init__">__init__</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1065,12 +1074,52 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">ndio</span> module</h1>
+  <h1 class="title"><span class="name">ndio.ramon.RAMONBase</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio', this);">Show source &equiv;</a></p>
-  <div id="source-ndio" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.18&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONBase', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.ramon.RAMONBase" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">class</span> <span class="nc">RAMONBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RAMONBase Object for storing neuroscience data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
+                 <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
+                 <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
+                 <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
+                 <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a new RAMONBase object with default attributes.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            id (int): Unique 32-bit ID value assigned by OCP database</span>
+<span class="sd">            confidence (float): Value 0-1 indicating confidence in annotation</span>
+<span class="sd">            kvpairs (dict): A collection of key-value pairs</span>
+<span class="sd">            status (string): Status of annotation in database</span>
+<span class="sd">            author (string): Username of the person who created the annotation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confidence</span> <span class="o">=</span> <span class="n">confidence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kvpairs</span> <span class="o">=</span> <span class="n">kvpairs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        String representation of a RAMON object for convenience.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;{} object. id={}&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        String representation of a RAMON object for convenience.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;{} object. id={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1080,7 +1129,39 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="ndio.version" class="name">var <span class="ident">version</span></p>
+      <p id="ndio.ramon.RAMONBase.DEFAULT_AUTHOR" class="name">var <span class="ident">DEFAULT_AUTHOR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONBase.DEFAULT_CONFIDENCE" class="name">var <span class="ident">DEFAULT_CONFIDENCE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONBase.DEFAULT_DYNAMIC_METADATA" class="name">var <span class="ident">DEFAULT_DYNAMIC_METADATA</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONBase.DEFAULT_ID" class="name">var <span class="ident">DEFAULT_ID</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONBase.DEFAULT_STATUS" class="name">var <span class="ident">DEFAULT_STATUS</span></p>
       
   
   <div class="source_cont">
@@ -1089,32 +1170,164 @@ table {
       </div>
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="convert/index.html">ndio.convert</a></p>
+      <p id="ndio.ramon.RAMONBase.RAMONBase" class="name">class <span class="ident">RAMONBase</span></p>
       
   
+    <div class="desc"><p>RAMONBase Object for storing neuroscience data</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONBase.RAMONBase', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.ramon.RAMONBase.RAMONBase" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RAMONBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RAMONBase Object for storing neuroscience data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
+                 <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
+                 <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
+                 <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
+                 <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a new RAMONBase object with default attributes.</span>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="ramon/index.html">ndio.ramon</a></p>
-      
+<span class="sd">        Arguments:</span>
+<span class="sd">            id (int): Unique 32-bit ID value assigned by OCP database</span>
+<span class="sd">            confidence (float): Value 0-1 indicating confidence in annotation</span>
+<span class="sd">            kvpairs (dict): A collection of key-value pairs</span>
+<span class="sd">            status (string): Status of annotation in database</span>
+<span class="sd">            author (string): Username of the person who created the annotation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confidence</span> <span class="o">=</span> <span class="n">confidence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kvpairs</span> <span class="o">=</span> <span class="n">kvpairs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        String representation of a RAMON object for convenience.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;{} object. id={}&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        String representation of a RAMON object for convenience.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;{} object. id={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#ndio.ramon.RAMONBase.RAMONBase">RAMONBase</a></li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="ndio.ramon.RAMONBase.RAMONBase.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, id=0, confidence=0, kvpairs={}, status=0, author=&#39;&#39;)</p>
+    </div>
+    
+
+    
   
+    <div class="desc"><p>Initialize a new RAMONBase object with default attributes.</p>
+<p>Arguments:
+    id (int): Unique 32-bit ID value assigned by OCP database
+    confidence (float): Value 0-1 indicating confidence in annotation
+    kvpairs (dict): A collection of key-value pairs
+    status (string): Status of annotation in database
+    author (string): Username of the person who created the annotation</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONBase.RAMONBase.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.ramon.RAMONBase.RAMONBase.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
+             <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
+             <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
+             <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
+             <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a new RAMONBase object with default attributes.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        id (int): Unique 32-bit ID value assigned by OCP database</span>
+<span class="sd">        confidence (float): Value 0-1 indicating confidence in annotation</span>
+<span class="sd">        kvpairs (dict): A collection of key-value pairs</span>
+<span class="sd">        status (string): Status of annotation in database</span>
+<span class="sd">        author (string): Username of the person who created the annotation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">confidence</span> <span class="o">=</span> <span class="n">confidence</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">kvpairs</span> <span class="o">=</span> <span class="n">kvpairs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span>
+</pre></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="remote/index.html">ndio.remote</a></p>
-      
+  </div>
+</div>
+
+  </div>
   
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="ndio.ramon.RAMONBase.RAMONBase.author" class="name">var <span class="ident">author</span></p>
+            
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="utils/index.html">ndio.utils</a></p>
-      
+            
   
+  <div class="source_cont">
+</div>
 
+            </div>
+            <div class="item">
+            <p id="ndio.ramon.RAMONBase.RAMONBase.confidence" class="name">var <span class="ident">confidence</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="ndio.ramon.RAMONBase.RAMONBase.id" class="name">var <span class="ident">id</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="ndio.ramon.RAMONBase.RAMONBase.kvpairs" class="name">var <span class="ident">kvpairs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="ndio.ramon.RAMONBase.RAMONBase.status" class="name">var <span class="ident">status</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
+      </div>
+
   </section>
 
     </article>

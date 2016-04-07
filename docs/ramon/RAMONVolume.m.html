@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>ndio API documentation</title>
+    <title>ndio.ramon.RAMONVolume API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1039,21 +1039,31 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#ndio.version">version</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONVolume.DEFAULT_AUTHOR">DEFAULT_AUTHOR</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONVolume.DEFAULT_CONFIDENCE">DEFAULT_CONFIDENCE</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONVolume.DEFAULT_DYNAMIC_METADATA">DEFAULT_DYNAMIC_METADATA</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONVolume.DEFAULT_ID">DEFAULT_ID</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONVolume.DEFAULT_STATUS">DEFAULT_STATUS</a></li>
   </ul>
 
     </li>
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="convert/index.html">ndio.convert</a></li>
-        <li class="mono"><a href="ramon/index.html">ndio.ramon</a></li>
-        <li class="mono"><a href="remote/index.html">ndio.remote</a></li>
-        <li class="mono"><a href="utils/index.html">ndio.utils</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#ndio.ramon.RAMONVolume.RAMONVolume">RAMONVolume</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#ndio.ramon.RAMONVolume.RAMONVolume.__init__">__init__</a></li>
+    <li class="mono"><a href="#ndio.ramon.RAMONVolume.RAMONVolume.data">data</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1065,12 +1075,73 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">ndio</span> module</h1>
+  <h1 class="title"><span class="name">ndio.ramon.RAMONVolume</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio', this);">Show source &equiv;</a></p>
-  <div id="source-ndio" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.18&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONVolume', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.ramon.RAMONVolume" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">.RAMONBase</span> <span class="kn">import</span> <span class="n">RAMONBase</span>
+
+
+<span class="k">class</span> <span class="nc">RAMONVolume</span><span class="p">(</span><span class="n">RAMONBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RAMONVolume Object for storing neuroscience data with a voxel volume</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">xyz_offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                 <span class="n">resolution</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">cutout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">voxels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+
+                 <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
+                 <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
+                 <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
+                 <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
+                 <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a new RAMONVolume object. Inherits attributes from RAMONBase</span>
+<span class="sd">        as well as:</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            xyz_offset (int[3] : (0, 0, 0)): x,y,z coordinates of the minimum</span>
+<span class="sd">                corner of the cube (if data is a cutout), otherwise empty</span>
+<span class="sd">            resolution (int : 0): level in the database resolution hierarchy</span>
+<span class="sd">            cutout (numpy.ndarray): dense matrix of data</span>
+<span class="sd">            voxels: Unused for now</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xyz_offset</span> <span class="o">=</span> <span class="n">xyz_offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span> <span class="o">=</span> <span class="n">cutout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voxels</span> <span class="o">=</span> <span class="n">voxels</span>
+
+        <span class="n">RAMONBase</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">confidence</span><span class="o">=</span><span class="n">confidence</span><span class="p">,</span>
+                           <span class="n">kvpairs</span><span class="o">=</span><span class="n">kvpairs</span><span class="p">,</span>
+                           <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the data from the volume and pumps it into a numpy.ndarray format,</span>
+<span class="sd">        regardless of whether it&#39;s stored in `cutout` or `voxels`. Returns it</span>
+<span class="sd">        as though it were stored in `cutout`.</span>
+
+<span class="sd">        This is useful for cases where you need to operate on a 3D matrix.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot convert from voxel list yet.&quot;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1080,7 +1151,39 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="ndio.version" class="name">var <span class="ident">version</span></p>
+      <p id="ndio.ramon.RAMONVolume.DEFAULT_AUTHOR" class="name">var <span class="ident">DEFAULT_AUTHOR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONVolume.DEFAULT_CONFIDENCE" class="name">var <span class="ident">DEFAULT_CONFIDENCE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONVolume.DEFAULT_DYNAMIC_METADATA" class="name">var <span class="ident">DEFAULT_DYNAMIC_METADATA</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONVolume.DEFAULT_ID" class="name">var <span class="ident">DEFAULT_ID</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ndio.ramon.RAMONVolume.DEFAULT_STATUS" class="name">var <span class="ident">DEFAULT_STATUS</span></p>
       
   
   <div class="source_cont">
@@ -1089,32 +1192,224 @@ table {
       </div>
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="convert/index.html">ndio.convert</a></p>
+      <p id="ndio.ramon.RAMONVolume.RAMONVolume" class="name">class <span class="ident">RAMONVolume</span></p>
       
   
+    <div class="desc"><p>RAMONVolume Object for storing neuroscience data with a voxel volume</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONVolume.RAMONVolume', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.ramon.RAMONVolume.RAMONVolume" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RAMONVolume</span><span class="p">(</span><span class="n">RAMONBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RAMONVolume Object for storing neuroscience data with a voxel volume</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">xyz_offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                 <span class="n">resolution</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">cutout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">voxels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="ramon/index.html">ndio.ramon</a></p>
-      
+                 <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
+                 <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
+                 <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
+                 <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
+                 <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a new RAMONVolume object. Inherits attributes from RAMONBase</span>
+<span class="sd">        as well as:</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            xyz_offset (int[3] : (0, 0, 0)): x,y,z coordinates of the minimum</span>
+<span class="sd">                corner of the cube (if data is a cutout), otherwise empty</span>
+<span class="sd">            resolution (int : 0): level in the database resolution hierarchy</span>
+<span class="sd">            cutout (numpy.ndarray): dense matrix of data</span>
+<span class="sd">            voxels: Unused for now</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xyz_offset</span> <span class="o">=</span> <span class="n">xyz_offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span> <span class="o">=</span> <span class="n">cutout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voxels</span> <span class="o">=</span> <span class="n">voxels</span>
+
+        <span class="n">RAMONBase</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">confidence</span><span class="o">=</span><span class="n">confidence</span><span class="p">,</span>
+                           <span class="n">kvpairs</span><span class="o">=</span><span class="n">kvpairs</span><span class="p">,</span>
+                           <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the data from the volume and pumps it into a numpy.ndarray format,</span>
+<span class="sd">        regardless of whether it&#39;s stored in `cutout` or `voxels`. Returns it</span>
+<span class="sd">        as though it were stored in `cutout`.</span>
+
+<span class="sd">        This is useful for cases where you need to operate on a 3D matrix.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot convert from voxel list yet.&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#ndio.ramon.RAMONVolume.RAMONVolume">RAMONVolume</a></li>
+          <li>ndio.ramon.RAMONBase.RAMONBase</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="ndio.ramon.RAMONVolume.RAMONVolume.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, xyz_offset=(0, 0, 0), resolution=0, cutout=None, voxels=None, id=0, confidence=0, kvpairs={}, status=0, author=&#39;&#39;)</p>
+    </div>
+    
+
+    
   
+    <div class="desc"><p>Initialize a new RAMONVolume object. Inherits attributes from RAMONBase
+as well as:</p>
+<p>Arguments:
+    xyz_offset (int[3] : (0, 0, 0)): x,y,z coordinates of the minimum
+        corner of the cube (if data is a cutout), otherwise empty
+    resolution (int : 0): level in the database resolution hierarchy
+    cutout (numpy.ndarray): dense matrix of data
+    voxels: Unused for now</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONVolume.RAMONVolume.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.ramon.RAMONVolume.RAMONVolume.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">xyz_offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+             <span class="n">resolution</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+             <span class="n">cutout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">voxels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
+             <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
+             <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
+             <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
+             <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a new RAMONVolume object. Inherits attributes from RAMONBase</span>
+<span class="sd">    as well as:</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        xyz_offset (int[3] : (0, 0, 0)): x,y,z coordinates of the minimum</span>
+<span class="sd">            corner of the cube (if data is a cutout), otherwise empty</span>
+<span class="sd">        resolution (int : 0): level in the database resolution hierarchy</span>
+<span class="sd">        cutout (numpy.ndarray): dense matrix of data</span>
+<span class="sd">        voxels: Unused for now</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">xyz_offset</span> <span class="o">=</span> <span class="n">xyz_offset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span> <span class="o">=</span> <span class="n">cutout</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">voxels</span> <span class="o">=</span> <span class="n">voxels</span>
+    <span class="n">RAMONBase</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">confidence</span><span class="o">=</span><span class="n">confidence</span><span class="p">,</span>
+                       <span class="n">kvpairs</span><span class="o">=</span><span class="n">kvpairs</span><span class="p">,</span>
+                       <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">)</span>
+</pre></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="remote/index.html">ndio.remote</a></p>
-      
+  </div>
+</div>
+
+  </div>
   
+            
+  <div class="item">
+    <div class="name def" id="ndio.ramon.RAMONVolume.RAMONVolume.data">
+    <p>def <span class="ident">data</span>(</p><p>self)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="utils/index.html">ndio.utils</a></p>
-      
+    
   
+    <div class="desc"><p>Gets the data from the volume and pumps it into a numpy.ndarray format,
+regardless of whether it's stored in <code>cutout</code> or <code>voxels</code>. Returns it
+as though it were stored in <code>cutout</code>.</p>
+<p>This is useful for cases where you need to operate on a 3D matrix.</p>
+<p>Arguments:
+    None</p>
+<p>Returns:
+    numpy.ndarray</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONVolume.RAMONVolume.data', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.ramon.RAMONVolume.RAMONVolume.data" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the data from the volume and pumps it into a numpy.ndarray format,</span>
+<span class="sd">    regardless of whether it&#39;s stored in `cutout` or `voxels`. Returns it</span>
+<span class="sd">    as though it were stored in `cutout`.</span>
+<span class="sd">    This is useful for cases where you need to operate on a 3D matrix.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        None</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot convert from voxel list yet.&quot;</span><span class="p">)</span>
+</pre></div>
 
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="ndio.ramon.RAMONVolume.RAMONVolume.cutout" class="name">var <span class="ident">cutout</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="ndio.ramon.RAMONVolume.RAMONVolume.resolution" class="name">var <span class="ident">resolution</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="ndio.ramon.RAMONVolume.RAMONVolume.voxels" class="name">var <span class="ident">voxels</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="ndio.ramon.RAMONVolume.RAMONVolume.xyz_offset" class="name">var <span class="ident">xyz_offset</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
+      </div>
+
   </section>
 
     </article>

@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>ndio API documentation</title>
+    <title>ndio.convert API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1036,22 +1036,17 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#ndio.version">version</a></li>
-  </ul>
-
-    </li>
 
 
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
-        <li class="mono"><a href="convert/index.html">ndio.convert</a></li>
-        <li class="mono"><a href="ramon/index.html">ndio.ramon</a></li>
-        <li class="mono"><a href="remote/index.html">ndio.remote</a></li>
-        <li class="mono"><a href="utils/index.html">ndio.utils</a></li>
+        <li class="mono"><a href="blosc.m.html">ndio.convert.blosc</a></li>
+        <li class="mono"><a href="convert.m.html">ndio.convert.convert</a></li>
+        <li class="mono"><a href="hdf5.m.html">ndio.convert.hdf5</a></li>
+        <li class="mono"><a href="nifti.m.html">ndio.convert.nifti</a></li>
+        <li class="mono"><a href="png.m.html">ndio.convert.png</a></li>
+        <li class="mono"><a href="tiff.m.html">ndio.convert.tiff</a></li>
       </ul>
     </li>
     </ul>
@@ -1065,12 +1060,14 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">ndio</span> module</h1>
+  <h1 class="title"><span class="name">ndio.convert</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio', this);">Show source &equiv;</a></p>
-  <div id="source-ndio" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.18&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.convert', this);">Show source &equiv;</a></p>
+  <div id="source-ndio.convert" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="c1"># Prevent typing ndio.convert.convert.convert</span>
+<span class="kn">from</span> <span class="nn">.convert</span> <span class="kn">import</span> <span class="n">convert</span>
 </pre></div>
 
   </div>
@@ -1078,39 +1075,42 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="ndio.version" class="name">var <span class="ident">version</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
 
 
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p class="name"><a href="convert/index.html">ndio.convert</a></p>
+      <p class="name"><a href="blosc.m.html">ndio.convert.blosc</a></p>
       
   
 
       </div>
       <div class="item">
-      <p class="name"><a href="ramon/index.html">ndio.ramon</a></p>
+      <p class="name"><a href="convert.m.html">ndio.convert.convert</a></p>
       
   
 
       </div>
       <div class="item">
-      <p class="name"><a href="remote/index.html">ndio.remote</a></p>
+      <p class="name"><a href="hdf5.m.html">ndio.convert.hdf5</a></p>
       
   
 
       </div>
       <div class="item">
-      <p class="name"><a href="utils/index.html">ndio.utils</a></p>
+      <p class="name"><a href="nifti.m.html">ndio.convert.nifti</a></p>
+      
+  
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="png.m.html">ndio.convert.png</a></p>
+      
+  
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="tiff.m.html">ndio.convert.tiff</a></p>
       
   
 
