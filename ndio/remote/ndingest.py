@@ -280,9 +280,9 @@ class NDIngest:
         dims = ()
         try:
             if (image_type.lower() == 'png'):
-                dims = ndpng.import_png('{}{}'.format(image_path, image_type))
+                dims = ndpng.load('{}{}'.format(image_path, image_type))
             elif (image_type.lower() == 'tif' or image_type.lower() == 'tiff'):
-                dims = ndtiff.import_tiff('{}{}'.format(
+                dims = ndtiff.load('{}{}'.format(
                     image_path, image_type
                 ))
             else:
@@ -303,31 +303,6 @@ class NDIngest:
             token_name = data["project"]["token_name"]
         except:
             token_name = data["project"]["project_name"]
-        # Check if token exists
-        URLPath = self.oo.url("{}/info/".format(token_name))
-
-        # UA TODO determine if the return will be in json for token DNE
-        try:
-            response = requests.get(URLPath)
-        except:
-            raise OSError("Error code contacting {} with code {}".format(
-                URLPath, response.status_code
-            ))
-
-        if (str(response.content.decode("utf-8")) !=
-                "Token {} does not exist".format(token_name)):
-            online_data = response.content
-            try:
-                assert(online_data['dataset']['name'] ==
-                       data['dataset']['dataset_name'])
-                assert(online_data['dataset']['imagesize'] ==
-                       data['dataset']['imagesize'])
-                assert(online_data['dataset']['offset'] ==
-                       data['dataset']['offset'])
-                assert(online_data['project']['name'] ==
-                       data['project']['project_name'])
-            except:
-                raise ValueError("Project and Dataset information Inconistent")
 
         channel_names = list(data["channels"].copy().keys())
         imgsz = data['dataset']['imagesize']
@@ -365,10 +340,10 @@ class NDIngest:
                     # empty
                     if (verifytype == VERIFY_BY_FOLDER):
                         work_path = "{}/{}/{}/time{}/".format(
-                            path, token_name, channel_names[i], j)
+                            path, token_name, channel_names[i], ("%04d" % j))
                     elif (verifytype == VERIFY_BY_SLICE):
                         work_path = "{}/{}/{}/time{}/{}.{}".format(
-                            path, token_name, channel_names[i], j,
+                            path, token_name, channel_names[i], ("%04d" % j),
                             ("%04d" % offset), file_type)
                     else:
                         raise TypeError('Incorrect verify method')
@@ -477,14 +452,14 @@ names")
         """
         Try to post data to the server.
         """
-        URLPath = self.oo.url("autoIngest")
+        URLPath = self.oo.url("autoIngest/")
         try:
             response = requests.post(URLPath, data=json.dumps(data))
             assert(response.status_code == 200)
             print("From ndio: {}".format(response.content))
         except:
             raise OSError("Error in posting JSON file {}\
-".format(reponse.status_code))
+".format(response.status_code))
 
     def post_data(self,
                   file_name=None, legacy=False,
