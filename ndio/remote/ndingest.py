@@ -164,11 +164,13 @@ class NDIngest:
                 0, and for each level up the data is down sampled by 2x2
                 (per slice). To learn more about the sampling service used,
                 visit the the propagation service page.
-            scaling (int): Scaling is the orientation of the data being
-                stored, 0 corresponds to a Z-slice orientation (as in a
+            scaling (int): Scaling is the scaling method of the data being
+                stored. 0 corresponds to a Z-slice orientation (as in a
                 collection of tiff images in which each tiff is a slice on
-                the z plane) and 1 corresponds to an isotropic orientation
-                (in which each tiff is a slice on the y plane).
+                the z plane) where data will be scaled only on the xy plane,
+                not the z plane. 1 corresponds to an isotropic orientation
+                (in which each tiff is a slice on the y plane) where data
+                is scaled along all axis.
 
         Returns:
             None
@@ -282,9 +284,10 @@ class NDIngest:
             if (image_type.lower() == 'png'):
                 dims = ndpng.load('{}{}'.format(image_path, image_type))
             elif (image_type.lower() == 'tif' or image_type.lower() == 'tiff'):
-                dims = ndtiff.load('{}{}'.format(
+                dims = np.shape(ndtiff.load('{}{}'.format(
                     image_path, image_type
-                ))
+                )))
+
             else:
                 raise ValueError("Unsupported image type.")
         except:
@@ -313,22 +316,10 @@ class NDIngest:
             path = data["channels"][channel_names[i]]["data_url"]
             aws_pattern = re.compile("^(http:\/\/)(.+)(\.s3\.amazonaws\.com)")
             file_type = data["channels"][channel_names[i]]["file_type"]
-            if "scaling" in data["dataset"]:
-                if (data["dataset"]["scaling"]) == 0:
-                    if "offset" in data["dataset"]:
-                        offset = data["dataset"]["offset"][0]
-                    else:
-                        offset = 0
-                else:
-                    if "offset" in data["dataset"]:
-                        offset = data["dataset"]["offset"][2]
-                    else:
-                        offset = 0
+            if "offset" in data["dataset"]:
+                offset = data["dataset"]["offset"][0]
             else:
-                if "offset" in data["dataset"]:
-                    offset = data["dataset"]["offset"][0]
-                else:
-                    offset = 0
+                offset = 0
 
             if (aws_pattern.match(path)):
                 verifytype = VERIFY_BY_SLICE
@@ -391,7 +382,7 @@ provided image size.')
                     resp = requests.get(work_path, stream=True)
                     with open('/tmp/img.{}'.format(file_type),
                               'wb') as out_file:
-                        shutil.copyfileobj(response.raw, out_file)
+                        shutil.copyfileobj(resp.raw, out_file)
                     out_file.close()
                     resp.close()
                 if (resp.status_code >= 300):
@@ -402,7 +393,7 @@ URL: {}'.format(work_path))
                 try:
                     if (verifytype == VERIFY_BY_SLICE):
                         assert(list(self.identify_imagesize(file_type)) ==
-                               imgsz)
+                               imgsz[0:2])
                 except:
                     raise ValueError('File image size does not match\
 provided image size.')
