@@ -87,7 +87,7 @@ class neurodata(Remote):
                     token = kwargs['token']
                 else:
                     token = args[0]
-                if token not in self._known_tokens
+                if token not in self._known_tokens:
                     if self.ping('{}/info/'.format(token)) != 200:
                         raise RemoteDataNotFoundError("Bad token {}".format(token))
                     else:
