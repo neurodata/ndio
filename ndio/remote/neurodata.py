@@ -65,6 +65,7 @@ class neurodata(Remote):
         self._check_tokens = kwargs.get('check_tokens', False)
         self._chunk_threshold = kwargs.get('chunk_threshold', 1E9 / 4)
         self._ext = kwargs.get('suffix', DEFAULT_SUFFIX)
+        self._known_tokens = []
 
         # Prepare meta url
         self.meta_root = meta_root
@@ -86,8 +87,12 @@ class neurodata(Remote):
                     token = kwargs['token']
                 else:
                     token = args[0]
-                if self.ping('{}/info/'.format(token)) != 200:
-                    raise RemoteDataNotFoundError("Bad token {}".format(token))
+                if token not in self._known_tokens:
+                    if self.ping('{}/info/'.format(token)) != 200:
+                        raise RemoteDataNotFoundError("Bad token {}".format(
+                                                      token))
+                    else:
+                        self._known_tokens.append(token)
             return f(self, *args, **kwargs)
         return wrapped
 
