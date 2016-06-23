@@ -8,6 +8,7 @@ import shutil
 from .neurodata import neurodata as nd
 import ndio.convert.tiff as ndtiff
 import ndio.convert.png as ndpng
+import numpy as np
 
 VERIFY_BY_FOLDER = 'Folder'
 VERIFY_BY_SLICE = 'Slice'
@@ -359,7 +360,7 @@ class NDIngest:
                     try:
                         if (verifytype == VERIFY_BY_SLICE):
                             assert(list(self.identify_imagesize(file_type)) ==
-                                   imgsz)
+                                   imgsz[0:2])
                     except:
                         raise ValueError('File image size does not match\
 provided image size.')
