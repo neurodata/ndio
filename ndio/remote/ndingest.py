@@ -296,7 +296,7 @@ class NDIngest:
                 image_path,
                 image_type
             ))
-        return dims
+        return dims[::-1]
 
     def verify_path(self, data, verifytype):
         """
