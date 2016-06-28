@@ -327,6 +327,11 @@ class NDIngest:
 
             if (channel_type == "timeseries"):
                 timerange = data["dataset"]["timerange"]
+                try:
+                    assert(timerange[0] != timerange[1])
+                except AssertionError:
+                    raise ValueError('Timeseries values are the same, did you\
+specify the time steps?')
                 for j in xrange(timerange[0], timerange[1] + 1):
                     # Test for tifs or such? Currently test for just not
                     # empty
