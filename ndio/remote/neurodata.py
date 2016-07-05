@@ -525,7 +525,8 @@ class neurodata(Remote):
         origin = self.get_image_offset(token, resolution)
 
         # Calculate size of the data to be downloaded.
-        size = (x_stop - x_start) * (y_stop - y_start) * (z_stop - z_start)
+        size = (x_stop - x_start) * (y_stop - y_start) * (
+                z_stop - z_start) * 16
 
         # Switch which download function to use based on which libraries are
         # available in this version of python.
