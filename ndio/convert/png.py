@@ -46,7 +46,7 @@ def save(filename, numpy_data):
             ill-formed?
     """
     # Expand filename to be absolute
-    png_filename = os.path.expanduser(png_filename)
+    png_filename = os.path.expanduser(filename)
 
     if type(numpy_data) is str:
         fp = open(png_filename, "wb")
