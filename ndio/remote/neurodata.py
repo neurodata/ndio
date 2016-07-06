@@ -437,7 +437,7 @@ class neurodata(Remote):
         im = self.get_cutout(token, channel, x_start, x_stop, y_start,
                              y_stop, z_index, z_index+1, resolution)
 
-        vol = numpy.zeros(((1,x_stop - x_start,
+        vol = numpy.zeros(((1, x_stop - x_start,
                             y_stop - y_start))).astype('int')
         for i in range(x_start - x_stop):
             for j in range(y_start - y_stop):
