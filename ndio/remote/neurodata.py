@@ -25,7 +25,8 @@ except ImportError:
 DEFAULT_HOSTNAME = "openconnecto.me"
 DEFAULT_SUFFIX = "ocp"
 DEFAULT_PROTOCOL = "http"
-DEFAULT_BLOCK_SIZE = (1024,1024,16)
+DEFAULT_BLOCK_SIZE = (1024, 1024, 16)
+
 
 class neurodata(Remote):
     """
@@ -435,10 +436,10 @@ class neurodata(Remote):
             str: binary image data
         """
         vol = self.get_cutout(token, channel, x_start, x_stop, y_start,
-                             y_stop, z_index, z_index+1, resolution)
+                              y_stop, z_index, z_index+1, resolution)
 
-        vol = numpy.squeeze(vol) # 3D volume to 2D slice
-        
+        vol = numpy.squeeze(vol)  # 3D volume to 2D slice
+
         return vol
 
     @_check_token
@@ -528,7 +529,7 @@ class neurodata(Remote):
 
         # Calculate size of the data to be downloaded.
         size = (x_stop - x_start) * (y_stop - y_start) * (
-                z_stop - z_start) * 8 # TODO depends on bit depth
+                z_stop - z_start) * 8  # TODO depends on bit depth
 
         # Switch which download function to use based on which libraries are
         # available in this version of python.
@@ -564,10 +565,10 @@ class neurodata(Remote):
                                b[1][0], b[1][1],
                                b[2][0], b[2][1], neariso=neariso)
 
-                if b == blocks[0]:  # first block # TODO - update if parallelized
+                if b == blocks[0]:  # first block  TODO -update if parallelized
                     vol = numpy.zeros(((z_stop - z_start),
                                        (y_stop - y_start),
-                                       (x_stop - x_start)),dtype=data.dtype)
+                                       (x_stop - x_start)), dtype=data.dtype)
 
                 vol[b[2][0]-z_start: b[2][1]-z_start,
                     b[1][0]-y_start: b[1][1]-y_start,
