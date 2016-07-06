@@ -434,16 +434,12 @@ class neurodata(Remote):
         Returns:
             str: binary image data
         """
-        im = self.get_cutout(token, channel, x_start, x_stop, y_start,
+        vol = self.get_cutout(token, channel, x_start, x_stop, y_start,
                              y_stop, z_index, z_index+1, resolution)
 
-        vol = numpy.zeros(((1, x_stop - x_start,
-                            y_stop - y_start))).astype('int')
-        for i in range(x_start - x_stop):
-            for j in range(y_start - y_stop):
-                for k in range(1):
-                    vol[k][i][j] = int(im[i][j][k])
-        return vol[0]
+        vol = np.squeeze(vol) # 3D volume to 2D slice
+        
+        return vol
 
     @_check_token
     def get_image(self, token, channel,
