@@ -25,7 +25,7 @@ except ImportError:
 DEFAULT_HOSTNAME = "openconnecto.me"
 DEFAULT_SUFFIX = "ocp"
 DEFAULT_PROTOCOL = "http"
-
+DEFAULT_BLOCK_SIZE = (1024,1024,16)
 
 class neurodata(Remote):
     """
