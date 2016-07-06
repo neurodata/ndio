@@ -434,10 +434,16 @@ class neurodata(Remote):
         Returns:
             str: binary image data
         """
-        im = self._get_cutout_no_chunking(token, channel, resolution,
-                                          x_start, x_stop, y_start, y_stop,
-                                          z_index, z_index+1)[0]
-        return im
+        im = self.get_cutout(token, channel, x_start, x_stop, y_start,
+                             y_stop, z_index, z_index+1, resolution)
+
+        vol = numpy.zeros(((1,x_stop - x_start,
+                            y_stop - y_start))).astype('int')
+        for i in range(x_start - x_stop):
+            for j in range(y_start - y_stop):
+                for k in range(1):
+                    vol[k][i][j] = int(im[i][j][k])
+        return vol[0]
 
     @_check_token
     def get_image(self, token, channel,
