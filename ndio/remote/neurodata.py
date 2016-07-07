@@ -535,7 +535,7 @@ class neurodata(Remote):
 
         # Calculate size of the data to be downloaded.
         # TODO Multiply size by number of bytes - This should not be >4
-        size = (x_stop - x_start) * (y_stop - y_start) * z_slices
+        size = (x_stop - x_start) * (y_stop - y_start) * z_slices * 4
 
         # Switch which download function to use based on which libraries are
         # available in this version of python.
