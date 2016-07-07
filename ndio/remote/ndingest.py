@@ -283,7 +283,9 @@ class NDIngest:
         dims = ()
         try:
             if (image_type.lower() == 'png'):
-                dims = ndpng.load('{}{}'.format(image_path, image_type))
+                dims = np.shape(ndpng.load('{}{}'.format(
+                    image_path, image_type
+                )))
             elif (image_type.lower() == 'tif' or image_type.lower() == 'tiff'):
                 dims = np.shape(ndtiff.load('{}{}'.format(
                     image_path, image_type
