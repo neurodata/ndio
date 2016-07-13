@@ -361,7 +361,8 @@ specify the time steps?')
                             resp.close()
                     except AssertionError:
                         raise OSError('Files are not http accessible: \
-                            Error: {}'.format(resp.status_code))
+                            Error: {}, Path: {}'.format(resp.status_code,
+                                                        work_path))
                     # Attempt to Verify imagesize here
 
                     try:
@@ -395,7 +396,8 @@ provided image size.')
                     resp.close()
                 if (resp.status_code >= 300):
                     raise OSError('Files are not http accessible: \
-URL: {}'.format(work_path))
+                            Error: {}, Path: {}'.format(resp.status_code,
+                                                        work_path))
                 # Attempt to Verify imagesize here
 
                 try:
