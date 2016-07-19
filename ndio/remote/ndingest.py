@@ -334,7 +334,7 @@ class NDIngest:
                 except AssertionError:
                     raise ValueError('Timeseries values are the same, did you\
 specify the time steps?')
-                for j in xrange(timerange[0], timerange[1] + 1):
+                for j in range(timerange[0], timerange[1] + 1):
                     # Test for tifs or such? Currently test for just not
                     # empty
                     if (verifytype == VERIFY_BY_FOLDER):
