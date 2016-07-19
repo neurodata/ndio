@@ -58,7 +58,7 @@ manipulation.',
         "numpy>=1.0.0",
         "h5py>=2.6.0",
         "requests",
-        "blosc==1.2.8",
+        "blosc==1.3.2",
         "jsonschema",
         "json-spec"
     ]
