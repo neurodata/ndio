@@ -4,6 +4,6 @@ h5py
 requests
 pymcubes
 pycollada
-blosc
+blosc==1.3.0
 jsonschema
 json-spec
