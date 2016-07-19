@@ -334,7 +334,7 @@ class NDIngest:
                 except AssertionError:
                     raise ValueError('Timeseries values are the same, did you\
 specify the time steps?')
-                for j in xrange(timerange[0], timerange[1] + 1):
+                for j in range(timerange[0], timerange[1] + 1):
                     # Test for tifs or such? Currently test for just not
                     # empty
                     if (verifytype == VERIFY_BY_FOLDER):
@@ -361,7 +361,8 @@ specify the time steps?')
                             resp.close()
                     except AssertionError:
                         raise OSError('Files are not http accessible: \
-                            Error: {}'.format(resp.status_code))
+                            Error: {}, Path: {}'.format(resp.status_code,
+                                                        work_path))
                     # Attempt to Verify imagesize here
 
                     try:
@@ -395,7 +396,8 @@ provided image size.')
                     resp.close()
                 if (resp.status_code >= 300):
                     raise OSError('Files are not http accessible: \
-URL: {}'.format(work_path))
+                            Error: {}, Path: {}'.format(resp.status_code,
+                                                        work_path))
                 # Attempt to Verify imagesize here
 
                 try:
