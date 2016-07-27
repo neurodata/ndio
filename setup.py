@@ -60,6 +60,7 @@ manipulation.',
         "requests",
         "blosc==1.3.2",
         "jsonschema",
-        "json-spec"
+        "json-spec",
+        "tifffile"
     ]
 )

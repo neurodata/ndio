@@ -1,8 +1,8 @@
 from __future__ import absolute_import
-from PIL import Image
 import numpy
 import os
 import glob
+import tifffile as tiff
 
 
 def load(tiff_filename):
@@ -19,7 +19,7 @@ def load(tiff_filename):
     tiff_filename = os.path.expanduser(tiff_filename)
 
     try:
-        img = Image.open(tiff_filename)
+        img = tiff.imread(tiff_filename)
     except Exception as e:
         raise ValueError("Could not load file {0} for conversion."
                          .format(tiff_filename))
@@ -49,8 +49,7 @@ def save(tiff_filename, numpy_data):
         return png_filename
 
     try:
-        img = Image.fromarray(numpy_data)
-        img.save(tiff_filename)
+        img = tiff.imsave(tiff_filename, numpy_data)
     except Exception as e:
         raise ValueError("Could not save TIFF file {0}.".format(tiff_filename))
 
@@ -111,7 +110,7 @@ def load_tiff_multipage(tiff_filename, dtype='float32'):
         raise RuntimeError('could not find file "%s"' % tiff_filename)
 
     # load the data from multi-layer TIF files
-    data = Image.open(tiff_filename)
+    data = tiff.imread(tiff_filename)
 
     im = []
 
