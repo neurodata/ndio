@@ -1,9 +1,9 @@
 from __future__ import absolute_import
-from PIL import Image
 import numpy
 import os
 import glob
 import tifffile as tiff
+
 
 def load(tiff_filename):
     """
@@ -26,6 +26,7 @@ def load(tiff_filename):
         raise
 
     return numpy.array(img)
+
 
 def save(tiff_filename, numpy_data):
     """
