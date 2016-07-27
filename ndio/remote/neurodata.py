@@ -1206,7 +1206,10 @@ class neurodata(Remote):
 
         if req.status_code is not 200:
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
-        return True
+        if req.content == "SUCCESS":
+            return True
+        else:
+            return False
 
     # Propagation
 
