@@ -693,14 +693,15 @@ class neurodata(Remote):
         blocks = block_compute(x_start, x_start + data.shape[2],
                                y_start, y_start + data.shape[1],
                                z_start, z_start + data.shape[0])
-
         for b in blocks:
+            # data coordinate relative to the size of the arra
             subvol = data[b[2][0]-z_start: b[2][1]-z_start,
                           b[1][0]-y_start: b[1][1]-y_start,
                           b[0][0]-x_start: b[0][1]-x_start]
             # upload the chunk:
-            ul_func(token, channel, x_start,
-                    y_start, z_start, subvol,
+            # upload coordinate relative to x_start, y_start, z_start
+            ul_func(token, channel, b[0][0],
+                    b[1][0], b[2][0], subvol,
                     resolution)
         return True
 
@@ -746,7 +747,6 @@ class neurodata(Remote):
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1]
         ))
-
         req = requests.post(url, data=blosc_data, headers={
             'Content-Type': 'application/octet-stream'
         })
@@ -1145,7 +1145,7 @@ class neurodata(Remote):
         Arguments:
             token (str): The token the new channel should be added to
             name (str): The name of the channel to add
-            type (str): Type of the channel to add (e.g. `neurodata.IMAGE`)
+            channel_type (str): Type of the channel (e.g. `neurodata.IMAGE`)
             dtype (str): The datatype of the channel's data (e.g. `uint8`)
             readonly (bool): Can others write to this channel?
 
