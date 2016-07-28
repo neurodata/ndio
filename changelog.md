@@ -1,6 +1,10 @@
 # Changelog
 
-- [Predicted April 30] **1.1.0**
+- **1.1.5**
+    - Resolve out-standing bugs with chunking code for large uploads (@alexbaden)
+    - Fixes to TIF import/exports to use tifffile instead of PIL
+    - Many other backwards-compatible fixed things...
+- **1.1.0**
     - Add converters for voxel lists and ndarrays
     - Add the `ndio.remote.NDIngest` remote
     - Improve how ndio version checking works
