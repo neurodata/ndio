@@ -1158,7 +1158,7 @@ class neurodata(Remote):
                 fails for some other reason.
         """
         for c in name:
-            if not c.isalnum():
+            if not c.isalnum() and c != "_":
                 raise ValueError("Name cannot contain character {}.".format(c))
 
         if channel_type not in ['image', 'annotation']:
