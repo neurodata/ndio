@@ -1,5 +1,8 @@
 # Changelog
 
+- **Latest**
+    - Add GruteDB endpoints for managing MR data
+    - Add DVID endpoint (https://github.com/janelia-flyem/dvid)
 - **1.1.5**
     - Resolve out-standing bugs with chunking code for large uploads (@alexbaden)
     - Fixes to TIF import/exports to use tifffile instead of PIL
