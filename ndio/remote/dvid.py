@@ -14,11 +14,16 @@ DEFAULT_PROTOCOL = "http"
 
 
 class dvid(Remote):
+    """
+    Handles data transfer with a DVID server.
+    """
 
     def __init__(self,
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL, **kwargs):
-
+        """
+        Initialize the new DVID remote, taking usual args.
+        """
         self._ext = "api"
         if hostname == "":
             raise ValueError("You must specify a hostname.")
@@ -70,7 +75,7 @@ class dvid(Remote):
         if deep:
             return res.json()
 
-        return res.json().keys()
+        return [i for i in res.json().keys()]
 
     def get_repos(self, deep=False):
         """
@@ -105,7 +110,7 @@ class dvid(Remote):
         Returns:
             list (str)
         """
-        return self.get_repository_info(uuid)['DAG']['Nodes'].keys()
+        return list(self.get_repository_info(uuid)['DAG']['Nodes'].keys())
 
     def get_data_info(self, uuid, dataname):
         """
@@ -132,7 +137,9 @@ class dvid(Remote):
         Returns:
             json
         """
-        res = requests.get(self.url('node/{}/{}/metadata'.format(uuid, dataname)))
+        res = requests.get(
+            self.url('node/{}/{}/metadata'.format(uuid, dataname))
+        )
         return res.json()
 
     def get_cutout(self, uuid, dataname, label, options={}):
@@ -158,13 +165,23 @@ class dvid(Remote):
         )
 
         res = requests.get(url)
-        import pdb; pdb.set_trace()
+        import pdb
+        pdb.set_trace()
 
     def post_cutout(self):
+        """
+        Not implemented.
+        """
         raise NotImplementedError
 
     def get_label(self):
+        """
+        Not implemented.
+        """
         raise NotImplementedError
 
     def post_label(self):
+        """
+        Not implemented.
+        """
         raise NotImplementedError
