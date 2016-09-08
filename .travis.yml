@@ -34,4 +34,4 @@ cache:
 script:
     - find . -name \*.py -exec pep8 {} +
     - ./stylecheck +
-    - python -m unittest discover
+    -  DVID_TEST_URL="localhost:8000" python -m unittest discover

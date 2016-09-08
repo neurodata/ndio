@@ -1,13 +1,14 @@
 import unittest
 import ndio.remote.dvid as dvid
 import numpy
+import os
 
 FIB25_HASH = '5cc94d532799484cb01788fcdb7cd9f0'
 
 class TestDVID(unittest.TestCase):
 
     def setUp(self):
-        self.dvid = dvid('conduit:8000')
+        self.dvid = dvid(os.environ['DVID_TEST_URL'])
 
     def test_get_repositories(self):
         self.assertTrue(
@@ -27,5 +28,5 @@ class TestDVID(unittest.TestCase):
             list
         )
 
-if __name__ == '__main__':
+if __name__ == '__main__' and os.environ.get('DVID_TEST_URL'):
     unittest.main()
