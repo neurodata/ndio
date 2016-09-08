@@ -534,7 +534,6 @@ class neurodata(Remote):
             z_slices = z_stop - z_start
 
         # Calculate size of the data to be downloaded.
-        # TODO Multiply size by number of bytes - This should not be >4
         size = (x_stop - x_start) * (y_stop - y_start) * z_slices * 4
 
         # Switch which download function to use based on which libraries are
@@ -571,7 +570,7 @@ class neurodata(Remote):
                                b[1][0], b[1][1],
                                b[2][0], b[2][1], neariso=neariso)
 
-                if b == blocks[0]:  # first block  TODO -update if parallelized
+                if b == blocks[0]:  # first block
                     vol = numpy.zeros(((z_stop - z_start),
                                        (y_stop - y_start),
                                        (x_stop - x_start)), dtype=data.dtype)
@@ -632,7 +631,8 @@ class neurodata(Remote):
                           req.status_code,
                           req.text))
 
-        return blosc.unpack_array(req.content)[0]  # TODO: 4D - 3D array
+        # This will need modification for >3D blocks
+        return blosc.unpack_array(req.content)[0]
 
         raise IOError("Failed to retrieve blosc cutout.")
 
@@ -903,8 +903,6 @@ class neurodata(Remote):
         return rs
 
     def _add_ramon_cutout(self, token, channel, ramon, resolution):
-        if 'cutout' not in dir(ramon):
-            return ramon
         origin = ramon.xyz_offset
         # Get the bounding box (cube-aligned)
         bbox = self.get_ramon_bounding_box(token, channel,
@@ -1067,12 +1065,9 @@ class neurodata(Remote):
             req = urllib2.Request(url, tmpfile.read())
             res = urllib2.urlopen(req)
 
-            if res.code == 404:
-                raise RemoteDataUploadError('[400] Could not upload {}'
-                                            .format(str(r)))
-            if res.code == 500:
-                raise RemoteDataUploadError('[500] Could not upload {}'
-                                            .format(str(r)))
+            if res.code != 200:
+                raise RemoteDataUploadError('[{}] Could not upload {}'
+                                            .format(res.code, str(r)))
 
             rets = res.read()
             if six.PY3:
@@ -1137,6 +1132,14 @@ class neurodata(Remote):
     # SECTION:
     # Channels
 
+    def _check_channel(self, channel):
+        for c in channel:
+            if not c.isalnum():
+                raise ValueError(
+                    "Channel name cannot contain character {}.".format(c)
+                )
+        return True
+
     @_check_token
     def create_channel(self, token, name, channel_type, dtype, readonly):
         """
@@ -1157,9 +1160,7 @@ class neurodata(Remote):
             RemoteDataUploadError: If the channel data is valid but upload
                 fails for some other reason.
         """
-        for c in name:
-            if not c.isalnum():
-                raise ValueError("Name cannot contain character {}.".format(c))
+        self._check_channel(name)
 
         if channel_type not in ['image', 'annotation']:
             raise ValueError('Channel type must be ' +

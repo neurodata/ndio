@@ -263,28 +263,23 @@ def from_json(json, cutout=None):
         )
 
         if rdata['type'] == 'segment':
-            if 'segmentclass' in _md:
-                r.segmentclass = _md['segmentclass']
-            if 'neuron' in _md:
-                r.neuron = _md['neuron']
+            r.segmentclass = _md.get('segmentclass')
+            r.neuron = _md.get('neuron')
             if 'synapses' in _md:
                 r.synapses = _md['synapses'][:]
             if 'organelles' in _md:
                 r.organelles = _md['organelles'][:]
 
-        elif rdata['type'] == 'neuron':
-            r.segments = _md['segments'][:]
+        elif rdata['type'] in ['neuron', 'synapse']:
+            if 'segments' in _md:
+                r.segments = _md['segments'][:]
 
         elif rdata['type'] == 'organelle':
             r.organelle_class = _md['organelleclass'][:]
 
         elif rdata['type'] == 'synapse':
-            if 'synapse_type' in _md:
-                r.synapse_type = _md['synapse_type']
-            if 'weight' in _md:
-                r.weight = _md['weight']
-            if 'segments' in _md:
-                r.segments = _md['segments'][:]
+            r.synapse_type = _md.get('synapse_type')
+            r.weight = _md.get('weight')
 
         out_ramons.append(r)
 
@@ -433,9 +428,6 @@ def to_hdf5(ramon, hdf5=None):
         metadata.create_dataset('AUTHOR', (1,),
                                 dtype=h5py.special_dtype(vlen=str),
                                 data=ramon.author)
-        # kvpairs = ' '.join(
-        #     ','.join([k,v]) for k, v in six.iteritems(ramon.kvpairs)
-        # )
 
         fstring = StringIO()
         csvw = csv.writer(fstring, delimiter=',')

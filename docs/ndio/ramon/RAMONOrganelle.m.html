@@ -851,73 +851,6 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
-.codehilite .c { color: #408080; font-style: italic } /* Comment */
-.codehilite .err { border: 1px solid #FF0000 } /* Error */
-.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
-.codehilite .o { color: #666666 } /* Operator */
-.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
-.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
-.codehilite .gd { color: #A00000 } /* Generic.Deleted */
-.codehilite .ge { font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
-.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.codehilite .kt { color: #B00040 } /* Keyword.Type */
-.codehilite .m { color: #666666 } /* Literal.Number */
-.codehilite .s { color: #BA2121 } /* Literal.String */
-.codehilite .na { color: #7D9029 } /* Name.Attribute */
-.codehilite .nb { color: #008000 } /* Name.Builtin */
-.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.codehilite .no { color: #880000 } /* Name.Constant */
-.codehilite .nd { color: #AA22FF } /* Name.Decorator */
-.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #0000FF } /* Name.Function */
-.codehilite .nl { color: #A0A000 } /* Name.Label */
-.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.codehilite .nv { color: #19177C } /* Name.Variable */
-.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
-.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
-.codehilite .mf { color: #666666 } /* Literal.Number.Float */
-.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
-.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
-.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
-.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
-.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.codehilite .sx { color: #008000 } /* Literal.String.Other */
-.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
-.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
-.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
-.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .vc { color: #19177C } /* Name.Variable.Class */
-.codehilite .vg { color: #19177C } /* Name.Variable.Global */
-.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
 
   <style type="text/css">
   
@@ -1080,54 +1013,53 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONOrganelle', this);">Show source &equiv;</a></p>
   <div id="source-ndio.ramon.RAMONOrganelle" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
+    <pre><code>from __future__ import absolute_import
+from .enums import *
+from .errors import *
+import numpy
 
-<span class="kn">from</span> <span class="nn">.RAMONVolume</span> <span class="kn">import</span> <span class="n">RAMONVolume</span>
+from .RAMONVolume import RAMONVolume
 
 
-<span class="k">class</span> <span class="nc">RAMONOrganelle</span><span class="p">(</span><span class="n">RAMONVolume</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    RAMONOrganelle Object for storing neuroscience data with a voxel volume</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+class RAMONOrganelle(RAMONVolume):
+    """
+    RAMONOrganelle Object for storing neuroscience data with a voxel volume
+    """
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">organelle_class</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    def __init__(self,
+                 organelle_class=0,
 
-                 <span class="n">xyz_offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                 <span class="n">resolution</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">cutout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">voxels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 xyz_offset=(0, 0, 0),
+                 resolution=0,
+                 cutout=None,
+                 voxels=None,
 
-                 <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
-                 <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
-                 <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
-                 <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
-                 <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize a new `RAMONOrganelle`. Organelles take all of the arguments</span>
-<span class="sd">        of their parent `RAMONVolume` class.</span>
+                 id=DEFAULT_ID,
+                 confidence=DEFAULT_CONFIDENCE,
+                 kvpairs=DEFAULT_DYNAMIC_METADATA,
+                 status=DEFAULT_STATUS,
+                 author=DEFAULT_AUTHOR):
+        """
+        Initialize a new `RAMONOrganelle`. Organelles take all of the arguments
+        of their parent `RAMONVolume` class.
 
-<span class="sd">        Arguments:</span>
-<span class="sd">            organelle_class (int: 0): The organelle class to which this object</span>
-<span class="sd">                belongs. For more details, see the online ndstore documentation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">organelle_class</span> <span class="o">=</span> <span class="n">organelle_class</span>
+        Arguments:
+            organelle_class (int: 0): The organelle class to which this object
+                belongs. For more details, see the online ndstore documentation
+        """
+        self.organelle_class = organelle_class
 
-        <span class="n">RAMONVolume</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                             <span class="n">xyz_offset</span><span class="o">=</span><span class="n">xyz_offset</span><span class="p">,</span>
-                             <span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span>
-                             <span class="n">cutout</span><span class="o">=</span><span class="n">cutout</span><span class="p">,</span>
-                             <span class="n">voxels</span><span class="o">=</span><span class="n">voxels</span><span class="p">,</span>
-                             <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
-                             <span class="n">confidence</span><span class="o">=</span><span class="n">confidence</span><span class="p">,</span>
-                             <span class="n">kvpairs</span><span class="o">=</span><span class="n">kvpairs</span><span class="p">,</span>
-                             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
-                             <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">)</span>
-</pre></div>
-
+        RAMONVolume.__init__(self,
+                             xyz_offset=xyz_offset,
+                             resolution=resolution,
+                             cutout=cutout,
+                             voxels=voxels,
+                             id=id,
+                             confidence=confidence,
+                             kvpairs=kvpairs,
+                             status=status,
+                             author=author)
+</code></pre>
   </div>
 
   </header>
@@ -1186,46 +1118,45 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONOrganelle.RAMONOrganelle', this);">Show source &equiv;</a></p>
   <div id="source-ndio.ramon.RAMONOrganelle.RAMONOrganelle" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RAMONOrganelle</span><span class="p">(</span><span class="n">RAMONVolume</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    RAMONOrganelle Object for storing neuroscience data with a voxel volume</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <pre><code>class RAMONOrganelle(RAMONVolume):
+    """
+    RAMONOrganelle Object for storing neuroscience data with a voxel volume
+    """
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">organelle_class</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    def __init__(self,
+                 organelle_class=0,
 
-                 <span class="n">xyz_offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                 <span class="n">resolution</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">cutout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">voxels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 xyz_offset=(0, 0, 0),
+                 resolution=0,
+                 cutout=None,
+                 voxels=None,
 
-                 <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
-                 <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
-                 <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
-                 <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
-                 <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize a new `RAMONOrganelle`. Organelles take all of the arguments</span>
-<span class="sd">        of their parent `RAMONVolume` class.</span>
+                 id=DEFAULT_ID,
+                 confidence=DEFAULT_CONFIDENCE,
+                 kvpairs=DEFAULT_DYNAMIC_METADATA,
+                 status=DEFAULT_STATUS,
+                 author=DEFAULT_AUTHOR):
+        """
+        Initialize a new `RAMONOrganelle`. Organelles take all of the arguments
+        of their parent `RAMONVolume` class.
 
-<span class="sd">        Arguments:</span>
-<span class="sd">            organelle_class (int: 0): The organelle class to which this object</span>
-<span class="sd">                belongs. For more details, see the online ndstore documentation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">organelle_class</span> <span class="o">=</span> <span class="n">organelle_class</span>
+        Arguments:
+            organelle_class (int: 0): The organelle class to which this object
+                belongs. For more details, see the online ndstore documentation
+        """
+        self.organelle_class = organelle_class
 
-        <span class="n">RAMONVolume</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                             <span class="n">xyz_offset</span><span class="o">=</span><span class="n">xyz_offset</span><span class="p">,</span>
-                             <span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span>
-                             <span class="n">cutout</span><span class="o">=</span><span class="n">cutout</span><span class="p">,</span>
-                             <span class="n">voxels</span><span class="o">=</span><span class="n">voxels</span><span class="p">,</span>
-                             <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
-                             <span class="n">confidence</span><span class="o">=</span><span class="n">confidence</span><span class="p">,</span>
-                             <span class="n">kvpairs</span><span class="o">=</span><span class="n">kvpairs</span><span class="p">,</span>
-                             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
-                             <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">)</span>
-</pre></div>
-
+        RAMONVolume.__init__(self,
+                             xyz_offset=xyz_offset,
+                             resolution=resolution,
+                             cutout=cutout,
+                             voxels=voxels,
+                             id=id,
+                             confidence=confidence,
+                             kvpairs=kvpairs,
+                             status=status,
+                             author=author)
+</code></pre>
   </div>
 </div>
 
@@ -1257,37 +1188,36 @@ of their parent <code>RAMONVolume</code> class.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONOrganelle.RAMONOrganelle.__init__', this);">Show source &equiv;</a></p>
   <div id="source-ndio.ramon.RAMONOrganelle.RAMONOrganelle.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-             <span class="n">organelle_class</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-             <span class="n">xyz_offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-             <span class="n">resolution</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-             <span class="n">cutout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-             <span class="n">voxels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-             <span class="nb">id</span><span class="o">=</span><span class="n">DEFAULT_ID</span><span class="p">,</span>
-             <span class="n">confidence</span><span class="o">=</span><span class="n">DEFAULT_CONFIDENCE</span><span class="p">,</span>
-             <span class="n">kvpairs</span><span class="o">=</span><span class="n">DEFAULT_DYNAMIC_METADATA</span><span class="p">,</span>
-             <span class="n">status</span><span class="o">=</span><span class="n">DEFAULT_STATUS</span><span class="p">,</span>
-             <span class="n">author</span><span class="o">=</span><span class="n">DEFAULT_AUTHOR</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Initialize a new `RAMONOrganelle`. Organelles take all of the arguments</span>
-<span class="sd">    of their parent `RAMONVolume` class.</span>
-<span class="sd">    Arguments:</span>
-<span class="sd">        organelle_class (int: 0): The organelle class to which this object</span>
-<span class="sd">            belongs. For more details, see the online ndstore documentation</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">organelle_class</span> <span class="o">=</span> <span class="n">organelle_class</span>
-    <span class="n">RAMONVolume</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                         <span class="n">xyz_offset</span><span class="o">=</span><span class="n">xyz_offset</span><span class="p">,</span>
-                         <span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span>
-                         <span class="n">cutout</span><span class="o">=</span><span class="n">cutout</span><span class="p">,</span>
-                         <span class="n">voxels</span><span class="o">=</span><span class="n">voxels</span><span class="p">,</span>
-                         <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
-                         <span class="n">confidence</span><span class="o">=</span><span class="n">confidence</span><span class="p">,</span>
-                         <span class="n">kvpairs</span><span class="o">=</span><span class="n">kvpairs</span><span class="p">,</span>
-                         <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
-                         <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">)</span>
-</pre></div>
-
+    <pre><code>def __init__(self,
+             organelle_class=0,
+             xyz_offset=(0, 0, 0),
+             resolution=0,
+             cutout=None,
+             voxels=None,
+             id=DEFAULT_ID,
+             confidence=DEFAULT_CONFIDENCE,
+             kvpairs=DEFAULT_DYNAMIC_METADATA,
+             status=DEFAULT_STATUS,
+             author=DEFAULT_AUTHOR):
+    """
+    Initialize a new `RAMONOrganelle`. Organelles take all of the arguments
+    of their parent `RAMONVolume` class.
+    Arguments:
+        organelle_class (int: 0): The organelle class to which this object
+            belongs. For more details, see the online ndstore documentation
+    """
+    self.organelle_class = organelle_class
+    RAMONVolume.__init__(self,
+                         xyz_offset=xyz_offset,
+                         resolution=resolution,
+                         cutout=cutout,
+                         voxels=voxels,
+                         id=id,
+                         confidence=confidence,
+                         kvpairs=kvpairs,
+                         status=status,
+                         author=author)
+</code></pre>
   </div>
 </div>
 
@@ -1308,34 +1238,30 @@ as though it were stored in <code>cutout</code>.</p>
 <p>This is useful for cases where you need to operate on a 3D matrix.</p>
 <h2 style='font-size:125% !important'>Arguments</h2>
 
-<div class="codehilite"><pre><span></span>None
-</pre></div>
-
-
+<p>&emsp;&emsp;&emsp;&emsp;<b>None</b></p>
 <h2 style='font-size:125% !important'>Returns</h2>
 
-<div class="codehilite"><pre><span></span>numpy.ndarray
-</pre></div></div>
+<pre><code>numpy.ndarray
+</code></pre></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.ramon.RAMONOrganelle.RAMONOrganelle.data', this);">Show source &equiv;</a></p>
   <div id="source-ndio.ramon.RAMONOrganelle.RAMONOrganelle.data" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gets the data from the volume and pumps it into a numpy.ndarray format,</span>
-<span class="sd">    regardless of whether it&#39;s stored in `cutout` or `voxels`. Returns it</span>
-<span class="sd">    as though it were stored in `cutout`.</span>
-<span class="sd">    This is useful for cases where you need to operate on a 3D matrix.</span>
-<span class="sd">    Arguments:</span>
-<span class="sd">        None</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutout</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot convert from voxel list yet.&quot;</span><span class="p">)</span>
-</pre></div>
-
+    <pre><code>def data(self):
+    """
+    Gets the data from the volume and pumps it into a numpy.ndarray format,
+    regardless of whether it's stored in `cutout` or `voxels`. Returns it
+    as though it were stored in `cutout`.
+    This is useful for cases where you need to operate on a 3D matrix.
+    Arguments:
+        None
+    Returns:
+        numpy.ndarray
+    """
+    if self.cutout:
+        return self.cutout
+    else:
+        raise NotImplementedError("Cannot convert from voxel list yet.")
+</code></pre>
   </div>
 </div>
 
