@@ -851,73 +851,6 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
-.codehilite .c { color: #408080; font-style: italic } /* Comment */
-.codehilite .err { border: 1px solid #FF0000 } /* Error */
-.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
-.codehilite .o { color: #666666 } /* Operator */
-.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
-.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
-.codehilite .gd { color: #A00000 } /* Generic.Deleted */
-.codehilite .ge { font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
-.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.codehilite .kt { color: #B00040 } /* Keyword.Type */
-.codehilite .m { color: #666666 } /* Literal.Number */
-.codehilite .s { color: #BA2121 } /* Literal.String */
-.codehilite .na { color: #7D9029 } /* Name.Attribute */
-.codehilite .nb { color: #008000 } /* Name.Builtin */
-.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.codehilite .no { color: #880000 } /* Name.Constant */
-.codehilite .nd { color: #AA22FF } /* Name.Decorator */
-.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #0000FF } /* Name.Function */
-.codehilite .nl { color: #A0A000 } /* Name.Label */
-.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.codehilite .nv { color: #19177C } /* Name.Variable */
-.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
-.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
-.codehilite .mf { color: #666666 } /* Literal.Number.Float */
-.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
-.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
-.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
-.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
-.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.codehilite .sx { color: #008000 } /* Literal.String.Other */
-.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
-.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
-.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
-.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .vc { color: #19177C } /* Name.Variable.Class */
-.codehilite .vg { color: #19177C } /* Name.Variable.Global */
-.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
 
   <style type="text/css">
   
@@ -1063,61 +996,60 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.convert.hdf5', this);">Show source &equiv;</a></p>
   <div id="source-ndio.convert.hdf5" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
-<span class="kn">import</span> <span class="nn">h5py</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">os</span>
+    <pre><code>from __future__ import absolute_import
+import h5py
+import numpy
+import os
 
 
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Import a HDF5 file into a numpy array.</span>
+def load(hdf5_filename):
+    """
+    Import a HDF5 file into a numpy array.
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        hdf5_filename:  A string filename of a HDF5 datafile</span>
+    Arguments:
+        hdf5_filename:  A string filename of a HDF5 datafile
 
-<span class="sd">    Returns:</span>
-<span class="sd">        A numpy array with data from the HDF5 file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Expand filename to be absolute</span>
-    <span class="n">hdf5_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">)</span>
+    Returns:
+        A numpy array with data from the HDF5 file
+    """
+    # Expand filename to be absolute
+    hdf5_filename = os.path.expanduser(hdf5_filename)
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-        <span class="c1"># neurodata stores data inside the &#39;cutout&#39; h5 dataset</span>
-        <span class="n">data_layers</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CUTOUT&#39;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not load file {0} for conversion. {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                         <span class="n">hdf5_filename</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
-        <span class="k">raise</span>
+    try:
+        f = h5py.File(hdf5_filename, "r")
+        # neurodata stores data inside the 'cutout' h5 dataset
+        data_layers = f.get('image').get('CUTOUT')
+    except Exception as e:
+        raise ValueError("Could not load file {0} for conversion. {}".format(
+                         hdf5_filename, e))
+        raise
 
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_layers</span><span class="p">)</span>
+    return numpy.array(data_layers)
 
 
-<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Export a numpy array to a HDF5 file.</span>
+def save(hdf5_filename, array):
+    """
+    Export a numpy array to a HDF5 file.
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        hdf5_filename (str): A filename to which to save the HDF5 data</span>
-<span class="sd">        array (numpy.ndarray): The numpy array to save to HDF5</span>
+    Arguments:
+        hdf5_filename (str): A filename to which to save the HDF5 data
+        array (numpy.ndarray): The numpy array to save to HDF5
 
-<span class="sd">    Returns:</span>
-<span class="sd">        String. The expanded filename that now holds the HDF5 data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Expand filename to be absolute</span>
-    <span class="n">hdf5_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">)</span>
+    Returns:
+        String. The expanded filename that now holds the HDF5 data
+    """
+    # Expand filename to be absolute
+    hdf5_filename = os.path.expanduser(hdf5_filename)
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;CUTOUT&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">array</span><span class="p">)</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not save HDF5 file {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">))</span>
+    try:
+        h = h5py.File(hdf5_filename, "w")
+        h.create_dataset('CUTOUT', data=array)
+        h.close()
+    except Exception as e:
+        raise ValueError("Could not save HDF5 file {0}.".format(hdf5_filename))
 
-    <span class="k">return</span> <span class="n">hdf5_filename</span>
-</pre></div>
-
+    return hdf5_filename
+</code></pre>
   </div>
 
   </header>
@@ -1140,36 +1072,35 @@ table {
 <p>&emsp;&emsp;&emsp;&emsp;<b>hdf5_filename</b>:  A string filename of a HDF5 datafile</p>
 <h2 style='font-size:125% !important'>Returns</h2>
 
-<div class="codehilite"><pre><span></span>A numpy array with data from the HDF5 file
-</pre></div></div>
+<pre><code>A numpy array with data from the HDF5 file
+</code></pre></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.convert.hdf5.load', this);">Show source &equiv;</a></p>
   <div id="source-ndio.convert.hdf5.load" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Import a HDF5 file into a numpy array.</span>
+    <pre><code>def load(hdf5_filename):
+    """
+    Import a HDF5 file into a numpy array.
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        hdf5_filename:  A string filename of a HDF5 datafile</span>
+    Arguments:
+        hdf5_filename:  A string filename of a HDF5 datafile
 
-<span class="sd">    Returns:</span>
-<span class="sd">        A numpy array with data from the HDF5 file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Expand filename to be absolute</span>
-    <span class="n">hdf5_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">)</span>
+    Returns:
+        A numpy array with data from the HDF5 file
+    """
+    # Expand filename to be absolute
+    hdf5_filename = os.path.expanduser(hdf5_filename)
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-        <span class="c1"># neurodata stores data inside the &#39;cutout&#39; h5 dataset</span>
-        <span class="n">data_layers</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CUTOUT&#39;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not load file {0} for conversion. {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                         <span class="n">hdf5_filename</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
-        <span class="k">raise</span>
+    try:
+        f = h5py.File(hdf5_filename, "r")
+        # neurodata stores data inside the 'cutout' h5 dataset
+        data_layers = f.get('image').get('CUTOUT')
+    except Exception as e:
+        raise ValueError("Could not load file {0} for conversion. {}".format(
+                         hdf5_filename, e))
+        raise
 
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_layers</span><span class="p">)</span>
-</pre></div>
-
+    return numpy.array(data_layers)
+</code></pre>
   </div>
 </div>
 
@@ -1191,35 +1122,34 @@ table {
 &emsp;&emsp;&emsp;&emsp;<b>array (numpy.ndarray)</b>: The numpy array to save to HDF5</p>
 <h2 style='font-size:125% !important'>Returns</h2>
 
-<div class="codehilite"><pre><span></span>String. The expanded filename that now holds the HDF5 data
-</pre></div></div>
+<pre><code>String. The expanded filename that now holds the HDF5 data
+</code></pre></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ndio.convert.hdf5.save', this);">Show source &equiv;</a></p>
   <div id="source-ndio.convert.hdf5.save" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Export a numpy array to a HDF5 file.</span>
+    <pre><code>def save(hdf5_filename, array):
+    """
+    Export a numpy array to a HDF5 file.
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        hdf5_filename (str): A filename to which to save the HDF5 data</span>
-<span class="sd">        array (numpy.ndarray): The numpy array to save to HDF5</span>
+    Arguments:
+        hdf5_filename (str): A filename to which to save the HDF5 data
+        array (numpy.ndarray): The numpy array to save to HDF5
 
-<span class="sd">    Returns:</span>
-<span class="sd">        String. The expanded filename that now holds the HDF5 data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Expand filename to be absolute</span>
-    <span class="n">hdf5_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">)</span>
+    Returns:
+        String. The expanded filename that now holds the HDF5 data
+    """
+    # Expand filename to be absolute
+    hdf5_filename = os.path.expanduser(hdf5_filename)
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;CUTOUT&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">array</span><span class="p">)</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not save HDF5 file {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hdf5_filename</span><span class="p">))</span>
+    try:
+        h = h5py.File(hdf5_filename, "w")
+        h.create_dataset('CUTOUT', data=array)
+        h.close()
+    except Exception as e:
+        raise ValueError("Could not save HDF5 file {0}.".format(hdf5_filename))
 
-    <span class="k">return</span> <span class="n">hdf5_filename</span>
-</pre></div>
-
+    return hdf5_filename
+</code></pre>
   </div>
 </div>
 
