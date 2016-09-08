@@ -253,6 +253,8 @@ class grute(Remote):
             if callback is not None:
                 callback(response)
             else:
+                # TODO: Download from the response.read() URL instead of
+                #       returning the http uri itself
                 return response.read()
         except:
             raise RemoteDataUploadError("Failed to upload data at " + url)
@@ -344,6 +346,8 @@ class grute(Remote):
             if callback is not None:
                 callback(response.read())
             else:
+                # TODO: Download from the response.read() URL instead of
+                #       returning the http uri itself
                 return response.read()
         except:
             raise RemoteDataUploadError("Failed to upload graph file. Try " +
@@ -431,6 +435,8 @@ class grute(Remote):
             if callback is not None:
                 callback(response.read())
             else:
+                # TODO: Download from the response.read() URL instead of
+                #       returning the http uri itself
                 return response.read()
         except:
             raise RemoteDataUploadError("Failed to upload graph file. Try " +

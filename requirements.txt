@@ -7,4 +7,5 @@ pycollada
 blosc==1.3.2
 jsonschema
 json-spec
+nibabel
 tifffile

@@ -28,7 +28,7 @@ def load(nifti_filename):
                          .format(nifti_filename))
         raise
 
-    return numpy.array(img)
+    return img
 
 
 def save(nifti_filename, numpy_data):
