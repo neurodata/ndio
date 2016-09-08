@@ -4,11 +4,11 @@ python:
     - "3.5"
 sudo: required
 services:
-    - docker
-before_install:
-    - docker pull flyem/dvid-fib25db
-    - docker run --name fib25db -d flyem/dvid-fib25db &
-    - docker run --volumes-from fib25db -p 8000:8000 -it flyem/dvid &
+    # - docker
+# before_install:
+    # - docker pull flyem/dvid-fib25db
+    # - docker run --name fib25db -d flyem/dvid-fib25db &
+    # - docker run --volumes-from fib25db -p 8000:8000 -it flyem/dvid &
 install:
     - sudo apt-get autoremove
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
@@ -34,4 +34,5 @@ cache:
 script:
     - find . -name \*.py -exec pep8 {} +
     - ./stylecheck +
-    -  DVID_TEST_URL="localhost:8000" python -m unittest discover
+    - python -m unittest discover
+    # -  DVID_TEST_URL="localhost:8000" python -m unittest discover
