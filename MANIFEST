@@ -9,6 +9,7 @@ ndio/convert/hdf5.py
 ndio/convert/nifti.py
 ndio/convert/png.py
 ndio/convert/tiff.py
+ndio/convert/volume.py
 ndio/ramon/RAMONBase.py
 ndio/ramon/RAMONGeneric.py
 ndio/ramon/RAMONNeuron.py
@@ -23,6 +24,7 @@ ndio/remote/Remote.py
 ndio/remote/__init__.py
 ndio/remote/errors.py
 ndio/remote/grute.py
+ndio/remote/ndingest.py
 ndio/remote/neurodata.py
 ndio/utils/__init__.py
 ndio/utils/mesh.py

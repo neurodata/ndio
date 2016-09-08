@@ -1,11 +1,9 @@
 import ndio
+from distutils.core import setup
 
 VERSION = ndio.version
 """
-update docs with:
-sphinx-apidoc -f -o ./docs/source/ ./ndio *.py
-cd docs
-make html
+update docs with the `generatedocs` script.
 
 roll with:
 
@@ -14,23 +12,23 @@ git push --tags
 python setup.py sdist upload -r pypi
 """
 
-from distutils.core import setup
 setup(
-    name = 'ndio',
-    packages = [
+    name='ndio',
+    packages=[
         'ndio',
         'ndio.convert',
         'ndio.ramon',
         'ndio.remote',
         'ndio.utils'
     ],
-    version = VERSION,
-    description = 'A Python library for open neuroscience data access and manipulation.',
-    author = 'Jordan Matelsky',
-    author_email = 'jordan@neurodata.io',
-    url = 'https://github.com/neurodata/ndio',
-    download_url = 'https://github.com/neurodata/ndio/tarball/' + VERSION,
-    keywords = [
+    version=VERSION,
+    description='A Python library for open neuroscience data access and \
+manipulation.',
+    author='Jordan Matelsky',
+    author_email='jordan@neurodata.io',
+    url='https://github.com/neurodata/ndio',
+    download_url='https://github.com/neurodata/ndio/tarball/' + VERSION,
+    keywords=[
         'brain',
         'medicine',
         'microscopy',
@@ -50,15 +48,19 @@ setup(
         'fMRI',
         'calcium'
     ],
-    classifiers = [],
-    setup_requires = [
+    classifiers=[],
+    setup_requires=[
+        "requests",
         'numpy',
     ],
-    install_requires = [
-        "pillow",
-        "numpy",
-        "h5py",
+    install_requires=[
+        "pillow>=3.2.0",
+        "numpy>=1.0.0",
+        "h5py>=2.6.0",
         "requests",
-        "blosc",
+        "blosc==1.3.2",
+        "jsonschema",
+        "json-spec",
+        "tifffile"
     ]
 )

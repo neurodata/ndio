@@ -1,8 +1,8 @@
 from __future__ import absolute_import
-from PIL import Image
 import numpy
 import os
 import glob
+import tifffile as tiff
 
 
 def load(tiff_filename):
@@ -15,12 +15,11 @@ def load(tiff_filename):
     Returns:
         A numpy array with data from the TIFF file
     """
-
     # Expand filename to be absolute
     tiff_filename = os.path.expanduser(tiff_filename)
 
     try:
-        img = Image.open(tiff_filename)
+        img = tiff.imread(tiff_filename)
     except Exception as e:
         raise ValueError("Could not load file {0} for conversion."
                          .format(tiff_filename))
@@ -40,7 +39,6 @@ def save(tiff_filename, numpy_data):
     Returns:
         String. The expanded filename that now holds the TIFF data
     """
-
     # Expand filename to be absolute
     tiff_filename = os.path.expanduser(tiff_filename)
 
@@ -51,8 +49,7 @@ def save(tiff_filename, numpy_data):
         return png_filename
 
     try:
-        img = Image.fromarray(numpy_data)
-        img.save(tiff_filename)
+        img = tiff.imsave(tiff_filename, numpy_data)
     except Exception as e:
         raise ValueError("Could not save TIFF file {0}.".format(tiff_filename))
 
@@ -73,7 +70,6 @@ def save_collection(tiff_filename_base, numpy_data, start_layers_at=1):
     Returns:
         Array. A list of expanded filenames that hold TIFF data.
     """
-
     file_ext = tiff_filename_base.split('.')[-1]
     if file_ext in ['tif', 'tiff']:
         # Filename is "name*.tif[f]", set file_base to "name*".
@@ -110,12 +106,11 @@ def load_tiff_multipage(tiff_filename, dtype='float32'):
     Returns:
         Array containing contents from input tiff file in xyz order
     """
-
     if not os.path.isfile(tiff_filename):
         raise RuntimeError('could not find file "%s"' % tiff_filename)
 
     # load the data from multi-layer TIF files
-    data = Image.open(tiff_filename)
+    data = tiff.imread(tiff_filename)
 
     im = []
 
@@ -123,7 +118,7 @@ def load_tiff_multipage(tiff_filename, dtype='float32'):
 
         Xi = numpy.array(data, dtype=dtype)
         if Xi.ndim == 2:
-            Xi = Xi[numpy.newaxis, ...] # add slice dimension
+            Xi = Xi[numpy.newaxis, ...]  # add slice dimension
         im.append(Xi)
 
         try:
@@ -153,7 +148,6 @@ def load_collection(tiff_filename_base):
     Returns:
         A numpy array holding a 3D dataset
     """
-
     # We expect images to be indexed by their alphabetical order.
     files = glob.glob(tiff_filename_base)
     files.sort()

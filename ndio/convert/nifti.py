@@ -16,7 +16,6 @@ def load(nifti_filename):
     Returns:
         A numpy array with data from the nifti file
     """
-
     # Expand filename to be absolute
     nifti_filename = os.path.expanduser(nifti_filename)
 
@@ -29,7 +28,7 @@ def load(nifti_filename):
                          .format(nifti_filename))
         raise
 
-    return numpy.array(img)
+    return img
 
 
 def save(nifti_filename, numpy_data):
@@ -44,7 +43,6 @@ def save(nifti_filename, numpy_data):
     Returns:
         String. The expanded filename that now holds the nifti data
     """
-
     # Expand filename to be absolute
     nifti_filename = os.path.expanduser(nifti_filename)
 

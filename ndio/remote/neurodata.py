@@ -25,9 +25,13 @@ except ImportError:
 DEFAULT_HOSTNAME = "openconnecto.me"
 DEFAULT_SUFFIX = "ocp"
 DEFAULT_PROTOCOL = "http"
+DEFAULT_BLOCK_SIZE = (1024, 1024, 16)
 
 
 class neurodata(Remote):
+    """
+    The NeuroData remote, for interfacing with ndstore, ndlims, and friends.
+    """
 
     # SECTION:
     # Enumerables
@@ -39,18 +43,30 @@ class neurodata(Remote):
                  protocol=DEFAULT_PROTOCOL,
                  meta_root="http://lims.neurodata.io/",
                  meta_protocol=DEFAULT_PROTOCOL, **kwargs):
+        """
+        Initializer for the neurodata remote class.
 
-        r = requests.get('https://pypi.python.org/pypi/ndio/json').json()
-        r = r['info']['version']
-        if r != ndio.version and not kwargs.get('suppress_warnings', False):
-            print("A newer version of ndio is available. " +
-                  "'pip install -U ndio' to update. Pass " +
-                  "'suppress_warnings=True' to the neurodata " +
-                  "constructor to suppress this message.")
-
+        Arguments:
+            hostname (str: "openconnecto.me"): The hostname to connect to
+            protocol (str: "http"): The protocol (http or https) to use
+            meta_root (str: "http://lims.neurodata.io/"): The metadata server
+            meta_protocol (str: "http"): The protocol to use for the md server
+            check_tokens (boolean: False): Whether functions that take `token`
+                as an argument should check for the existance of that token and
+                fail immediately if it is not found. This is a good idea for
+                functions that take more time to complete, and might not fail
+                until the very end otherwise.
+            chunk_threshold (int: 1e9 / 4): The maximum size of a numpy array
+                that will be uploaded in one HTTP request. If you find that
+                your data requests are commonly timing out, try reducing this.
+                Default is 1e9 / 4, or a 0.25GiB.
+            suffix (str: "ocp"): The URL suffix to specify ndstore/microns. If
+                you aren't sure what to do with this, don't specify one.
+        """
         self._check_tokens = kwargs.get('check_tokens', False)
         self._chunk_threshold = kwargs.get('chunk_threshold', 1E9 / 4)
         self._ext = kwargs.get('suffix', DEFAULT_SUFFIX)
+        self._known_tokens = []
 
         # Prepare meta url
         self.meta_root = meta_root
@@ -72,8 +88,12 @@ class neurodata(Remote):
                     token = kwargs['token']
                 else:
                     token = args[0]
-                if self.ping('{}/info/'.format(token)) != 200:
-                    raise RemoteDataNotFoundError("Bad token {}".format(token))
+                if token not in self._known_tokens:
+                    if self.ping('{}/info/'.format(token)) != 200:
+                        raise RemoteDataNotFoundError("Bad token {}".format(
+                                                      token))
+                    else:
+                        self._known_tokens.append(token)
             return f(self, *args, **kwargs)
         return wrapped
 
@@ -81,20 +101,20 @@ class neurodata(Remote):
     # Utilities
     def ping(self, suffix='public_tokens/'):
         """
-        Returns the status-code of the API (estimated using the public-tokens
+        Return the status-code of the API (estimated using the public-tokens
         lookup page).
 
         Arguments:
             suffix (str : 'public_tokens/'): The url endpoint to check
 
         Returns:
-            int status code
+            int: status code
         """
         return super(neurodata, self).ping(suffix)
 
     def url(self, suffix=""):
         """
-        Returns a constructed URL, appending an optional suffix (uri path).
+        Return a constructed URL, appending an optional suffix (uri path).
 
         Arguments:
             suffix (str : ""): The suffix to append to the end of the URL
@@ -106,7 +126,7 @@ class neurodata(Remote):
 
     def meta_url(self, suffix=""):
         """
-        Returns a constructed URL, appending an optional suffix (uri path),
+        Return a constructed URL, appending an optional suffix (uri path),
         for the metadata server. (Should be temporary, until the LIMS shim
         is fixed.)
 
@@ -120,7 +140,7 @@ class neurodata(Remote):
 
     def __repr__(self):
         """
-        Returns a string representation that can be used to reproduce this
+        Return a string representation that can be used to reproduce this
         instance. `eval(repr(this))` should return an identical copy.
 
         Arguments:
@@ -154,7 +174,7 @@ class neurodata(Remote):
     def get_public_datasets(self):
         """
         NOTE: VERY SLOW!
-        Gets a list of public datasets. Different than public tokens!
+        Get a list of public datasets. Different than public tokens!
 
         Arguments:
             None
@@ -167,7 +187,7 @@ class neurodata(Remote):
     def get_public_datasets_and_tokens(self):
         """
         NOTE: VERY SLOW!
-        Gets a dictionary relating key:dataset to value:[tokens] that rely
+        Get a dictionary relating key:dataset to value:[tokens] that rely
         on that dataset.
 
         Arguments:
@@ -202,7 +222,7 @@ class neurodata(Remote):
     @_check_token
     def get_proj_info(self, token):
         """
-        Returns the project info for a given token.
+        Return the project info for a given token.
 
         Arguments:
             token (str): Token to return information for
@@ -237,7 +257,7 @@ class neurodata(Remote):
     @_check_token
     def get_image_size(self, token, resolution=0):
         """
-        Returns the size of the volume (3D). Convenient for when you want
+        Return the size of the volume (3D). Convenient for when you want
         to download the entirety of a dataset.
 
         Arguments:
@@ -269,7 +289,7 @@ class neurodata(Remote):
             data (str): A dictionary to insert as metadata. Include `secret`.
 
         Returns:
-            JSON of the inserted ID (convenience) or an error message.
+            json: Info of the inserted ID (convenience) or an error message.
 
         Throws:
             RemoteDataUploadError: If the token is already populated, or if
@@ -287,13 +307,13 @@ class neurodata(Remote):
     @_check_token
     def get_subvolumes(self, token):
         """
-        Returns a list of subvolumes taken from LIMS, if available.
+        Return a list of subvolumes taken from LIMS, if available.
 
         Arguments:
             token (str): The token to read from in LIMS
 
         Returns:
-            dict, or None if unavailable
+            dict: or None if unavailable
         """
         md = self.get_metadata(token)['metadata']
         if 'subvolumes' in md:
@@ -313,14 +333,18 @@ class neurodata(Remote):
         Arguments:
             token (str): The token to write to in LIMS
             channel (str): Channel to add in the subvolume. Can be `None`
-            Q_start (int): The start of the Q dimension
-            Q_stop (int): The top of the Q dimension,
+            x_start (int): Start in x dimension
+            x_stop (int): Stop in x dimension
+            y_start (int): Start in y dimension
+            y_stop (int): Stop in y dimension
+            z_start (int): Start in z dimension
+            z_stop (int): Stop in z dimension
             resolution (int): The resolution at which this subvolume is seen
             title (str): The title to set for the subvolume
             notes (str): Optional extra thoughts on the subvolume
 
         Returns:
-            Boolean success
+            boolean: success
         """
         md = self.get_metadata(token)['metadata']
         if 'subvolumes' in md:
@@ -411,10 +435,12 @@ class neurodata(Remote):
         Returns:
             str: binary image data
         """
-        im = self._get_cutout_no_chunking(token, channel, resolution,
-                                          x_start, x_stop, y_start, y_stop,
-                                          z_index, z_index+1)[0]
-        return im
+        vol = self.get_cutout(token, channel, x_start, x_stop, y_start,
+                              y_stop, z_index, z_index+1, resolution)
+
+        vol = numpy.squeeze(vol)  # 3D volume to 2D slice
+
+        return vol
 
     @_check_token
     def get_image(self, token, channel,
@@ -437,7 +463,7 @@ class neurodata(Remote):
                    y_start, y_stop,
                    z_start, z_stop,
                    resolution=1,
-                   block_size=None,
+                   block_size=DEFAULT_BLOCK_SIZE,
                    neariso=False):
         """
         Get a RAMONVolume volumetric cutout from the neurodata server.
@@ -455,7 +481,6 @@ class neurodata(Remote):
         Returns:
             ndio.ramon.RAMONVolume: Downloaded data.
         """
-
         size = (x_stop-x_start)*(y_stop-y_start)*(z_stop-z_start)
         volume = ramon.RAMONVolume()
         volume.xyz_offset = [x_start, y_start, z_start]
@@ -475,7 +500,7 @@ class neurodata(Remote):
                    y_start, y_stop,
                    z_start, z_stop,
                    resolution=1,
-                   block_size=None,
+                   block_size=DEFAULT_BLOCK_SIZE,
                    neariso=False):
         """
         Get volumetric cutout data from the neurodata server.
@@ -496,15 +521,21 @@ class neurodata(Remote):
         Returns:
             numpy.ndarray: Downloaded data.
         """
-
         if block_size is None:
             # look up block size from metadata
             block_size = self.get_block_size(token, resolution)
 
         origin = self.get_image_offset(token, resolution)
 
+        # If z_stop - z_start is < 16, backend still pulls minimum 16 slices
+        if (z_stop - z_start) < 16:
+            z_slices = 16
+        else:
+            z_slices = z_stop - z_start
+
         # Calculate size of the data to be downloaded.
-        size = (x_stop - x_start) * (y_stop - y_start) * (z_stop - z_start)
+        # TODO Multiply size by number of bytes - This should not be >4
+        size = (x_stop - x_start) * (y_stop - y_start) * z_slices * 4
 
         # Switch which download function to use based on which libraries are
         # available in this version of python.
@@ -534,14 +565,20 @@ class neurodata(Remote):
                               (y_stop - y_start),
                               (x_stop - x_start)))
             for b in blocks:
+
                 data = dl_func(token, channel, resolution,
                                b[0][0], b[0][1],
                                b[1][0], b[1][1],
                                b[2][0], b[2][1], neariso=neariso)
 
-                vol[b[2][0]-z_start : b[2][1]-z_start,
-                    b[1][0]-y_start : b[1][1]-y_start,
-                    b[0][0]-x_start : b[0][1]-x_start] = data
+                if b == blocks[0]:  # first block  TODO -update if parallelized
+                    vol = numpy.zeros(((z_stop - z_start),
+                                       (y_stop - y_start),
+                                       (x_stop - x_start)), dtype=data.dtype)
+
+                vol[b[2][0]-z_start: b[2][1]-z_start,
+                    b[1][0]-y_start: b[1][1]-y_start,
+                    b[0][0]-x_start: b[0][1]-x_start] = data
 
             vol = numpy.rollaxis(vol, 1)
             vol = numpy.rollaxis(vol, 2)
@@ -608,7 +645,6 @@ class neurodata(Remote):
                     y_start,
                     z_start,
                     data,
-                    dtype='',
                     resolution=0):
         """
         Post a cutout to the server.
@@ -620,15 +656,14 @@ class neurodata(Remote):
             y_start (int)
             z_start (int)
             data (numpy.ndarray): A numpy array of data. Pass in (x, y, z)
-            dtype (str : ''): Pass in explicit datatype, or we use projinfo
             resolution (int : 0): Resolution at which to insert the data
+
         Returns:
             bool: True on success
 
         Raises:
-            RemoteDataUploadError if there's an issue during upload.
+            RemoteDataUploadError: if there's an issue during upload.
         """
-
         datatype = self.get_proj_info(token)['channels'][channel]['datatype']
         if data.dtype.name != datatype:
             data = data.astype(datatype)
@@ -638,31 +673,36 @@ class neurodata(Remote):
 
         if six.PY3 or data.nbytes > 1.5e9:
             ul_func = self._post_cutout_no_chunking_npz
-        elif six.PY2:
-            ul_func = self._post_cutout_no_chunking_blosc
         else:
-            raise OSError("Check yo version of Python!")
+            ul_func = self._post_cutout_no_chunking_blosc
 
         if data.size < self._chunk_threshold:
             return ul_func(token, channel, x_start,
                            y_start, z_start, data,
                            resolution)
-        else:
-            # must chunk first
-            from ndio.utils.parallel import block_compute
-            blocks = block_compute(x_start, x_start + data.shape[2],
-                                   y_start, y_start + data.shape[1],
-                                   z_start, z_start + data.shape[0])
 
-            for b in blocks:
-                subvol = data[b[2][0]-z_start : b[2][1]-z_start,
-                              b[1][0]-y_start : b[1][1]-y_start,
-                              b[0][0]-x_start : b[0][1]-x_start]
-                # upload the chunk:
-                ul_func(token, channel, x_start,
-                        y_start, z_start, subvol,
-                        resolution)
+        return self._post_cutout_with_chunking(token, channel,
+                                               x_start, y_start, z_start, data,
+                                               resolution, ul_func)
 
+    def _post_cutout_with_chunking(self, token, channel, x_start,
+                                   y_start, z_start, data,
+                                   resolution, ul_func):
+        # must chunk first
+        from ndio.utils.parallel import block_compute
+        blocks = block_compute(x_start, x_start + data.shape[2],
+                               y_start, y_start + data.shape[1],
+                               z_start, z_start + data.shape[0])
+        for b in blocks:
+            # data coordinate relative to the size of the arra
+            subvol = data[b[2][0]-z_start: b[2][1]-z_start,
+                          b[1][0]-y_start: b[1][1]-y_start,
+                          b[0][0]-x_start: b[0][1]-x_start]
+            # upload the chunk:
+            # upload coordinate relative to x_start, y_start, z_start
+            ul_func(token, channel, b[0][0],
+                    b[1][0], b[2][0], subvol,
+                    resolution)
         return True
 
     def _post_cutout_no_chunking_npz(self, token, channel,
@@ -697,7 +737,6 @@ class neurodata(Remote):
         """
         Accepts data in zyx. !!!
         """
-
         data = numpy.expand_dims(data, axis=0)
         blosc_data = blosc.pack_array(data)
 
@@ -708,7 +747,6 @@ class neurodata(Remote):
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1]
         ))
-
         req = requests.post(url, data=blosc_data, headers={
             'Content-Type': 'application/octet-stream'
         })
@@ -733,7 +771,7 @@ class neurodata(Remote):
             resolution (int : 0): The resolution at which to download
 
         Returns:
-            (x_start, x_stop, y_start, y_stop, z_start, z_stop) ints
+            (x_start, x_stop, y_start, y_stop, z_start, z_stop): ints
         """
         url = self.url('{}/{}/{}/boundingbox/{}/'.format(token, channel,
                                                          r_id, resolution))
@@ -768,12 +806,13 @@ class neurodata(Remote):
             channel (str): Channel to use
             ramon_type (int : None): Optional. If set, filters IDs and only
                 returns those of RAMON objects of the requested type.
+
         Returns:
             int[]: A list of the ids of the returned RAMON objects
+
         Raises:
             RemoteDataNotFoundError: If the channel or token is not found
         """
-
         url = self.url("{}/{}/query/".format(token, channel))
         if ramon_type is not None:
             # User is requesting a specific ramon_type.
@@ -797,7 +836,7 @@ class neurodata(Remote):
             raise IOError("Could not successfully mock HDF5 file for parsing.")
 
     @_check_token
-    def get_ramon(self, token, channel, ids, resolution=None,
+    def get_ramon(self, token, channel, ids, resolution=0,
                   include_cutout=False, sieve=None, batch_size=100):
         """
         Download a RAMON object by ID.
@@ -814,16 +853,12 @@ class neurodata(Remote):
             sieve (function : None): A function that accepts a single ramon
                 and returns True or False depending on whether you want that
                 ramon object to be included in your response or not.
-
                 For example,
-
                 ```
                 def is_even_id(ramon):
                     return ramon.id % 2 == 0
                 ```
-
                 You can then pass this to get_ramon like this:
-
                 ```
                 ndio.remote.neurodata.get_ramon( . . . , sieve=is_even_id)
                 ```
@@ -833,73 +868,67 @@ class neurodata(Remote):
                 If >=100, set it to 100.
 
         Returns:
-            ndio.ramon.RAMON[]
+            ndio.ramon.RAMON[]: A list of returned RAMON objects.
 
         Raises:
             RemoteDataNotFoundError: If the requested ids cannot be found.
         """
-
         b_size = min(100, batch_size)
 
-        mdata = self.get_ramon_metadata(token, channel, ids)
-
-        if resolution is None:
-            resolution = 0
-            # probably should be dynamic...
-
-        BATCH = False
         _return_first_only = False
-
         if type(ids) is not list:
             _return_first_only = True
             ids = [ids]
-        if type(ids) is list:
-            ids = [str(i) for i in ids]
-            if len(ids) > b_size:
-                BATCH = True
-        # now ids is a list of strings
+        ids = [str(i) for i in ids]
 
-        if BATCH:
-            rs = []
-            id_batches = [ids[i:i+b_size] for i in xrange(0, len(ids), b_size)]
-            for batch in id_batches:
-                rs.extend(self._get_ramon_batch(token, channel,
-                                                batch, resolution))
-        else:
-            rs = self._get_ramon_batch(token, channel, ids, resolution)
+        rs = []
+        id_batches = [ids[i:i+b_size] for i in range(0, len(ids), b_size)]
+        for batch in id_batches:
+            rs.extend(self._get_ramon_batch(token, channel, batch, resolution))
 
-        if sieve is not None:
-            rs = [r for r in rs if sieve(r)]
+        rs = self._filter_ramon(rs, sieve)
 
         if include_cutout:
-            for r in rs:
-                if 'cutout' not in dir(r):
-                    continue
-                origin = r.xyz_offset
-                # Get the bounding box (cube-aligned)
-                bbox = self.get_ramon_bounding_box(token, channel,
-                                                   r.id, resolution=resolution)
-                # Get the cutout (cube-aligned)
-                cutout = self.get_cutout(token, channel,
-                                         *bbox, resolution=resolution)
-                cutout[cutout != int(r.id)] = 0
-
-                # Compute upper offset and crop
-                bounds = numpy.argwhere(cutout)
-                mins = [min([i[dim] for i in bounds]) for dim in range(3)]
-                maxs = [max([i[dim] for i in bounds]) for dim in range(3)]
-
-                r.cutout = cutout[
-                    mins[0]:maxs[0],
-                    mins[1]:maxs[1],
-                    mins[2]:maxs[2]
-                ]
+            rs = [self._add_ramon_cutout(token, channel, r, resolution)
+                  for r in rs]
 
         if _return_first_only:
             return rs[0]
+
+        return sorted(rs, key=lambda x: ids.index(x.id))
+
+    def _filter_ramon(self, rs, sieve):
+        if sieve is not None:
+            return [r for r in rs if sieve(r)]
         return rs
 
+    def _add_ramon_cutout(self, token, channel, ramon, resolution):
+        if 'cutout' not in dir(ramon):
+            return ramon
+        origin = ramon.xyz_offset
+        # Get the bounding box (cube-aligned)
+        bbox = self.get_ramon_bounding_box(token, channel,
+                                           ramon.id, resolution=resolution)
+        # Get the cutout (cube-aligned)
+        cutout = self.get_cutout(token, channel,
+                                 *bbox, resolution=resolution)
+        cutout[cutout != int(ramon.id)] = 0
+
+        # Compute upper offset and crop
+        bounds = numpy.argwhere(cutout)
+        mins = [min([i[dim] for i in bounds]) for dim in range(3)]
+        maxs = [max([i[dim] for i in bounds]) for dim in range(3)]
+
+        ramon.cutout = cutout[
+            mins[0]:maxs[0],
+            mins[1]:maxs[1],
+            mins[2]:maxs[2]
+        ]
+
+        return ramon
+
     def _get_ramon_batch(self, token, channel, ids, resolution):
+        ids = [str(i) for i in ids]
         url = self.url("{}/{}/{}/json/".format(token, channel, ",".join(ids)))
         req = requests.get(url)
 
@@ -930,7 +959,6 @@ class neurodata(Remote):
         Raises:
             RemoteDataNotFoundError: If the data cannot be found on the Remote
         """
-
         if type(anno_id) in [int, numpy.uint32]:
             # there's just one ID to download
             return self._get_single_ramon_metadata(token, channel,
@@ -970,8 +998,8 @@ class neurodata(Remote):
         with this function, it seems dangerous.
 
         Arguments:
-            token
-            channel
+            token (str): The token to inspect
+            channel (str): The channel to inspect
             anno (int OR list(int) OR RAMON): The annotation to delete. If a
                 RAMON object is supplied, the remote annotation will be deleted
                 by an ID lookup. If an int is supplied, the annotation will be
@@ -1014,9 +1042,8 @@ class neurodata(Remote):
             bool: Success = True
 
         Throws:
-            RemoteDataUploadError if something goes wrong
+            RemoteDataUploadError: if something goes wrong
         """
-
         # Max out batch-size at 100.
         b_size = min(100, batch_size)
 
@@ -1027,7 +1054,7 @@ class neurodata(Remote):
         # If there are too many to fit in one batch, split here and call this
         # function recursively.
         if len(r) > batch_size:
-            batches = [r[i:i+b_size] for i in xrange(0, len(r), b_size)]
+            batches = [r[i:i+b_size] for i in range(0, len(r), b_size)]
             for batch in batches:
                 self.post_ramon(token, channel, batch, b_size)
             return
@@ -1090,13 +1117,13 @@ class neurodata(Remote):
         Call the restful endpoint to merge two RAMON objects into one.
 
         Arguments:
-            token
-            channel
+            token (str): The token to inspect
+            channel (str): The channel to inspect
             ids (int[]): the list of the IDs to merge
             delete (bool : False): Whether to delete after merging.
 
         Returns:
-            json
+            json: The ID as returned by ndstore
         """
         req = requests.get(self.url() + "/merge/{}/"
                            .format(','.join([str(i) for i in ids])))
@@ -1118,19 +1145,18 @@ class neurodata(Remote):
         Arguments:
             token (str): The token the new channel should be added to
             name (str): The name of the channel to add
-            type (str): Type of the channel to add (e.g. neurodata.IMAGE)
-            dtype (str): The datatype of the channel's data (e.g. 'uint8')
+            channel_type (str): Type of the channel (e.g. `neurodata.IMAGE`)
+            dtype (str): The datatype of the channel's data (e.g. `uint8`)
             readonly (bool): Can others write to this channel?
 
         Returns:
-            bool: True if successful, False otherwise.
+            bool: `True` if successful, `False` otherwise.
 
         Raises:
             ValueError: If your args were bad :(
             RemoteDataUploadError: If the channel data is valid but upload
                 fails for some other reason.
         """
-
         for c in name:
             if not c.isalnum():
                 raise ValueError("Name cannot contain character {}.".format(c))
@@ -1174,19 +1200,31 @@ class neurodata(Remote):
         Raises:
             RemoteDataUploadError: If the upload fails for some reason.
         """
-
         req = requests.post(self.url("{}/deleteChannel/".format(token)), json={
             "channels": [name]
         })
 
         if req.status_code is not 200:
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
-        return True
+        if req.content == "SUCCESS":
+            return True
+        else:
+            return False
 
     # Propagation
 
     @_check_token
     def propagate(self, token, channel):
+        """
+        Kick off the propagate function on the remote server.
+
+        Arguments:
+            token (str): The token to propagate
+            channel (str): The channel to propagate
+
+        Returns:
+            boolean: Success
+        """
         if self.get_propagate_status(token, channel) is not 0:
             return
         url = self.url('{}/{}/setPropagate/1/'.format(token, channel))
@@ -1197,6 +1235,16 @@ class neurodata(Remote):
 
     @_check_token
     def get_propagate_status(self, token, channel):
+        """
+        Get the propagate status for a token/channel pair.
+
+        Arguments:
+            token (str): The token to check
+            channel (str): The channel to check
+
+        Returns:
+            str: The status code
+        """
         url = self.url('{}/{}/getPropagate/'.format(token, channel))
         req = requests.get(url)
         if req.status_code is not 200:

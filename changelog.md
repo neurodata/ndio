@@ -1,10 +1,17 @@
 # Changelog
 
-- **1.0.1**
+- **1.1.5**
+    - Resolve out-standing bugs with chunking code for large uploads (@alexbaden)
+    - Fixes to TIF import/exports to use tifffile instead of PIL
+    - Many other backwards-compatible fixed things...
+- **1.1.0**
     - Add converters for voxel lists and ndarrays
+    - Add the `ndio.remote.NDIngest` remote
+    - Improve how ndio version checking works
+    - Improve how ndio installation and updates check for module versions (setup.py)
+    - Add checks for styleguide, both pep8 and docstrings
 - **1.0.0**
     - This changelog prepares ndio to be stable.
-    - All APIs are now static until the next breaking version (2.\*.\*).
     - We now follow Semantic Versioning.
 - **0.1.18**
     - Standardize converter names in the `convert` module
