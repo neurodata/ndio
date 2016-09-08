@@ -3,7 +3,9 @@ import ndio.remote.dvid as dvid
 import numpy
 import os
 
+
 FIB25_HASH = '5cc94d532799484cb01788fcdb7cd9f0'
+
 
 class TestDVID(unittest.TestCase):
 
