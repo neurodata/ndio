@@ -40,3 +40,12 @@ Guidelines](<https://github.com/neurodata/ndio/blob/master/CONTRIBUTING.md>).
 ndio is fully documented [here](<http://docs.neurodata.io/ndio/>).
 
 Submit bug reports [here](<https://github.com/neurodata/ndio/issues/new>).
+
+## Testing
+ndio comes with a full test-suite designed to encourage test-driven development. The tests reside in the `tests/` directory, and can be run with `python -m unittest discover`. If you would like to also test DVID endpoints, specify the environment variable `DVID_TEST_URL`. For instance, if you are running the [example Docker container](https://github.com/janelia-flyem/dvid/wiki/Installation-via-Docker), you would run:
+
+```
+DVID_TEST_URL="localhost:8000" python -m unittest discover
+```
+
+If you do not specify a DVID url, the DVID-related tests will not run.
