@@ -4,9 +4,9 @@ python:
     - "3.5"
 install:
     - curl -sSL https://get.docker.com/ | sh
-    - docker pull flyem/dvid-fib25db
-    - docker run --name fib25db -d flyem/dvid-fib25db &
-    - docker run --volumes-from fib25db -p 8000:8000 -it flyem/dvid &
+    - sudo docker pull flyem/dvid-fib25db
+    - sudo docker run --name fib25db -d flyem/dvid-fib25db &
+    - sudo docker run --volumes-from fib25db -p 8000:8000 -it flyem/dvid &
     - sudo apt-get autoremove
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
