@@ -449,20 +449,30 @@ provided image size.')
 including: $&+,:;=?@#|'<>.^*()%!-].* in dataset, project, channel or token \
 names")
 
-    def put_data(self, data):
+    def put_data(self, data, token_file):
         """
         Try to post data to the server.
         """
         URLPath = self.oo.url("autoIngest/")
         try:
-            response = requests.post(URLPath, data=json.dumps(data))
+            f = open(token_file, 'r')
+            token = f.read()
+            f.close()
+        except:
+            raise OSError("Could not read token file. \
+Make sure it only contains the token")
+        try:
+            response = requests.post(URLPath, data=json.dumps(data),
+                                     headers={'Authorization\
+': 'Token {}'.format(token)},
+                                     verify=False)
             assert(response.status_code == 200)
             print("From ndio: {}".format(response.content))
         except:
             raise OSError("Error in posting JSON file {}\
 ".format(response.status_code))
 
-    def post_data(self,
+    def post_data(self, token_file,
                   file_name=None, legacy=False,
                   verifytype=VERIFY_BY_SLICE):
         """
@@ -494,7 +504,7 @@ names")
 
         self.verify_path(data, verifytype)
         self.verify_json(data)
-        self.put_data(data)
+        self.put_data(data, token_file)
 
     def output_json(self, file_name='/tmp/ND.json'):
         """
