@@ -492,7 +492,7 @@ names")
             except:
                 raise OSError("Error opening file")
 
-        self.verify_path(data, verifytype)
+        # self.verify_path(data, verifytype)
         self.verify_json(data)
         self.put_data(data)
 
