@@ -1226,7 +1226,7 @@ class neurodata(Remote):
         Returns:
             boolean: Success
         """
-        if self.get_propagate_status(token, channel) is not 0:
+        if self.get_propagate_status(token, channel) != u'0':
             return
         url = self.url('{}/{}/setPropagate/1/'.format(token, channel))
         req = requests.get(url)
