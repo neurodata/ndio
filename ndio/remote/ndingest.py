@@ -410,70 +410,60 @@ provided image size.')
 
             # By Here the path should have been verified
 
-    def verify_json(self, data):
-        """
-        Verify the JSON against the spec.
-        """
-        names = []
-        # Channels
-        channel_names = list(data["channels"].copy().keys())
-        for i in range(0, len(channel_names)):
-            channel_object = data["channels"][channel_names[i]]
-            try:
-                self.CHANNEL_SCHEMA.validate(channel_object)
-            except:
-                raise ValueError("channel " + channel_object["channel_name"])
-            names.append(channel_object["channel_name"])
-        # Dataset"
-        dataset_object = data["dataset"]
-        try:
-            self.DATASET_SCHEMA.validate(dataset_object)
-        except:
-            raise ValueError("Error in dataset parameters")
-        names.append(dataset_object["dataset_name"])
+    # def verify_json(self, data):
+        # """
+        # Verify the JSON against the spec.
+        # """
+        # names = []
+        # # Channels
+        # channel_names = list(data["channels"].copy().keys())
+        # for i in range(0, len(channel_names)):
+            # channel_object = data["channels"][channel_names[i]]
+            # try:
+                # self.CHANNEL_SCHEMA.validate(channel_object)
+            # except:
+                # raise ValueError("channel " + channel_object["channel_name"])
+            # names.append(channel_object["channel_name"])
+        # # Dataset"
+        # dataset_object = data["dataset"]
+        # try:
+            # self.DATASET_SCHEMA.validate(dataset_object)
+        # except:
+            # raise ValueError("Error in dataset parameters")
+        # names.append(dataset_object["dataset_name"])
 
-        # Project
-        project_object = data["project"]
-        try:
-            self.PROJECT_SCHEMA.validate(project_object)
-        except:
-            raise ValueError("Error in project parameters")
-        names.append(project_object["project_name"])
+        # # Project
+        # project_object = data["project"]
+        # try:
+            # self.PROJECT_SCHEMA.validate(project_object)
+        # except:
+            # raise ValueError("Error in project parameters")
+        # names.append(project_object["project_name"])
 
         # Check if names contain bad chars. Underscore is allowed
-        spec_chars = re.compile(".*[$&+,:;=?@#|'<>.^*()%!-].*")
+        # spec_chars = re.compile(".*[$&+,:;=?@#|'<>.^*()%!-].*")
 
-        for i in names:
-            if(spec_chars.match(i)):
-                raise ValueError("Error. No special characters allowed \
-including: $&+,:;=?@#|'<>.^*()%!-].* in dataset, project, channel or token \
-names")
+        # for i in names:
+            # if(spec_chars.match(i)):
+                # raise ValueError("Error. No special characters allowed \
+# including: $&+,:;=?@#|'<>.^*()%!-].* in dataset, project, channel or token \
+# names")
 
-    def put_data(self, data, token_file):
+    def put_data(self, data):
         """
         Try to post data to the server.
         """
         URLPath = self.oo.url("autoIngest/")
+        # URLPath = 'https://{}/ca/autoIngest/'.format(self.oo.site_host)
         try:
-            f = open(token_file, 'r')
-            token = f.read()
-            f.close()
-        except:
-            raise OSError("Could not read token file. \
-Make sure it only contains the token")
-        try:
-            response = requests.post(URLPath, data=json.dumps(data),
-                                     headers={'Authorization\
-': 'Token {}'.format(token)},
-                                     verify=False)
+            response = requests.post(URLPath, data=json.dumps(data), verify=False)
             assert(response.status_code == 200)
             print("From ndio: {}".format(response.content))
         except:
             raise OSError("Error in posting JSON file {}\
 ".format(response.status_code))
 
-    def post_data(self, token_file,
-                  file_name=None, legacy=False,
+    def post_data(self, file_name=None, legacy=False,
                   verifytype=VERIFY_BY_SLICE):
         """
         Arguments:
@@ -503,8 +493,8 @@ Make sure it only contains the token")
                 raise OSError("Error opening file")
 
         # self.verify_path(data, verifytype)
-        self.verify_json(data)
-        self.put_data(data, token_file)
+        # self.verify_json(data)
+        self.put_data(data)
 
     def output_json(self, file_name='/tmp/ND.json'):
         """
@@ -518,7 +508,7 @@ Make sure it only contains the token")
             self.dataset, self.project, self.channels, self.metadata)
         data = json.loads(self.nd_json(*complete_example))
 
-        self.verify_json(data)
+        # self.verify_json(data)
         self.verify_path(data, VERIFY_BY_SLICE)
 
         f = open(file_name, 'w')
