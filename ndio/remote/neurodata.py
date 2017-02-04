@@ -24,7 +24,7 @@ except ImportError:
 
 DEFAULT_HOSTNAME = "openconnecto.me"
 DEFAULT_SUFFIX = "nd"
-DEFAULT_PROTOCOL = "http"
+DEFAULT_PROTOCOL = "https"
 DEFAULT_BLOCK_SIZE = (1024, 1024, 16)
 
 
@@ -72,7 +72,7 @@ class neurodata(Remote):
         self.meta_root = meta_root
         if not self.meta_root.endswith('/'):
             self.meta_root = self.meta_root + "/"
-        if self.meta_root.startswith('http'):
+        if self.meta_root.startswith('https'):
             self.meta_root = self.meta_root[self.meta_root.index('://')+3:]
         self.meta_protocol = meta_protocol
 
