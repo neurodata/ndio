@@ -39,6 +39,7 @@ class neurodata(Remote):
     ANNOTATION = ANNO = 'annotation'
 
     def __init__(self,
+                 user_token,
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL,
                  meta_root="http://lims.neurodata.io/",
@@ -67,13 +68,14 @@ class neurodata(Remote):
         self._chunk_threshold = kwargs.get('chunk_threshold', 1E9 / 4)
         self._ext = kwargs.get('suffix', DEFAULT_SUFFIX)
         self._known_tokens = []
+        self._user_token = user_token
 
         # Prepare meta url
         self.meta_root = meta_root
         if not self.meta_root.endswith('/'):
             self.meta_root = self.meta_root + "/"
         if self.meta_root.startswith('https'):
-            self.meta_root = self.meta_root[self.meta_root.index('://')+3:]
+            self.meta_root = self.meta_root[self.meta_root.index('://') + 3:]
         self.meta_protocol = meta_protocol
 
         super(neurodata, self).__init__(hostname, protocol)
@@ -168,7 +170,7 @@ class neurodata(Remote):
         Returns:
             str[]: list of public tokens
         """
-        r = requests.get(self.url() + "public_tokens/")
+        r = getURL(self.url() + "public_tokens/")
         return r.json()
 
     def get_public_datasets(self):
@@ -230,7 +232,7 @@ class neurodata(Remote):
         Returns:
             JSON: representation of proj_info
         """
-        r = requests.get(self.url() + "{}/info/".format(token))
+        r = getURL(self.url() + "{}/info/".format(token))
         return r.json()
 
     @_check_token
@@ -436,7 +438,7 @@ class neurodata(Remote):
             str: binary image data
         """
         vol = self.get_cutout(token, channel, x_start, x_stop, y_start,
-                              y_stop, z_index, z_index+1, resolution)
+                              y_stop, z_index, z_index + 1, resolution)
 
         vol = numpy.squeeze(vol)  # 3D volume to 2D slice
 
@@ -481,7 +483,7 @@ class neurodata(Remote):
         Returns:
             ndio.ramon.RAMONVolume: Downloaded data.
         """
-        size = (x_stop-x_start)*(y_stop-y_start)*(z_stop-z_start)
+        size = (x_stop - x_start) * (y_stop - y_start) * (z_stop - z_start)
         volume = ramon.RAMONVolume()
         volume.xyz_offset = [x_start, y_start, z_start]
         volume.resolution = resolution
@@ -575,9 +577,9 @@ class neurodata(Remote):
                                        (y_stop - y_start),
                                        (x_stop - x_start)), dtype=data.dtype)
 
-                vol[b[2][0]-z_start: b[2][1]-z_start,
-                    b[1][0]-y_start: b[1][1]-y_start,
-                    b[0][0]-x_start: b[0][1]-x_start] = data
+                vol[b[2][0] - z_start: b[2][1] - z_start,
+                    b[1][0] - y_start: b[1][1] - y_start,
+                    b[0][0] - x_start: b[0][1] - x_start] = data
 
             vol = numpy.rollaxis(vol, 1)
             vol = numpy.rollaxis(vol, 2)
@@ -587,16 +589,16 @@ class neurodata(Remote):
                                 x_start, x_stop, y_start, y_stop,
                                 z_start, z_stop, neariso=False):
         url = self.url() + "{}/{}/hdf5/{}/{},{}/{},{}/{},{}/".format(
-           token, channel, resolution,
-           x_start, x_stop,
-           y_start, y_stop,
-           z_start, z_stop
+            token, channel, resolution,
+            x_start, x_stop,
+            y_start, y_stop,
+            z_start, z_stop
         )
 
         if neariso:
             url += "neariso/"
 
-        req = requests.get(url)
+        req = getURL(url)
         if req.status_code is not 200:
             raise IOError("Bad server response for {}: {}: {}".format(
                           url,
@@ -615,16 +617,16 @@ class neurodata(Remote):
                                       z_start, z_stop, neariso=False):
 
         url = self.url() + "{}/{}/blosc/{}/{},{}/{},{}/{},{}/".format(
-           token, channel, resolution,
-           x_start, x_stop,
-           y_start, y_stop,
-           z_start, z_stop
+            token, channel, resolution,
+            x_start, x_stop,
+            y_start, y_stop,
+            z_start, z_stop
         )
 
         if neariso:
             url += "neariso/"
 
-        req = requests.get(url)
+        req = getURL(url)
         if req.status_code is not 200:
             raise IOError("Bad server response for {}: {}: {}".format(
                           url,
@@ -695,9 +697,9 @@ class neurodata(Remote):
                                z_start, z_start + data.shape[0])
         for b in blocks:
             # data coordinate relative to the size of the arra
-            subvol = data[b[2][0]-z_start: b[2][1]-z_start,
-                          b[1][0]-y_start: b[1][1]-y_start,
-                          b[0][0]-x_start: b[0][1]-x_start]
+            subvol = data[b[2][0] - z_start: b[2][1] - z_start,
+                          b[1][0] - y_start: b[1][1] - y_start,
+                          b[0][0] - x_start: b[0][1] - x_start]
             # upload the chunk:
             # upload coordinate relative to x_start, y_start, z_start
             ul_func(token, channel, b[0][0],
@@ -777,7 +779,7 @@ class neurodata(Remote):
                                                          r_id, resolution))
 
         r_id = str(r_id)
-        res = requests.get(url)
+        res = getURL(url)
 
         if res.status_code != 200:
             rt = self.get_ramon_metadata(token, channel, r_id)[r_id]['type']
@@ -820,7 +822,7 @@ class neurodata(Remote):
                 ramon_type = ramon.AnnotationType.get_int(ramon_type)
             url += "type/{}/".format(str(ramon_type))
 
-        req = requests.get(url)
+        req = getURL(url)
 
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('No query results for token {}.'
@@ -882,7 +884,7 @@ class neurodata(Remote):
         ids = [str(i) for i in ids]
 
         rs = []
-        id_batches = [ids[i:i+b_size] for i in range(0, len(ids), b_size)]
+        id_batches = [ids[i:i + b_size] for i in range(0, len(ids), b_size)]
         for batch in id_batches:
             rs.extend(self._get_ramon_batch(token, channel, batch, resolution))
 
@@ -928,7 +930,7 @@ class neurodata(Remote):
     def _get_ramon_batch(self, token, channel, ids, resolution):
         ids = [str(i) for i in ids]
         url = self.url("{}/{}/{}/json/".format(token, channel, ",".join(ids)))
-        req = requests.get(url)
+        req = getURL(url)
 
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('No data for id {}.'.format(ids))
@@ -983,8 +985,8 @@ class neurodata(Remote):
             return results
 
     def _get_single_ramon_metadata(self, token, channel, anno_id):
-        req = requests.get(self.url() +
-                           "{}/{}/{}/json/".format(token, channel, anno_id))
+        req = getURL(self.url() +
+                     "{}/{}/{}/json/".format(token, channel, anno_id))
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('No data for id {}.'.format(anno_id))
         return req.json()
@@ -1052,7 +1054,7 @@ class neurodata(Remote):
         # If there are too many to fit in one batch, split here and call this
         # function recursively.
         if len(r) > batch_size:
-            batches = [r[i:i+b_size] for i in range(0, len(r), b_size)]
+            batches = [r[i:i + b_size] for i in range(0, len(r), b_size)]
             for batch in batches:
                 self.post_ramon(token, channel, batch, b_size)
             return
@@ -1100,7 +1102,7 @@ class neurodata(Remote):
         """
         quantity = str(quantity)
         url = self.url("{}/{}/reserve/{}/".format(token, channel, quantity))
-        req = requests.get(url)
+        req = getURL(url)
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('Invalid req: ' + req.status_code)
         out = req.json()
@@ -1120,8 +1122,8 @@ class neurodata(Remote):
         Returns:
             json: The ID as returned by ndstore
         """
-        req = requests.get(self.url() + "/merge/{}/"
-                           .format(','.join([str(i) for i in ids])))
+        req = getURL(self.url() + "/merge/{}/"
+                     .format(','.join([str(i) for i in ids])))
         if req.status_code is not 200:
             raise RemoteDataUploadError('Could not merge ids {}'.format(
                                         ','.join([str(i) for i in ids])))
@@ -1229,7 +1231,7 @@ class neurodata(Remote):
         if self.get_propagate_status(token, channel) != u'0':
             return
         url = self.url('{}/{}/setPropagate/1/'.format(token, channel))
-        req = requests.get(url)
+        req = getURL(url)
         if req.status_code is not 200:
             raise RemoteDataUploadError('Propagate fail: {}'.format(req.text))
         return True
@@ -1247,7 +1249,26 @@ class neurodata(Remote):
             str: The status code
         """
         url = self.url('{}/{}/getPropagate/'.format(token, channel))
-        req = requests.get(url)
+        req = getURL(url)
         if req.status_code is not 200:
             raise ValueError('Bad pair: {}/{}'.format(token, channel))
         return req.text
+
+    def getURL(self, url, token=''):
+        """
+        Get the propagate status for a token/channel pair.
+
+        Arguments:
+            url (str): The url make a get to
+            token (str): The authentication token
+
+        Returns:
+            obj: The response object
+        """
+        if (token == ''):
+            token = self._user_token
+
+        return requests.get(url,
+                            headers={
+                                'Authorization': 'Token {}'.format(token)},
+                            verify=False)

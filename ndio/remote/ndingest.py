@@ -456,7 +456,8 @@ provided image size.')
         URLPath = self.oo.url("autoIngest/")
         # URLPath = 'https://{}/ca/autoIngest/'.format(self.oo.site_host)
         try:
-            response = requests.post(URLPath, data=json.dumps(data), verify=False)
+            response = requests.post(URLPath, data=json.dumps(data),
+                                     verify=False)
             assert(response.status_code == 200)
             print("From ndio: {}".format(response.content))
         except:
