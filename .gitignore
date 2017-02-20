@@ -1,6 +1,7 @@
 # OS Things
 .DS_Store
 .thumbnails
+.idea/*
 
 # Private Things
 .coverage
