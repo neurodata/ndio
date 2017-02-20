@@ -22,9 +22,9 @@ try:
 except ImportError:
     import urllib2
 
-DEFAULT_HOSTNAME = "openconnecto.me"
+DEFAULT_HOSTNAME = "cloud.neurodata.io"
 DEFAULT_SUFFIX = "nd"
-DEFAULT_PROTOCOL = "https"
+DEFAULT_PROTOCOL = "http"   #should be https
 DEFAULT_BLOCK_SIZE = (1024, 1024, 16)
 
 
@@ -208,6 +208,29 @@ class neurodata(Remote):
                 datasets[dataset] = [t]
         return datasets
 
+    def getURL(self, url, token='', json=''):
+        print url
+
+        """
+        Get the propagate status for a token/channel pair.
+
+        Arguments:
+            url (str): The url make a get to
+            token (str): The authentication token
+
+        Returns:
+            obj: The response object
+        """
+        if (token == ''):
+            token = self._user_token
+
+        #return requests.get(url, json)
+
+        return requests.get(url, json,
+                            headers={
+                                'Authorization': 'Token {}'.format(token)},
+                            verify=False,)
+
     @_check_token
     def get_token_dataset(self, token):
         """
@@ -232,8 +255,9 @@ class neurodata(Remote):
         Returns:
             JSON: representation of proj_info
         """
-        r = getURL(self.url() + "{}/info/".format(token))
+        r = self.getURL(self.url() + "{}/info/".format(token))
         return r.json()
+
 
     @_check_token
     def get_metadata(self, token):
@@ -626,7 +650,7 @@ class neurodata(Remote):
         if neariso:
             url += "neariso/"
 
-        req = getURL(url)
+        req = self.getURL(url)
         if req.status_code is not 200:
             raise IOError("Bad server response for {}: {}: {}".format(
                           url,
@@ -1172,6 +1196,7 @@ class neurodata(Remote):
             raise ValueError("readonly must be 0 (False) or 1 (True).")
 
         # Good job! You supplied very nice arguments.
+        print self.url("{}/createChannel/".format(token))
         req = requests.post(self.url("{}/createChannel/".format(token)), json={
             "channels": {
                 name: {
@@ -1189,30 +1214,163 @@ class neurodata(Remote):
             return True
 
     @_check_token
-    def delete_channel(self, token, name):
+    def create_channels(self, dataset, token, new_channels_data):
+
         """
-        Delete an existing channel on the Remote. Be careful!
+        Creates channels given a dictionary in 'new_channels_data'
+        , 'dataset' name, and 'token' (project) name.
 
         Arguments:
-            token (str): The token the new channel should be deleted from
-            name (str): The name of the channel to delete
+            token (str): Token to identify project
+            dataset (str): Dataset name to identify dataset to download from
+            new_channels_data (dict): New channel data to upload into new channels
 
         Returns:
-            bool: True if successful, False otherwise.
-
-        Raises:
-            RemoteDataUploadError: If the upload fails for some reason.
+            bool: Process completed succesfully or not
         """
-        req = requests.post(self.url("{}/deleteChannel/".format(token)), json={
-            "channels": [name]
+
+        channels = {}
+        for channel_new in new_channels_data:
+
+            self._check_channel(channel_new.name)
+
+            if channel_new.channel_type not in ['image', 'annotation']:
+                raise ValueError('Channel type must be ' +
+                                 'neurodata.IMAGE or neurodata.ANNOTATION.')
+
+            if channel_new.readonly * 1 not in [0, 1]:
+                raise ValueError("readonly must be 0 (False) or 1 (True).")
+
+            channels[channel_new.name] = {
+                "channel_name": channel_new.name,
+                "channel_type": channel_new.channel_type,
+                "datatype": channel_new.dtype,
+                "readonly": channel_new.readonly * 1
+            }
+        req = requests.post(self.url("/{}/project/".format(dataset) + "{}".format(token)), json={"channels" : {channels}})
+
+        if req.status_code is not 201:
+            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
+        else:
+            return True
+
+    @_check_token
+    def delete_channel(self, token, channel_names):
+        """
+
+        Deletes channels listed in 'channel_names' and in the
+        project folder 'token'.
+
+        Arugments:
+            token (str): Token to identify project
+            channel_names (list): List containing names of channels to delete
+
+        Returns:
+            bool: Process completed succesfully or not
+
+        """
+        url = self.url()[:-4] + "/ca/{}/deleteChannel/".format(token)
+        print url
+        req = requests.post(url, json={
+            "channels": [channel_names]
         })
 
         if req.status_code is not 200:
+            print 'error is',str(req.status_code), '\n'
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
         if req.content == "SUCCESS":
             return True
         else:
             return False
+
+    # Resources API
+
+    @_check_token
+    def create_dataset(self, name, x_img_size, y_img_size, z_img_size, x_vox_res, y_vox_res, z_vox_res, is_public):
+
+        """
+
+        Creates a dataset given dataset 'name' and x,y,z image sizes and voxel resolutions.
+        User can choose if dataset should be public or not by specifying 'is_public' as either
+        ints 1 or 0.
+
+        Arguments:
+            name (str):
+            x_img_size (int):
+            y_img_size (int):
+            z_img_size (int):
+            x_vox_res (float):
+            y_vox_res (float):
+            z_vox_res (float):
+            is_public (int):
+
+        Returns:
+            bool: Process completed succesfully or not
+
+        """
+
+        url = self.url()[:-4] + "/resource/dataset/"
+        print url
+
+        req = requests.post(url, json={
+            "dataset_name": name,
+            "ximagesize": x_img_size,
+            "yimagesize": y_img_size,
+            "zimagesize": z_img_size,
+            "xvoxelres": x_vox_res,
+            "yvoxelres": y_vox_res,
+            "zvoxelres": z_vox_res,
+            "public": is_public
+        })
+
+        if req.status_code is not 201:
+            print 'error is', str(req.status_code), '\n'
+            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
+        if req.content == "SUCCESS":
+            return True
+        else:
+            return False
+
+    def get_datasets(self):
+
+        """
+
+        Gets all datasets in resources.
+
+        Returns:
+            dict: Returns datasets in JSON format
+
+        """
+
+        url = self.url()[:-4] + "/resource/dataset/"
+        print url
+
+        req = requests.get(url)
+
+        return req.json()
+
+
+    def delete_dataset(self, dataset_name):
+
+        """
+        Arguments:
+            dataset_name (str): Name of dataset to delete
+
+        Returns:
+            bool: Process completed succesfully or not
+        """
+
+        url = self.url()[:-4] + "/resource/dataset/"
+        print url
+        req = requests.delete(url, json={"dataset_name":dataset_name})
+
+        if req.status.code is not 204:
+            raise RemoteDataUploadError('Could not delete {}'.format(req.text))
+        if req.content == "SUCCESS":
+            return True
+        else:
+            return False
+
 
     # Propagation
 
@@ -1254,21 +1412,4 @@ class neurodata(Remote):
             raise ValueError('Bad pair: {}/{}'.format(token, channel))
         return req.text
 
-    def getURL(self, url, token=''):
-        """
-        Get the propagate status for a token/channel pair.
 
-        Arguments:
-            url (str): The url make a get to
-            token (str): The authentication token
-
-        Returns:
-            obj: The response object
-        """
-        if (token == ''):
-            token = self._user_token
-
-        return requests.get(url,
-                            headers={
-                                'Authorization': 'Token {}'.format(token)},
-                            verify=False)
