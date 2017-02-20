@@ -22,9 +22,9 @@ try:
 except ImportError:
     import urllib2
 
-DEFAULT_HOSTNAME = "cloud.neurodata.io"
+DEFAULT_HOSTNAME = "openconnecto.me"
 DEFAULT_SUFFIX = "nd"
-DEFAULT_PROTOCOL = "http"   #should be https
+DEFAULT_PROTOCOL = "http"   #originally was https in master
 DEFAULT_BLOCK_SIZE = (1024, 1024, 16)
 
 
@@ -208,8 +208,7 @@ class neurodata(Remote):
                 datasets[dataset] = [t]
         return datasets
 
-    def getURL(self, url, token='', json=''):
-        print url
+    def getURL(self, url, token=''):
 
         """
         Get the propagate status for a token/channel pair.
@@ -226,7 +225,7 @@ class neurodata(Remote):
 
         #return requests.get(url, json)
 
-        return requests.get(url, json,
+        return requests.get(url,
                             headers={
                                 'Authorization': 'Token {}'.format(token)},
                             verify=False,)
@@ -1196,7 +1195,6 @@ class neurodata(Remote):
             raise ValueError("readonly must be 0 (False) or 1 (True).")
 
         # Good job! You supplied very nice arguments.
-        print self.url("{}/createChannel/".format(token))
         req = requests.post(self.url("{}/createChannel/".format(token)), json={
             "channels": {
                 name: {
@@ -1270,13 +1268,11 @@ class neurodata(Remote):
 
         """
         url = self.url()[:-4] + "/ca/{}/deleteChannel/".format(token)
-        print url
         req = requests.post(url, json={
             "channels": [channel_names]
         })
 
         if req.status_code is not 200:
-            print 'error is',str(req.status_code), '\n'
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
         if req.content == "SUCCESS":
             return True
@@ -1292,17 +1288,17 @@ class neurodata(Remote):
 
         Creates a dataset given dataset 'name' and x,y,z image sizes and voxel resolutions.
         User can choose if dataset should be public or not by specifying 'is_public' as either
-        ints 1 or 0.
+        bools 1 'true' or 0 'false'.
 
         Arguments:
-            name (str):
-            x_img_size (int):
-            y_img_size (int):
-            z_img_size (int):
-            x_vox_res (float):
-            y_vox_res (float):
-            z_vox_res (float):
-            is_public (int):
+            name (str): Name of dataset
+            x_img_size (int): max x coordinate of image size
+            y_img_size (int): max y coordinate of image size
+            z_img_size (int): max z coordinate of image size
+            x_vox_res (float): x voxel resolution
+            y_vox_res (float): y voxel resolution
+            z_vox_res (float): z voxel resolution
+            is_public (bool): 1 'true' or 0 'false' for viewability of data set in public
 
         Returns:
             bool: Process completed succesfully or not
@@ -1310,7 +1306,6 @@ class neurodata(Remote):
         """
 
         url = self.url()[:-4] + "/resource/dataset/"
-        print url
 
         req = requests.post(url, json={
             "dataset_name": name,
@@ -1324,7 +1319,6 @@ class neurodata(Remote):
         })
 
         if req.status_code is not 201:
-            print 'error is', str(req.status_code), '\n'
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
         if req.content == "SUCCESS":
             return True
@@ -1343,7 +1337,6 @@ class neurodata(Remote):
         """
 
         url = self.url()[:-4] + "/resource/dataset/"
-        print url
 
         req = requests.get(url)
 
@@ -1361,7 +1354,6 @@ class neurodata(Remote):
         """
 
         url = self.url()[:-4] + "/resource/dataset/"
-        print url
         req = requests.delete(url, json={"dataset_name":dataset_name})
 
         if req.status.code is not 204:

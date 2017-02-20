@@ -21,3 +21,8 @@
 *.swp
 *.swo
 
+
+#Rahul Things
+./testND.py
+.idea/Neurodata-Rahul.iml
+
