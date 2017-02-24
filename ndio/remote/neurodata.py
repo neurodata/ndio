@@ -24,7 +24,7 @@ except ImportError:
 
 DEFAULT_HOSTNAME = "openconnecto.me"
 DEFAULT_SUFFIX = "nd"
-DEFAULT_PROTOCOL = "http"   #originally was https in master
+DEFAULT_PROTOCOL = "http"  # originally was https in master
 DEFAULT_BLOCK_SIZE = (1024, 1024, 16)
 
 
@@ -209,7 +209,6 @@ class neurodata(Remote):
         return datasets
 
     def getURL(self, url, token=''):
-
         """
         Get the propagate status for a token/channel pair.
 
@@ -223,7 +222,7 @@ class neurodata(Remote):
         if (token == ''):
             token = self._user_token
 
-        #return requests.get(url, json)
+        # return requests.get(url, json)
 
         return requests.get(url,
                             headers={
@@ -256,7 +255,6 @@ class neurodata(Remote):
         """
         r = self.getURL(self.url() + "{}/info/".format(token))
         return r.json()
-
 
     @_check_token
     def get_metadata(self, token):
@@ -586,8 +584,8 @@ class neurodata(Remote):
                                    origin, block_size)
 
             vol = numpy.zeros(((z_stop - z_start),
-                              (y_stop - y_start),
-                              (x_stop - x_start)))
+                               (y_stop - y_start),
+                               (x_stop - x_start)))
             for b in blocks:
 
                 data = dl_func(token, channel, resolution,
@@ -1213,7 +1211,6 @@ class neurodata(Remote):
 
     @_check_token
     def create_channels(self, dataset, token, new_channels_data):
-
         """
         Creates channels given a dictionary in 'new_channels_data'
         , 'dataset' name, and 'token' (project) name.
@@ -1221,7 +1218,8 @@ class neurodata(Remote):
         Arguments:
             token (str): Token to identify project
             dataset (str): Dataset name to identify dataset to download from
-            new_channels_data (dict): New channel data to upload into new channels
+            new_channels_data (dict): New channel data to upload into new
+                channels
 
         Returns:
             bool: Process completed succesfully or not
@@ -1245,7 +1243,9 @@ class neurodata(Remote):
                 "datatype": channel_new.dtype,
                 "readonly": channel_new.readonly * 1
             }
-        req = requests.post(self.url("/{}/project/".format(dataset) + "{}".format(token)), json={"channels" : {channels}})
+        req = requests.post(self.url("/{}/project/".format(dataset) +
+                            "{}".format(token)),
+                            json={"channels": {channels}})
 
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
@@ -1283,7 +1283,6 @@ class neurodata(Remote):
 
     @_check_token
     def create_dataset(self, name, x_img_size, y_img_size, z_img_size, x_vox_res, y_vox_res, z_vox_res, is_public):
-
         """
 
         Creates a dataset given dataset 'name' and x,y,z image sizes and voxel resolutions.
@@ -1326,7 +1325,6 @@ class neurodata(Remote):
             return False
 
     def get_datasets(self):
-
         """
 
         Gets all datasets in resources.
@@ -1342,9 +1340,7 @@ class neurodata(Remote):
 
         return req.json()
 
-
     def delete_dataset(self, dataset_name):
-
         """
         Arguments:
             dataset_name (str): Name of dataset to delete
@@ -1354,7 +1350,7 @@ class neurodata(Remote):
         """
 
         url = self.url()[:-4] + "/resource/dataset/"
-        req = requests.delete(url, json={"dataset_name":dataset_name})
+        req = requests.delete(url, json={"dataset_name": dataset_name})
 
         if req.status.code is not 204:
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
@@ -1362,7 +1358,6 @@ class neurodata(Remote):
             return True
         else:
             return False
-
 
     # Propagation
 
@@ -1403,5 +1398,3 @@ class neurodata(Remote):
         if req.status_code is not 200:
             raise ValueError('Bad pair: {}/{}'.format(token, channel))
         return req.text
-
-
