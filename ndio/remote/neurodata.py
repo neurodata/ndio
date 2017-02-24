@@ -1265,7 +1265,7 @@ class neurodata(Remote):
             obj: The response object
         """
         try:
-            req = requests.get(url, verify = True, header={
+            req = requests.get(url, verify=True, header={
                 'Authorization': 'Token {}'.format(token)
             })
             return req
