@@ -1266,7 +1266,8 @@ class neurodata(Remote):
         """
         try:
             req = requests.get(url,
-                            headers={
+                            headers =
+                            {
                                 'Authorization': 'Token {}'.format(token)
                             },
                             verify=True)
