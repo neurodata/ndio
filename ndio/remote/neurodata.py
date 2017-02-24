@@ -1265,11 +1265,10 @@ class neurodata(Remote):
             obj: The response object
         """
         try:
-            req = requests.get(url, 
-                header={
+            req = requests.get(url,
+            header={
                     'Authorization': 'Token {}'.format(token)
-                },
-                verify=True
+            }, verify=True
             )
             return req
         except requests.exceptions.ConnectionError as e:
