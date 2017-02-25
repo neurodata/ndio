@@ -1282,12 +1282,21 @@ class neurodata(Remote):
     # Resources API
 
     @_check_token
-    def create_dataset(self, name, x_img_size, y_img_size, z_img_size, x_vox_res, y_vox_res, z_vox_res, is_public):
+    def create_dataset(self,
+                       name,
+                       x_img_size,
+                       y_img_size,
+                       z_img_size,
+                       x_vox_res,
+                       y_vox_res,
+                       z_vox_res,
+                       is_public):
+
         """
 
-        Creates a dataset given dataset 'name' and x,y,z image sizes and voxel resolutions.
-        User can choose if dataset should be public or not by specifying 'is_public' as either
-        bools 1 'true' or 0 'false'.
+        Creates a dataset given dataset 'name' and x,y,z image sizes and voxel
+        resolutions. User can choose if dataset should be public or not by
+        specifying 'is_public' as either bools 1 'true' or 0 'false'.
 
         Arguments:
             name (str): Name of dataset
@@ -1297,7 +1306,8 @@ class neurodata(Remote):
             x_vox_res (float): x voxel resolution
             y_vox_res (float): y voxel resolution
             z_vox_res (float): z voxel resolution
-            is_public (bool): 1 'true' or 0 'false' for viewability of data set in public
+            is_public (bool): 1 'true' or 0 'false' for viewability of data set
+                in public
 
         Returns:
             bool: Process completed succesfully or not
