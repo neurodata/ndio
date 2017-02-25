@@ -1224,7 +1224,6 @@ class neurodata(Remote):
         Returns:
             bool: Process completed succesfully or not
         """
-
         channels = {}
         for channel_new in new_channels_data:
 
@@ -1255,7 +1254,6 @@ class neurodata(Remote):
     @_check_token
     def delete_channel(self, token, channel_names):
         """
-
         Deletes channels listed in 'channel_names' and in the
         project folder 'token'.
 
@@ -1291,9 +1289,7 @@ class neurodata(Remote):
                        y_vox_res,
                        z_vox_res,
                        is_public):
-
         """
-
         Creates a dataset given dataset 'name' and x,y,z image sizes and voxel
         resolutions. User can choose if dataset should be public or not by
         specifying 'is_public' as either bools 1 'true' or 0 'false'.
@@ -1311,9 +1307,7 @@ class neurodata(Remote):
 
         Returns:
             bool: Process completed succesfully or not
-
         """
-
         url = self.url()[:-4] + "/resource/dataset/"
 
         req = requests.post(url, json={
@@ -1336,14 +1330,12 @@ class neurodata(Remote):
 
     def get_datasets(self):
         """
-
         Gets all datasets in resources.
 
         Returns:
             dict: Returns datasets in JSON format
 
         """
-
         url = self.url()[:-4] + "/resource/dataset/"
 
         req = requests.get(url)
@@ -1358,7 +1350,6 @@ class neurodata(Remote):
         Returns:
             bool: Process completed succesfully or not
         """
-
         url = self.url()[:-4] + "/resource/dataset/"
         req = requests.delete(url, json={"dataset_name": dataset_name})
 
