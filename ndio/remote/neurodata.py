@@ -1254,21 +1254,23 @@ class neurodata(Remote):
             raise ValueError('Bad pair: {}/{}'.format(token, channel))
         return req.text
 
-    def getURL(self, url, token=''):
+    def getURL(self, url):
         """
         Get the propagate status for a token/channel pair.
 
         Arguments:
             url (str): The url make a get to
-            token (str): The authentication token
 
         Returns:
             obj: The response object
         """
-        if (token == ''):
-            token = self._user_token
-
-        return requests.get(url,
-                            headers={
-                                'Authorization': 'Token {}'.format(token)},
-                            verify=False)
+        try:
+            req = requests.get(url, verify=True, header={
+                'Authorization': 'Token {}'.format(token)
+            })
+            return req
+        except requests.exceptions.ConnectionError as e:
+            if str(e) == "403 Client Error: Forbidden":
+                raise ValueError('Access Denied')
+            else:
+                raise
