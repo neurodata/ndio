@@ -39,7 +39,7 @@ class neurodata(Remote):
     ANNOTATION = ANNO = 'annotation'
 
     def __init__(self,
-                 user_token,
+                 user_token='placeholder',
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL,
                  meta_root="http://lims.neurodata.io/",
