@@ -1266,8 +1266,8 @@ class neurodata(Remote):
         """
         try:
             req = requests.get(url, headers={
-                'Authorization':'Token {}'.format(self._user_token)
-            }, verify = False)
+                'Authorization': 'Token {}'.format(self._user_token)
+            }, verify=False)
             if req.status_code is 403:
                 raise ValueError("Access Denied")
             else:

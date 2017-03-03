@@ -9,41 +9,42 @@ class TestgetURL(unittest.TestCase):
 
     def setUp(self):
         self.neurodata = neurodata(user_token = neurodata_token)
-        self.public = neurodata(user_token = "")
+        self.public = neurodata()
         self.test = neurodata(user_token = Default_token)
-
+        self.private_project = "https://localhost/nd/sd/private_neuro/info/"
+        self.public_project = "https://localhost/nd/sd/temp_neuro/info/"
     def test_masterToken(self):
         try:
-            req = self.neurodata.getURL("https://localhost/nd/sd/private_neuro/info/")
+            req = self.neurodata.getURL(self.private_project)
             self.assertEqual(req.status_code, 200)
         except ValueError as e:
-            print(e)
+            print(req.content)
         try:
-            req2 = self.neurodata.getURL("https://localhost/nd/sd/temp_neuro/info/")
+            req2 = self.neurodata.getURL(self.public_project)
             self.assertEqual(req2.status_code, 200)
         except ValueError as e:
             print(e)
 
     def test_testToken(self):
         try:
-            req = self.neurodata.getURL("https://localhost/nd/sd/private_neuro/info/")
+            req = self.neurodata.getURL(self.private_project)
             self.assertEqual(req.status_code, 403)
         except ValueError as e:
             print(e)
         try:
-            req2 = self.neurodata.getURL("https://localhost/nd/sd/temp_neuro/info/")
+            req2 = self.neurodata.getURL(self.public_project)
             self.assertEqual(req2.status_code, 200)
         except ValueError as e:
             print(e)
 
     def test_publicToken(self):
         try:
-            req = self.neurodata.getURL("https://localhost/nd/sd/private_neuro/info/")
+            req = self.neurodata.getURL(self.private_project)
             self.assertEqual(req.status_code, 403)
         except ValueError as e:
-            print(e)
+            print(req.content)
         try:
-            req2 = self.neurodata.getURL("https://localhost/nd/sd/temp_neuro/info/")
+            req2 = self.neurodata.getURL(self.public_project)
             self.assertEqual(req2.status_code, 200)
         except ValueError as e:
             print(e)
