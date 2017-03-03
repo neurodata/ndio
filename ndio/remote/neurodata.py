@@ -1265,10 +1265,13 @@ class neurodata(Remote):
             obj: The response object
         """
         try:
-            req = requests.get(url, verify=True, header={
-                'Authorization': 'Token {}'.format(token)
-            })
-            return req
+            req = requests.get(url, headers={
+                'Authorization':'Token {}'.format(self._user_token)
+            }, verify = False)
+            if req.status_code is 403:
+                raise ValueError("Access Denied")
+            else:
+                return req
         except requests.exceptions.ConnectionError as e:
             if str(e) == "403 Client Error: Forbidden":
                 raise ValueError('Access Denied')
