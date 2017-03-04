@@ -259,16 +259,7 @@ class neurodata(Remote):
         """
         return self.get_proj_info(token)['dataset']['description']
 
-    def create_project(self,
-                       project_name,
-                       dataset_name,
-                       hostname,
-                       s3backend,
-                       is_public,
-                       kvserver,
-                       kvengine,
-                       mdengine='MySQL',
-                       description=''):
+    def create_project(self, project_name, dataset_name, hostname, s3backend, is_public, kvserver, kvengine):
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) + "/project/{}/".format(project_name)
 
         json = {
@@ -278,8 +269,6 @@ class neurodata(Remote):
               "public" : is_public,
               "kvserver" : kvserver,
               "kvengine" : kvengine,
-              "mdengine" : mdengine,
-              "project_description" : description
             }
 
         req = self.post_url(url, json=json)
@@ -1246,18 +1235,7 @@ class neurodata(Remote):
         return True
 
     @_check_token
-    def create_channel(self,
-                       channel_name,
-                       project_name,
-                       dataset_name,
-                       channel_type,
-                       dtype,
-                       startwindow,
-                       endwindow,
-                       readonly,
-                       propagate=0,
-                       resolution=0,
-                       channel_description=''):
+    def create_channel(self, channel_name, project_name, dataset_name, channel_type, dtype, startwindow, endwindow, readonly):
         """
         Create a new channel on the Remote, using channel_data.
 
@@ -1390,7 +1368,9 @@ class neurodata(Remote):
                        dataset_description="",
                        is_public=0):
         """
-        Creates a dataset.
+        Creates a dataset given dataset 'name' and x,y,z image sizes and voxel
+        resolutions. User can choose if dataset should be public or not by
+        specifying 'is_public' as either bools 1 'true' or 0 'false'.
 
         Arguments:
             name (str): Name of dataset
