@@ -21,4 +21,4 @@
 # Temp Files
 *.swp
 *.swo
-
+build/*
