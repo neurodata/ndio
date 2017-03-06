@@ -3,12 +3,13 @@ import ndio.remote.neurodata as neurodata
 import ndio.remote.errors
 import numpy
 import random
+import test_settings
 
 
 class TestXYZZYX(unittest.TestCase):
 
     def setUp(self):
-        self.nd = neurodata()
+        self.nd = neurodata(hostname=test_settings.HOSTNAME)
         self.nd_force_chunk = neurodata(chunk_threshold=0)
 
     def test_post_get_no_chunk(self):

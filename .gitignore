@@ -22,8 +22,7 @@
 *.swp
 *.swo
 
-
-#Rahul Things
+#IDE Specific
 ./ndio/remote/testND.py
 .idea/*
-
+build/*

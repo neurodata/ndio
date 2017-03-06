@@ -39,7 +39,7 @@ class neurodata(Remote):
     ANNOTATION = ANNO = 'annotation'
 
     def __init__(self,
-                 user_token,
+                 user_token='placeholder',
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL,
                  meta_root="http://lims.neurodata.io/",
@@ -170,7 +170,7 @@ class neurodata(Remote):
         Returns:
             str[]: list of public tokens
         """
-        r = getURL(self.url() + "public_tokens/")
+        r = self.getURL(self.url() + "public_tokens/")
         return r.json()
 
     def get_public_datasets(self):
@@ -701,7 +701,7 @@ class neurodata(Remote):
         if neariso:
             url += "neariso/"
 
-        req = getURL(url)
+        req = self.getURL(url)
         if req.status_code is not 200:
             raise IOError("Bad server response for {}: {}: {}".format(
                           url,
@@ -882,7 +882,7 @@ class neurodata(Remote):
                                                          r_id, resolution))
 
         r_id = str(r_id)
-        res = getURL(url)
+        res = self.getURL(url)
 
         if res.status_code != 200:
             rt = self.get_ramon_metadata(token, channel, r_id)[r_id]['type']
@@ -925,7 +925,7 @@ class neurodata(Remote):
                 ramon_type = ramon.AnnotationType.get_int(ramon_type)
             url += "type/{}/".format(str(ramon_type))
 
-        req = getURL(url)
+        req = self.getURL(url)
 
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('No query results for token {}.'
@@ -1033,7 +1033,7 @@ class neurodata(Remote):
     def _get_ramon_batch(self, token, channel, ids, resolution):
         ids = [str(i) for i in ids]
         url = self.url("{}/{}/{}/json/".format(token, channel, ",".join(ids)))
-        req = getURL(url)
+        req = self.getURL(url)
 
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('No data for id {}.'.format(ids))
@@ -1088,8 +1088,8 @@ class neurodata(Remote):
             return results
 
     def _get_single_ramon_metadata(self, token, channel, anno_id):
-        req = getURL(self.url() +
-                     "{}/{}/{}/json/".format(token, channel, anno_id))
+        req = self.getURL(self.url() +
+                          "{}/{}/{}/json/".format(token, channel, anno_id))
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('No data for id {}.'.format(anno_id))
         return req.json()
@@ -1205,7 +1205,7 @@ class neurodata(Remote):
         """
         quantity = str(quantity)
         url = self.url("{}/{}/reserve/{}/".format(token, channel, quantity))
-        req = getURL(url)
+        req = self.getURL(url)
         if req.status_code is not 200:
             raise RemoteDataNotFoundError('Invalid req: ' + req.status_code)
         out = req.json()
@@ -1225,8 +1225,8 @@ class neurodata(Remote):
         Returns:
             json: The ID as returned by ndstore
         """
-        req = getURL(self.url() + "/merge/{}/"
-                     .format(','.join([str(i) for i in ids])))
+        req = self.getURL(self.url() + "/merge/{}/"
+                          .format(','.join([str(i) for i in ids])))
         if req.status_code is not 200:
             raise RemoteDataUploadError('Could not merge ids {}'.format(
                                         ','.join([str(i) for i in ids])))
@@ -1503,7 +1503,7 @@ class neurodata(Remote):
         if self.get_propagate_status(token, channel) != u'0':
             return
         url = self.url('{}/{}/setPropagate/1/'.format(token, channel))
-        req = getURL(url)
+        req = self.getURL(url)
         if req.status_code is not 200:
             raise RemoteDataUploadError('Propagate fail: {}'.format(req.text))
         return True
@@ -1521,7 +1521,7 @@ class neurodata(Remote):
             str: The status code
         """
         url = self.url('{}/{}/getPropagate/'.format(token, channel))
-        req = getURL(url)
+        req = self.getURL(url)
         if req.status_code is not 200:
             raise ValueError('Bad pair: {}/{}'.format(token, channel))
         return req.text
