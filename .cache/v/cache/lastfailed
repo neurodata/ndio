@@ -1,0 +1,4 @@
+{
+  "test_getURL.py::TestgetURL::test_publicToken": true, 
+  "test_getURL.py::TestgetURL::test_testToken": true
+}
