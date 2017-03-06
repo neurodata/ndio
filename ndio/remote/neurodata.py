@@ -269,6 +269,23 @@ class neurodata(Remote):
                        kvengine,
                        mdengine='MySQL',
                        description=''):
+        """
+        Creates a project with the given parameters.
+
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            hostname (str): Hostname
+            s3backend (str): S3 region to save the data in
+            is_public (int): 1 is public. 0 is not public.
+            kvserver (str): Server to store key value pairs in
+            kvengine (str): Database to store key value pairs in
+            mdengine (str): ???
+            description (str): Description for your project
+
+        Returns:
+            bool: True if project created, false if not created.
+        """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(
             dataset_name) + "/project/{}/".format(project_name)
 
@@ -293,6 +310,17 @@ class neurodata(Remote):
             return False
 
     def get_project(self, project_name, dataset_name):
+        """
+        Get details regarding a project given its name and dataset its linked
+        to.
+
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+
+        Returns:
+            dict: Project info
+        """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}/".format(project_name)
         req = self.getURL(url)
@@ -303,6 +331,16 @@ class neurodata(Remote):
             return req.json()
 
     def delete_project(self, project_name, dataset_name):
+        """
+        Deletes a project once given its name and its related dataset.
+
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+
+        Returns:
+            bool: True if project deleted, False if not.
+        """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}/".format(project_name)
         req = self.delete_url(url)
@@ -315,6 +353,15 @@ class neurodata(Remote):
             return False
 
     def list_projects(self, dataset_name):
+        """
+        Lists a set of projects related to a dataset.
+
+        Arguments:
+            dataset_name (str): Dataset name to search projects for
+
+        Returns:
+            dict: Projects found based on dataset query
+        """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/"
 
@@ -1263,11 +1310,17 @@ class neurodata(Remote):
         Create a new channel on the Remote, using channel_data.
 
         Arguments:
-            token (str): The token the new channel should be added to
-            name (str): The name of the channel to add
+            channel_name (str): Channel name
+            project_name (str): Project name
+            dataset_name (str): Dataset name
             channel_type (str): Type of the channel (e.g. `neurodata.IMAGE`)
             dtype (str): The datatype of the channel's data (e.g. `uint8`)
+            startwindow (int): Window to start in
+            endwindow (int): Window to end in
             readonly (bool): Can others write to this channel?
+            propagate (int): Allow propogation? 1 is True, 0 is False
+            resolution (int): Resolution scaling
+            channel_description (str): Your description of the channel
 
         Returns:
             bool: `True` if successful, `False` otherwise.
@@ -1308,6 +1361,18 @@ class neurodata(Remote):
             return False
 
     def get_channel(self, channel_name, project_name, dataset_name):
+        """
+        Gets info about a channel given its name, name of its project
+        , and name of its dataset.
+
+        Arguments:
+            channel_name (str): Channel name
+            project_name (str): Project name
+            dataset_name (str): Dataset name
+
+        Returns:
+            dict: Channel info
+        """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
@@ -1320,6 +1385,18 @@ class neurodata(Remote):
             return req.json()
 
     def delete_channel(self, channel_name, project_name, dataset_name):
+        """
+        Deletes a channel given its name, name of its project
+        , and name of its dataset.
+
+        Arguments:
+            channel_name (str): Channel name
+            project_name (str): Project name
+            dataset_name (str): Dataset name
+
+        Returns:
+            bool: True if channel deleted, False if not
+        """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
@@ -1404,11 +1481,17 @@ class neurodata(Remote):
             x_vox_res (float): x voxel resolution
             y_vox_res (float): y voxel resolution
             z_vox_res (float): z voxel resolution
+            x_offset (int): x offset amount
+            y_offset (int): y offset amount
+            z_offset (int): z offset amount
+            scaling_levels (int): Level of resolution scaling
+            scaling_option (int): Z slices is 0 or Isotropic is 1
+            dataset_description (str): Your description of the dataset
             is_public (int): 1 'true' or 0 'false' for viewability of data set
                 in public
 
         Returns:
-            bool: Process completed succesfully or not
+            bool: True if dataset created, False if not
         """
         url = self.url()[:-4] + "/resource/dataset/{}".format(name)
         json = {
@@ -1452,7 +1535,7 @@ class neurodata(Remote):
         will retrieve all public datasets in cloud. 'False' will get user's
         public datasets.
 
-        Arugments:
+        Arguments:
             get_global_public (bool): True if user wants all public datasets in
                                       cloud. False if user wants only their
                                       public datasets.
@@ -1475,10 +1558,10 @@ class neurodata(Remote):
     def delete_dataset(self, name):
         """
         Arguments:
-            dataset_name (str): Name of dataset to delete
+            name (str): Name of dataset to delete
 
         Returns:
-            bool: Process completed succesfully or not
+            bool: True if dataset deleted, False if not
         """
         url = self.url()[:-4] + "/resource/dataset/{}".format(name)
         req = self.delete_url(url)
