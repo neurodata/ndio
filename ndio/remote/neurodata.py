@@ -233,7 +233,7 @@ class neurodata(Remote):
 
         return requests.post(url,
                              headers={
-                                'Authorization': 'Token {}'.format(token)},
+                                 'Authorization': 'Token {}'.format(token)},
                              json=json,
                              verify=False,)
 
@@ -243,7 +243,7 @@ class neurodata(Remote):
 
         return requests.delete(url,
                                headers={
-                                 'Authorization': 'Token {}'.format(token)},
+                                   'Authorization': 'Token {}'.format(token)},
                                verify=False,)
 
     @_check_token
@@ -269,18 +269,19 @@ class neurodata(Remote):
                        kvengine,
                        mdengine='MySQL',
                        description=''):
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) + "/project/{}/".format(project_name)
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(
+            dataset_name) + "/project/{}/".format(project_name)
 
         json = {
-              "project_name" : project_name,
-              "host" : hostname,
-              "s3backend" : s3backend,
-              "public" : is_public,
-              "kvserver" : kvserver,
-              "kvengine" : kvengine,
-              "mdengine" : mdengine,
-              "project_description" : description
-            }
+            "project_name": project_name,
+            "host": hostname,
+            "s3backend": s3backend,
+            "public": is_public,
+            "kvserver": kvserver,
+            "kvengine": kvengine,
+            "mdengine": mdengine,
+            "project_description": description
+        }
 
         req = self.post_url(url, json=json)
 
@@ -292,8 +293,8 @@ class neurodata(Remote):
             return False
 
     def get_project(self, project_name, dataset_name):
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) \
-        + "/project/{}/".format(project_name)
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}/".format(project_name)
         req = self.getURL(url)
 
         if req.status_code is not 200:
@@ -302,8 +303,8 @@ class neurodata(Remote):
             return req.json()
 
     def delete_project(self, project_name, dataset_name):
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) \
-        + "/project/{}/".format(project_name)
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}/".format(project_name)
         req = self.delete_url(url)
 
         if req.status_code is not 204:
@@ -314,8 +315,8 @@ class neurodata(Remote):
             return False
 
     def list_projects(self, dataset_name):
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) \
-        + "/project/"
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/"
 
         req = self.getURL(url)
 
@@ -1287,15 +1288,16 @@ class neurodata(Remote):
 
         # Good job! You supplied very nice arguments.
 
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) \
-        + "/project/{}".format(project_name) + "/channel/{}/".format(channel_name)
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name) + \
+            "/channel/{}/".format(channel_name)
         json = {
-              "channel_name" : channel_name,
-              "channel_type" : channel_type,
-              "channel_datatype" : dtype,
-              "startwindow" : startwindow,
-              "endwindow" : endwindow,
-            }
+            "channel_name": channel_name,
+            "channel_type": channel_type,
+            "channel_datatype": dtype,
+            "startwindow": startwindow,
+            "endwindow": endwindow,
+        }
         req = self.post_url(url, json=json)
 
         if req.status_code is not 201:
@@ -1306,8 +1308,9 @@ class neurodata(Remote):
             return False
 
     def get_channel(self, channel_name, project_name, dataset_name):
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) \
-        + "/project/{}".format(project_name) + "/channel/{}/".format(channel_name)
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name) + \
+            "/channel/{}/".format(channel_name)
 
         req = self.getURL(url)
 
@@ -1317,8 +1320,9 @@ class neurodata(Remote):
             return req.json()
 
     def delete_channel(self, channel_name, project_name, dataset_name):
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name) \
-        + "/project/{}".format(project_name) + "/channel/{}/".format(channel_name)
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name) + \
+            "/channel/{}/".format(channel_name)
 
         req = self.delete_url(url)
 
@@ -1363,7 +1367,7 @@ class neurodata(Remote):
                 "readonly": channel_new.readonly * 1
             }
         req = requests.post(self.url("/{}/project/".format(dataset) +
-                            "{}".format(token)),
+                                     "{}".format(token)),
                             json={"channels": {channels}})
 
         if req.status_code is not 201:
@@ -1433,7 +1437,6 @@ class neurodata(Remote):
         else:
             return False
 
-
     def get_dataset(self, name):
         url = self.url()[:-4] + "/resource/dataset/{}".format(name)
         req = self.getURL(url)
@@ -1459,7 +1462,8 @@ class neurodata(Remote):
 
         """
         appending = ""
-        if get_global_public: appending = "public"
+        if get_global_public:
+            appending = "public"
         url = self.url()[:-4] + "/resource/{}dataset/".format(appending)
         req = self.getURL(url)
 
