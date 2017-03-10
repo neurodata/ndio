@@ -44,5 +44,6 @@ script:
     - sudo ndstore/setup/ndstore_install.sh
     - cd /home/neurodata/ndstore/test
     - sudo py.test
-    - cd
+    - cd $TRAVIS_BUILD_DIR
+    - cd tests
     - python -m unittest discover
