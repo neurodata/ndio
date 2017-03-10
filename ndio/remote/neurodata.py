@@ -210,7 +210,7 @@ class neurodata(Remote):
 
     def getURL(self, url, token=''):
         """
-        Get the propagate status for a token/channel pair.
+        Get a response object for a given url.
 
         Arguments:
             url (str): The url make a get to
@@ -228,6 +228,18 @@ class neurodata(Remote):
                             verify=False,)
 
     def post_url(self, url, token='', json={}):
+        """
+        Returns a post resquest object taking in a url, user token, and possible
+        json information.
+
+        Arguments:
+            url (str): The url to make post to
+            token (str): The authentication token
+            json (dict): json info to send
+
+        Returns:
+            obj: Post request object
+        """
         if (token == ''):
             token = self._user_token
 
@@ -238,6 +250,16 @@ class neurodata(Remote):
                              verify=False,)
 
     def delete_url(self, url, token=''):
+        """
+        Returns a delete resquest object taking in a url and user token.
+
+        Arguments:
+            url (str): The url to make post to
+            token (str): The authentication token
+
+        Returns:
+            obj: Delete request object
+        """
         if (token == ''):
             token = self._user_token
 
@@ -1521,6 +1543,15 @@ class neurodata(Remote):
             return False
 
     def get_dataset(self, name):
+        """
+        Returns info regarding a particular dataset.
+
+        Arugments:
+            name (str): Dataset name
+
+        Returns:
+            dict: Dataset information
+        """
         url = self.url()[:-4] + "/resource/dataset/{}".format(name)
         req = self.getURL(url)
 
