@@ -229,8 +229,8 @@ class neurodata(Remote):
 
     def post_url(self, url, token='', json={}):
         """
-        Returns a post resquest object taking in a url, user token, and possible
-        json information.
+        Returns a post resquest object taking in a url, user token, and
+        possible json information.
 
         Arguments:
             url (str): The url to make post to

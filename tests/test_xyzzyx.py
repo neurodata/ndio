@@ -19,6 +19,7 @@ class TestXYZZYX(unittest.TestCase):
         #self.nd.create_channel('image1','ndio_demos', 'demo1', 'image','unit8', 0, 500, 0)
 
     def test_post_get_no_chunk(self):
+        import pdb; pdb.set_trace()
         token = 'ndio_demos'
         channel = 'image1'
         cutout = numpy.zeros((10, 10, 10)).astype(int)
