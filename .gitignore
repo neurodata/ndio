@@ -21,4 +21,8 @@
 # Temp Files
 *.swp
 *.swo
+
+#IDE Specific
+./ndio/remote/testND.py
+.idea/*
 build/*
