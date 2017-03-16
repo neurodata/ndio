@@ -285,10 +285,10 @@ class neurodata(Remote):
                        project_name,
                        dataset_name,
                        hostname,
-                       s3backend,
                        is_public,
-                       kvserver,
-                       kvengine,
+                       s3backend=0,
+                       kvserver='localhost',
+                       kvengine='MySQL',
                        mdengine='MySQL',
                        description=''):
         """
