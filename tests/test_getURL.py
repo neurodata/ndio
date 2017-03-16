@@ -1,18 +1,19 @@
-import unittest
 import ndio.remote.neurodata as neurodata
 import test_settings
 
-neurodata_token = "1524d74ec9a915536061af8fd5b51f2cde7de9a5"
-test_token = "b1876fab697e519e0cfe4acc9ca0496bf2889e17"
-Default_token = ""
-HOSTNAME = hostname=test_settings.HOSTNAME
+
+
+
+HOSTNAME = test_settings.HOSTNAME
+NEURODATA = test_settings.NEURODATA
+TEST = test_settings.TEST
 
 class TestgetURL(unittest.TestCase):
 
     def setUp(self):
-        self.neurodata = neurodata(user_token = neurodata_token, hostname=HOSTNAME)
+        self.neurodata = neurodata(user_token=NEURODATA, hostname=HOSTNAME)
         self.public = neurodata(hostname=HOSTNAME)
-        self.test = neurodata(user_token = Default_token, hostname=HOSTNAME)
+        self.test = neurodata(user_token=TEST, hostname=HOSTNAME)
         self.private_project = "https://{}/sd/private_neuro/info/".format(HOSTNAME)
         self.public_project = "https://{}/sd/public_neuro/info/".format(HOSTNAME)
         self.private_test_project = "https://{}/sd/private_test_neuro/info/".format(HOSTNAME)

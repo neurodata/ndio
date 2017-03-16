@@ -62,6 +62,11 @@ class TestgetURL(unittest.TestCase):
             self.assertEqual(req2.status_code, 200)
         except ValueError as e:
             print(e)
+        try:
+            req3 = self.test.getURL(self.private_test_project)
+            self.assertEqual(req3.status_code, 403)
+        except ValueError as e:
+            print(e)
 
 if __name__ == '__main__':
     unittest.main()

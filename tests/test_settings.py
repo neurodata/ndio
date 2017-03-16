@@ -11,5 +11,7 @@ import sys
 DEV_MODE = True
 
 # server to check against
-HOSTNAME = 'localhost:8080'
-#HOSTNAME = 'localhost/nd'
+# HOSTNAME = 'localhost:8080'
+HOSTNAME = 'localhost/nd'
+NEURODATA = "1524d74ec9a915536061af8fd5b51f2cde7de9a5"
+TEST = "b1876fab697e519e0cfe4acc9ca0496bf2889e17"
