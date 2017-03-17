@@ -13,5 +13,5 @@ DEV_MODE = True
 # server to check against
 # HOSTNAME = 'localhost:8080'
 HOSTNAME = 'localhost/nd'
-NEURODATA = open('/tmp/neurotoken.txt', 'r').read()
-TEST = open('/tmp/testtoken.txt', 'r').read()
+NEURODATA = open('/tmp/token_super', 'r').read()
+TEST = open('/tmp/token_user', 'r').read()

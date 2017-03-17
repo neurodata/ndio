@@ -2,8 +2,6 @@ import ndio.remote.neurodata as neurodata
 import test_settings
 import unittest
 
-
-
 HOSTNAME = test_settings.HOSTNAME
 NEURODATA = test_settings.NEURODATA
 TEST = test_settings.TEST
