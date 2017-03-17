@@ -406,6 +406,7 @@ class neurodata(Remote):
             JSON: representation of proj_info
         """
         r = self.getURL(self.url() + "{}/info/".format(token))
+        print r, "\n\n"
         return r.json()
 
     @_check_token
@@ -789,7 +790,7 @@ class neurodata(Remote):
                                       x_start, x_stop, y_start, y_stop,
                                       z_start, z_stop, neariso=False):
 
-        url = self.url() + "{}/{}/blosc/{}/{},{}/{},{}/{},{}/".format(
+        url = self.url() + "{}/{}/blosc/{}/{},{}/{},{}/{},{}/0,1/".format(
             token, channel, resolution,
             x_start, x_stop,
             y_start, y_stop,
@@ -914,17 +915,24 @@ class neurodata(Remote):
         """
         data = numpy.expand_dims(data, axis=0)
         blosc_data = blosc.pack_array(data)
-
-        url = self.url("{}/{}/blosc/{}/{},{}/{},{}/{},{}/".format(
+        url = self.url("{}/{}/blosc/{}/{},{}/{},{}/{},{}/0,0/".format(
             token, channel,
             resolution,
             x_start, x_start + data.shape[3],
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1]
         ))
-        req = requests.post(url, data=blosc_data, headers={
-            'Content-Type': 'application/octet-stream'
-        })
+        print self._user_token
+        req = requests.post(url,
+                            data=blosc_data,
+                            headers={
+                                'Content-Type':
+                                    'application/octet-stream',
+                                'Authorization':
+                                    'Token {}'.format(self._user_token)},
+                            verify=False)
+
+        print url, req, "\n\n"
 
         if req.status_code is not 200:
             raise RemoteDataUploadError(req.text)
@@ -1325,7 +1333,9 @@ class neurodata(Remote):
                        startwindow,
                        endwindow,
                        readonly,
-                       propagate=0,
+                       start_time=0,
+                       end_time=0,
+                       propagate=1,
                        resolution=0,
                        channel_description=''):
         """
@@ -1354,7 +1364,7 @@ class neurodata(Remote):
         """
         self._check_channel(channel_name)
 
-        if channel_type not in ['image', 'annotation']:
+        if channel_type not in ['image', 'annotation', 'timeseries']:
             raise ValueError('Channel type must be ' +
                              'neurodata.IMAGE or neurodata.ANNOTATION.')
 
@@ -1363,7 +1373,7 @@ class neurodata(Remote):
 
         # Good job! You supplied very nice arguments.
 
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url()[:-4] + "/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
         json = {
@@ -1372,6 +1382,12 @@ class neurodata(Remote):
             "channel_datatype": dtype,
             "startwindow": startwindow,
             "endwindow": endwindow,
+            'starttime': start_time,
+            'endtime': end_time,
+            'readonly': readonly,
+            'propagate': propagate,
+            'resolution': resolution,
+            'channel_description': channel_description
         }
         req = self.post_url(url, json=json)
 
@@ -1395,7 +1411,7 @@ class neurodata(Remote):
         Returns:
             dict: Channel info
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url()[:-4] + "/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
 
@@ -1419,7 +1435,7 @@ class neurodata(Remote):
         Returns:
             bool: True if channel deleted, False if not
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url()[:-4] + "/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
 

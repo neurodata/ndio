@@ -11,5 +11,5 @@ import sys
 DEV_MODE = True
 
 # server to check against
-# SITE_HOST = 'localhost:8080'
-HOSTNAME = 'localhost/nd'
+HOSTNAME = 'localhost:8080'
+#HOSTNAME = 'localhost'
