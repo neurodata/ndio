@@ -1,4 +1,0 @@
-{
-  "tests/test_getURL.py::TestgetURL::test_masterToken": true, 
-  "tests/test_getURL.py::TestgetURL::test_testToken": true
-}

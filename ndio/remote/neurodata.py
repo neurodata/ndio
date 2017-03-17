@@ -227,7 +227,10 @@ class neurodata(Remote):
             else:
                 return req
         except requests.exceptions.ConnectionError as e:
-            raise e
+            if str(e) == '403 Client Error: Forbidden':
+                raise ValueError('Access Denied')
+            else:
+                raise e
 
     def post_url(self, url, token='', json={}):
         """

@@ -1,6 +1,6 @@
 import ndio.remote.neurodata as neurodata
 import test_settings
-
+import unittest
 
 
 
@@ -20,7 +20,7 @@ class TestgetURL(unittest.TestCase):
     def test_masterToken(self):
         try:
             req = self.neurodata.getURL(self.private_project)
-            print(req.content)
+            print(req.status_code)
             self.assertEqual(req.status_code, 200)
         except ValueError as e:
             print(req.content)
@@ -57,7 +57,7 @@ class TestgetURL(unittest.TestCase):
     def test_publicToken(self):
         try:
             req = self.public.getURL(self.private_project)
-            self.assertEqual(req.status_code, 403)
+            self.assertEqual(req.status_code, 401)
         except ValueError as e:
             print(req.content)
         try:
