@@ -11,8 +11,8 @@ class TestXYZZYX(unittest.TestCase):
     def setUp(self):
         self.token_user = '043813bf95d9d5be2bb19448d5a9337db086c559'
         hostname = test_settings.HOSTNAME
-        self.nd = neurodata(self.token_user,hostname=hostname)
-        self.nd_force_chunk = neurodata(self.token_user,hostname=hostname,
+        self.nd = neurodata(self.token_user, hostname=hostname)
+        self.nd_force_chunk = neurodata(self.token_user, hostname=hostname,
                                         chunk_threshold=0)
         dataset_name = 'demo1'
         project_name = 'ndio_demos'
@@ -20,19 +20,19 @@ class TestXYZZYX(unittest.TestCase):
         channel_name = 'image1'
         self.nd.create_dataset(dataset_name, 100, 100, 100, 1.0, 1.0, 1.0)
         self.nd.create_project(project_name, dataset_name, 'localhost',
-                               1, 1,'localhost','Redis')
+                               1, 1, 'localhost', 'Redis')
         self.nd.create_project_token(dataset_name, project_name,
                                      project_token, 1)
-        self.nd.create_channel(channel_name,project_name,
+        self.nd.create_channel(channel_name, project_name,
                                dataset_name, 'timeseries',
-                               'uint8', 0, 500, 0,0,0)
+                               'uint8', 0, 500, 0, 0, 0)
 
     def tearDown(self):
         dataset_name = 'demo1'
         project_name = 'ndio_demos'
         project_token = 'test_token'
         channel_name = 'image1'
-        self.nd.delete_channel(channel_name,project_name, dataset_name)
+        self.nd.delete_channel(channel_name, project_name, dataset_name)
         self.nd.delete_project(project_name, dataset_name)
         self.nd.delete_dataset(dataset_name)
 

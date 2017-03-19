@@ -418,7 +418,7 @@ class neurodata(Remote):
             "public": is_public
         }
 
-        req = self.post_url(url,json=json)
+        req = self.post_url(url, json=json)
 
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
@@ -971,7 +971,6 @@ class neurodata(Remote):
                                 'Authorization':
                                     'Token {}'.format(self._user_token)},
                             verify=False)
-
 
         if req.status_code is not 200:
             raise RemoteDataUploadError(req.text)

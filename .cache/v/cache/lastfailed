@@ -1,4 +1,1 @@
-{
-  "tests/test_resources_api.py::TestResourcesApi::test_get_channel": true, 
-  "tests/test_xyzzyx.py::TestXYZZYX::test_post_get_no_chunk": true
-}
+{}
