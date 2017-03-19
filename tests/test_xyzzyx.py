@@ -26,8 +26,6 @@ class TestXYZZYX(unittest.TestCase):
         self.nd.create_channel(channel_name,project_name,
                                dataset_name, 'timeseries',
                                'uint8', 0, 500, 0,0,0)
-        #print self.nd.get_channel('image1','ndio_demos','demo1')
-        #print self.nd.get_project('image1','ndio_demos')
 
     def tearDown(self):
         dataset_name = 'demo1'
@@ -65,6 +63,4 @@ class TestXYZZYX(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    #t = TestXYZZYX()
-    #t.setUp()
     unittest.main()

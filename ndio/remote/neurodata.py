@@ -707,6 +707,7 @@ class neurodata(Remote):
                    x_start, x_stop,
                    y_start, y_stop,
                    z_start, z_stop,
+                   t_start=0, t_stop=1,
                    resolution=1,
                    block_size=DEFAULT_BLOCK_SIZE,
                    neariso=False):
@@ -757,7 +758,9 @@ class neurodata(Remote):
             vol = dl_func(token, channel, resolution,
                           x_start, x_stop,
                           y_start, y_stop,
-                          z_start, z_stop, neariso=neariso)
+                          z_start, z_stop,
+                          t_start, t_stop,
+                          neariso=neariso)
             vol = numpy.rollaxis(vol, 1)
             vol = numpy.rollaxis(vol, 2)
             return vol
@@ -776,7 +779,9 @@ class neurodata(Remote):
                 data = dl_func(token, channel, resolution,
                                b[0][0], b[0][1],
                                b[1][0], b[1][1],
-                               b[2][0], b[2][1], neariso=neariso)
+                               b[2][0], b[2][1],
+                               0, 1,
+                               neariso=neariso)
 
                 if b == blocks[0]:  # first block
                     vol = numpy.zeros(((z_stop - z_start),
@@ -793,12 +798,14 @@ class neurodata(Remote):
 
     def _get_cutout_no_chunking(self, token, channel, resolution,
                                 x_start, x_stop, y_start, y_stop,
-                                z_start, z_stop, neariso=False):
-        url = self.url() + "{}/{}/hdf5/{}/{},{}/{},{}/{},{}/".format(
+                                z_start, z_stop, t_start, t_stop,
+                                neariso=False):
+        url = self.url() + "{}/{}/hdf5/{}/{},{}/{},{}/{},{}/{},{}".format(
             token, channel, resolution,
             x_start, x_stop,
             y_start, y_stop,
-            z_start, z_stop
+            z_start, z_stop,
+            t_start, t_stop,
         )
 
         if neariso:
@@ -820,13 +827,15 @@ class neurodata(Remote):
 
     def _get_cutout_blosc_no_chunking(self, token, channel, resolution,
                                       x_start, x_stop, y_start, y_stop,
-                                      z_start, z_stop, neariso=False):
+                                      z_start, z_stop, t_start, t_stop,
+                                      neariso=False):
 
-        url = self.url() + "{}/{}/blosc/{}/{},{}/{},{}/{},{}/0,1/".format(
+        url = self.url() + "{}/{}/blosc/{}/{},{}/{},{}/{},{}/{},{}/".format(
             token, channel, resolution,
             x_start, x_stop,
             y_start, y_stop,
-            z_start, z_stop
+            z_start, z_stop,
+            t_start, t_stop,
         )
 
         if neariso:
@@ -954,7 +963,6 @@ class neurodata(Remote):
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1]
         ))
-        print self._user_token
         req = requests.post(url,
                             data=blosc_data,
                             headers={
@@ -964,7 +972,6 @@ class neurodata(Remote):
                                     'Token {}'.format(self._user_token)},
                             verify=False)
 
-        print url, req, "\n\n"
 
         if req.status_code is not 200:
             raise RemoteDataUploadError(req.text)
