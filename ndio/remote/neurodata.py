@@ -963,14 +963,10 @@ class neurodata(Remote):
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1]
         ))
-        req = requests.post(url,
-                            data=blosc_data,
-                            headers={
-                                'Content-Type':
-                                    'application/octet-stream',
-                                'Authorization':
-                                    'Token {}'.format(self._user_token)},
-                            verify=False)
+
+        req = self.post_url(url, data=blosc_data, headers={
+            'Content-Type': 'application/octet-stream'
+        })
 
         if req.status_code is not 200:
             raise RemoteDataUploadError(req.text)
