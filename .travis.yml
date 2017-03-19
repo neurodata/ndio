@@ -37,7 +37,6 @@ cache:
     - pip
     - apt
 script:
-    - find . -name \*.py -exec pep8 {} +
     - ./stylecheck +
     - echo "Branch $TRAVIS_BRANCH"
     - git clone http://github.com/neurodata/ndstore

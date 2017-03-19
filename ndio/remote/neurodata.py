@@ -285,10 +285,10 @@ class neurodata(Remote):
                        project_name,
                        dataset_name,
                        hostname,
-                       s3backend,
                        is_public,
-                       kvserver,
-                       kvengine,
+                       s3backend=0,
+                       kvserver='localhost',
+                       kvengine='MySQL',
                        mdengine='MySQL',
                        description=''):
         """
@@ -326,7 +326,8 @@ class neurodata(Remote):
 
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
-        if req.content == "":
+        if req.content == "" or req.content == b'':
+
             return True
         else:
             return False
@@ -369,7 +370,7 @@ class neurodata(Remote):
 
         if req.status_code is not 204:
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
-        if req.content == "":
+        if req.content == "" or req.content == b'':
             return True
         else:
             return False
@@ -394,6 +395,38 @@ class neurodata(Remote):
         else:
             return req.json()
 
+    def create_project_token(self, dataset_name, project_name,
+                             token_name, is_public):
+        """
+        Creates and assigns a new token for a project.
+
+        Arguments:
+            dataset_name (str):
+            project_name (str):
+            token_name (str):
+            is_public (int):
+
+        Returns:
+            bool: True if project deleted. False if not.
+        """
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name) \
+            + "/token/{}/".format(token_name)
+
+        json = {
+            "token_name": token_name,
+            "public": is_public
+        }
+
+        req = self.post_url(url,json=json)
+
+        if req.status_code is not 201:
+            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
+        if req.content == "" or req.content == b'':
+            return True
+        else:
+            return False
+
     @_check_token
     def get_proj_info(self, token):
         """
@@ -406,7 +439,6 @@ class neurodata(Remote):
             JSON: representation of proj_info
         """
         r = self.getURL(self.url() + "{}/info/".format(token))
-        print r, "\n\n"
         return r.json()
 
     @_check_token
@@ -1332,10 +1364,10 @@ class neurodata(Remote):
                        dtype,
                        startwindow,
                        endwindow,
-                       readonly,
+                       readonly=0,
                        start_time=0,
                        end_time=0,
-                       propagate=1,
+                       propagate=0,
                        resolution=0,
                        channel_description=''):
         """
@@ -1349,7 +1381,7 @@ class neurodata(Remote):
             dtype (str): The datatype of the channel's data (e.g. `uint8`)
             startwindow (int): Window to start in
             endwindow (int): Window to end in
-            readonly (bool): Can others write to this channel?
+            readonly (int): Can others write to this channel?
             propagate (int): Allow propogation? 1 is True, 0 is False
             resolution (int): Resolution scaling
             channel_description (str): Your description of the channel
@@ -1373,7 +1405,7 @@ class neurodata(Remote):
 
         # Good job! You supplied very nice arguments.
 
-        url = self.url()[:-4] + "/resource/dataset/{}".format(dataset_name)\
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
         json = {
@@ -1393,7 +1425,7 @@ class neurodata(Remote):
 
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
-        if req.content == "":
+        if req.content == "" or req.content == b'':
             return True
         else:
             return False
@@ -1411,7 +1443,7 @@ class neurodata(Remote):
         Returns:
             dict: Channel info
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(dataset_name)\
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
 
@@ -1435,7 +1467,7 @@ class neurodata(Remote):
         Returns:
             bool: True if channel deleted, False if not
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(dataset_name)\
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
 
@@ -1443,7 +1475,7 @@ class neurodata(Remote):
 
         if req.status_code is not 204:
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
-        if req.content == "":
+        if req.content == "" or req.content == b'':
             return True
         else:
             return False
@@ -1553,7 +1585,7 @@ class neurodata(Remote):
 
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
-        if req.content == "":
+        if req.content == "" or req.content == b'':
             return True
         else:
             return False
@@ -1615,7 +1647,7 @@ class neurodata(Remote):
 
         if req.status_code is not 204:
             raise RemoteDataUploadError('Could not delete {}'.format(req.text))
-        if req.content == "":
+        if req.content == "" or req.content == b'':
             return True
         else:
             return False
