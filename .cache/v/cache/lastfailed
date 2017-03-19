@@ -1,4 +1,1 @@
-{
-  "tests/test_xyzzyx.py::TestXYZZYX::test_post_get_chunk": true, 
-  "tests/test_xyzzyx.py::TestXYZZYX::test_post_get_no_chunk": true
-}
+{}
