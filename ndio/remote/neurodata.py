@@ -953,7 +953,7 @@ class neurodata(Remote):
             z_start, z_start + data.shape[1]
         ))
 
-        req = post_url(url, data=compressed, headers={
+        req = self.post_url(url, data=compressed, headers={
             'Content-Type': 'application/octet-stream'
         })
 
