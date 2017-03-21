@@ -1,5 +1,5 @@
 import unittest
-import ndio.remote.neurodata as nd
+from ndio.remote.resources import resources as nd
 import numpy
 import json
 import test_settings
