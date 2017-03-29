@@ -23,11 +23,11 @@ try:
 except ImportError:
     import urllib2
 
-from .neurodata import neurodata as nd
-from .neurodata import DEFAULT_HOSTNAME
-from .neurodata import DEFAULT_SUFFIX
-from .neurodata import DEFAULT_PROTOCOL
-from .neurodata import DEFAULT_BLOCK_SIZE
+from .neuroRemote import neuroRemote as nd
+from .neuroRemote import DEFAULT_HOSTNAME
+from .neuroRemote import DEFAULT_SUFFIX
+from .neuroRemote import DEFAULT_PROTOCOL
+from .neuroRemote import DEFAULT_BLOCK_SIZE
 
 class resources(nd):
 

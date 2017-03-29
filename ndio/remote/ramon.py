@@ -23,27 +23,26 @@ try:
 except ImportError:
     import urllib2
 
-from .neurodata import neurodata
-from .neurodata import DEFAULT_HOSTNAME
-from .neurodata import DEFAULT_SUFFIX
-from .neurodata import DEFAULT_PROTOCOL
-from .neurodata import DEFAULT_BLOCK_SIZE
+from .neuroRemote import neuroRemote
+from .neuroRemote import DEFAULT_HOSTNAME
+from .neuroRemote import DEFAULT_SUFFIX
+from .neuroRemote import DEFAULT_PROTOCOL
+from .neuroRemote import DEFAULT_BLOCK_SIZE
 
-class ramon(neurodata):
+class ramon(neuroRemote):
     def __init__(self,
                  user_token='placeholder',
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL,
                  meta_root="http://lims.neurodata.io/",
                  meta_protocol=DEFAULT_PROTOCOL, **kwargs):
-        super(resources, self).__init__(user_token,
+        super(ramon, self).__init__(user_token,
                                         hostname,
                                         protocol,
                                         meta_root,
                                         meta_protocol, **kwargs)
 
 
-        @_check_token
         def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
             """
             Get the bounding box for a RAMON object (specified by ID).
@@ -79,7 +78,7 @@ class ramon(neurodata):
                         origin[1], origin[1] + size[1],
                         origin[2], origin[2] + size[2])
 
-        @_check_token
+
         def get_ramon_ids(self, token, channel, ramon_type=None):
             """
             Return a list of all IDs available for download from this token and
@@ -119,7 +118,7 @@ class ramon(neurodata):
                     return [i for i in h5file['ANNOIDS']]
                 raise IOError("Could not successfully mock HDF5 file for parsing.")
 
-        @_check_token
+
         def get_ramon(self, token, channel, ids, resolution=0,
                       include_cutout=False, sieve=None, batch_size=100):
             """
@@ -144,7 +143,7 @@ class ramon(neurodata):
                     ```
                     You can then pass this to get_ramon like this:
                     ```
-                    ndio.remote.neurodata.get_ramon( . . . , sieve=is_even_id)
+                    ndio.remote.neuroRemote.get_ramon( . . . , sieve=is_even_id)
                     ```
                 batch_size (int : 100): The amount of RAMON objects to download at
                     a time. If this is greater than 100, we anticipate things going
@@ -219,7 +218,7 @@ class ramon(neurodata):
             else:
                 return ramon.from_json(req.json())
 
-        @_check_token
+
         def get_ramon_metadata(self, token, channel, anno_id):
             """
             Download a RAMON object by ID. `anno_id` can be a string `"123"`, an
@@ -273,7 +272,7 @@ class ramon(neurodata):
                 raise RemoteDataNotFoundError('No data for id {}.'.format(anno_id))
             return req.json()
 
-        @_check_token
+
         def delete_ramon(self, token, channel, anno):
             """
             Deletes an annotation from the server. Probably you should be careful
@@ -307,7 +306,7 @@ class ramon(neurodata):
             else:
                 return True
 
-        @_check_token
+
         def post_ramon(self, token, channel, r, batch_size=100):
             """
             Posts a RAMON object to the Remote.

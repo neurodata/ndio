@@ -1,5 +1,5 @@
 import unittest
-#import ndio.remote.neurodata as neurodata
+import ndio.remote.neurodata as neurodata
 from ndio.remote.data import data
 from ndio.remote.resources import resources
 import ndio.remote.errors
@@ -13,28 +13,32 @@ class TestXYZZYX(unittest.TestCase):
     def setUp(self):
         self.token_user = '043813bf95d9d5be2bb19448d5a9337db086c559'
         hostname = test_settings.HOSTNAME
-        self.resources = resources(self.token_user, hostname=hostname)
-        self.data_utils = data(self.token_user, hostname=hostname,
-                                        chunk_threshold=0)
+        self.resources = neurodata(self.token_user, hostname=hostname)
+        self.data_utils = neurodata(self.token_user, hostname=hostname,
+                                    chunk_threshold=0)
         dataset_name = 'demo1'
         project_name = 'ndio_demos'
         project_token = 'test_token'
         channel_name = 'image1'
-        self.resources.create_dataset(dataset_name, 100, 100, 100, 1.0, 1.0, 1.0)
-        self.resources.create_project(project_name, dataset_name, 'localhost',
-                               1, 1, 'localhost', 'Redis')
+        self.resources.create_dataset(dataset_name, 100, 100, 100, 1.0,
+                                      1.0,
+                                      1.0)
+        self.resources.create_project(project_name, dataset_name,
+                                      'localhost',
+                                      1, 1, 'localhost', 'Redis')
         self.resources.create_project_token(dataset_name, project_name,
-                                     project_token, 1)
+                                            project_token, 1)
         self.resources.create_channel(channel_name, project_name,
-                               dataset_name, 'timeseries',
-                               'uint8', 0, 500, 0, 0, 0)
+                                      dataset_name, 'timeseries',
+                                      'uint8', 0, 500, 0, 0, 0)
 
     def tearDown(self):
         dataset_name = 'demo1'
         project_name = 'ndio_demos'
         project_token = 'test_token'
         channel_name = 'image1'
-        self.resources.delete_channel(channel_name, project_name, dataset_name)
+        self.resources.delete_channel(channel_name, project_name,
+                                      dataset_name)
         self.resources.delete_project(project_name, dataset_name)
         self.resources.delete_dataset(dataset_name)
 
@@ -44,12 +48,14 @@ class TestXYZZYX(unittest.TestCase):
         cutout = numpy.zeros((10, 10, 10)).astype(int)
         zind = random.randint(0, 4)
         cutout[2, 3, zind] = random.randint(100, 200)
-        self.data_utils.post_cutout(token, channel, 20, 20, 20, cutout, resolution=0)
+        self.data_utils.post_cutout(token, channel, 20, 20, 20, cutout,
+                                    resolution=0)
         pulldown = self.data_utils.get_cutout(token, channel,
-                                      20, 25, 20, 25, 20, 25, resolution=0)
+                                              20, 25, 20, 25, 20, 25,
+                                              resolution=0)
 
-        #self.assertEqual(cutout[2, 3, zind], pulldown[3, zind, 0, 2])
-        self.assertEqual(cutout[2, 3, zind], pulldown[2,3,zind])
+        # self.assertEqual(cutout[2, 3, zind], pulldown[3, zind, 0, 2])
+        self.assertEqual(cutout[2, 3, zind], pulldown[2, 3, zind])
 
     def test_post_get_chunk(self):
         token = 'test_token'
@@ -58,10 +64,10 @@ class TestXYZZYX(unittest.TestCase):
         zind = random.randint(0, 4)
         cutout[2, 3, zind] = random.randint(100, 200)
         self.data_utils.post_cutout(token, channel,
-                                        20, 20, 20, cutout, resolution=0)
+                                    20, 20, 20, cutout, resolution=0)
         pulldown = self.data_utils.get_cutout(token, channel,
-                                                  20, 25, 20, 25, 20, 25,
-                                                  resolution=0)
+                                              20, 25, 20, 25, 20, 25,
+                                              resolution=0)
         self.assertEqual(cutout[2, 3, zind], pulldown[2, 3, zind])
 
 

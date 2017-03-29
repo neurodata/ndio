@@ -23,15 +23,15 @@ try:
 except ImportError:
     import urllib2
 
-from .neurodata import neurodata
-from .neurodata import DEFAULT_HOSTNAME
-from .neurodata import DEFAULT_SUFFIX
-from .neurodata import DEFAULT_PROTOCOL
-from .neurodata import DEFAULT_BLOCK_SIZE
+from .neuroRemote import neuroRemote
+from .neuroRemote import DEFAULT_HOSTNAME
+from .neuroRemote import DEFAULT_SUFFIX
+from .neuroRemote import DEFAULT_PROTOCOL
+from .neuroRemote import DEFAULT_BLOCK_SIZE
 
 from .metadata import metadata
 
-class data(neurodata, metadata):
+class data(neuroRemote, metadata):
     def __init__(self,
                  user_token='placeholder',
                  hostname=DEFAULT_HOSTNAME,
