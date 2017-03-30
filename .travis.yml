@@ -33,16 +33,17 @@ install:
     - pip install pep8
     - pip install pydocstyle
     - pip install json-spec jsonschema
-cache:
-    - pip
-    - apt
-script:
-    - ./stylecheck +
     - echo "Branch $TRAVIS_BRANCH"
     - git clone http://github.com/neurodata/ndstore
     - sudo ndstore/setup/ndstore_install.sh
     - cd /home/neurodata/ndstore/test
     - sudo py.test
+cache:
+    - pip
+    - apt
+script:
+    - cd $TRAVIS_BUILD_DIR
+    - ./stylecheck +
     - cd $TRAVIS_BUILD_DIR
     - cd tests
     - python -m unittest discover
