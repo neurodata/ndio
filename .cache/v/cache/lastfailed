@@ -1,1 +1,3 @@
-{}
+{
+  "tests/test_neurodata_ramon.py::TestRAMON::test_download_single_ramon": true
+}

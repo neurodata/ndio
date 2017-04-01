@@ -12,7 +12,7 @@ from .remote_utils import remote_utils
 
 from .Remote import Remote
 from .errors import *
-import ndio.ramon as ramon
+# import ndio.ramon as ramon
 from six.moves import range
 import six
 
@@ -30,7 +30,7 @@ from .neuroRemote import DEFAULT_PROTOCOL
 from .neuroRemote import DEFAULT_BLOCK_SIZE
 
 from .data import data
-from .ramon import ramon
+from ndio.remote.ramon import ramon
 from .resources import resources
 
 

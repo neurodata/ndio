@@ -189,6 +189,32 @@ class resources(nd):
         else:
             return False
 
+    def delete_project_token(self, dataset_name, project_name,
+                             token_name):
+        """
+        Deletes project token.
+
+        Arguments:
+            dataset_name (str):
+            project_name (str):
+            token_name (str):
+
+        Returns:
+            bool: True if project deleted. False if not.
+        """
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name) \
+            + "/token/{}/".format(token_name)
+
+        req = self.remote_utils.delete_url(url)
+
+        if req.status_code is not 204:
+            raise RemoteDataUploadError('Could not delete {}'.format(req.text))
+        if req.content == "" or req.content == b'':
+            return True
+        else:
+            return False
+
     def create_dataset(self,
                        name,
                        x_img_size,

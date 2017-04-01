@@ -1,7 +1,5 @@
 import unittest
 import ndio.remote.neurodata as neurodata
-from ndio.remote.data import data
-from ndio.remote.resources import resources
 import ndio.remote.errors
 import numpy
 import random
