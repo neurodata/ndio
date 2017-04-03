@@ -11,5 +11,7 @@ import sys
 DEV_MODE = True
 
 # server to check against
-# SITE_HOST = 'localhost:8080'
-HOSTNAME = 'localhost/nd'
+#HOSTNAME = 'localhost:8080'
+HOSTNAME = 'localhost'
+NEURODATA = open('/tmp/token_super', 'r').read().replace('\n', '')
+TEST = open('/tmp/token_user', 'r').read().replace('\n', '')

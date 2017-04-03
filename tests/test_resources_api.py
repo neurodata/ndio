@@ -8,9 +8,9 @@ import test_settings
 class TestResourcesApi(unittest.TestCase):
 
     def setUp(self):
-        self.token_user = '043813bf95d9d5be2bb19448d5a9337db086c559'
+        self.token_user = test_settings.NEURODATA
         hostname = 'localhost'
-        self.nd = nd(self.token_user, hostname=hostname)
+        self.nd = nd(user_token=self.token_user, hostname=hostname)
 
     def test_create_dataset(self):
         result = self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0)
@@ -168,6 +168,62 @@ class TestResourcesApi(unittest.TestCase):
         self.assertEqual(result, True)
         self.nd.delete_project('testp', 'test')
         self.nd.delete_dataset('test')
+
+    def test_create_token(self):
+        self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
+        self.nd.create_project(
+            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+        result = self.nd.create_token('testt', 'testp', 'test', 1)
+        self.assertEqual(result, True)
+        self.nd.delete_token('testt', 'testp', 'test')
+        self.nd.delete_project('testp', 'test')
+        self.nd.delete_dataset('test')
+
+    def test_get_token(self):
+        self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
+        self.nd.create_project(
+            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+        self.nd.create_token('testt', 'testp', 'test', 1)
+        result = self.nd.get_token('testt', 'testp', 'test')
+        compare_dict = {u'token_name': 'testt',
+                        u'public': 1}
+        for key in compare_dict:
+            self.assertEqual(result[key], compare_dict[key])
+        self.nd.delete_token('testt', 'testp', 'test')
+        self.nd.delete_project('testp', 'test')
+        self.nd.delete_dataset('test')
+
+    def test_delete_token(self):
+        self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
+        self.nd.create_project(
+            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+        self.nd.create_token('testt', 'testp', 'test', 1)
+        result = self.nd.delete_token('testt', 'testp', 'test')
+        self.assertEqual(result, True)
+        self.nd.delete_project('testp', 'test')
+        self.nd.delete_dataset('test')
+
+    def test_list_token(self):
+        self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
+        test_token_names = [u'test1t', u'test2t', u'test3t']
+        self.nd.create_project(
+            'test1p', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+        self.nd.create_project(
+            'test2p', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+        self.nd.create_token('test1t', 'test1p', 'test', 1)
+        self.nd.create_token('test2t', 'test1p', 'test', 1)
+        self.nd.create_token('test3t', 'test2p', 'test', 1)
+        test_token_list = self.nd.list_tokens()
+        for name in test_token_names:
+            self.assertEqual(name in test_token_list, True)
+        self.nd.delete_token('test1t', 'test1p', 'test')
+        self.nd.delete_token('test2t', 'test1p', 'test')
+        self.nd.delete_token('test3t', 'test2p', 'test')
+        self.nd.delete_project('test1p', 'test')
+        self.nd.delete_project('test2p', 'test')
+        self.nd.delete_dataset('test')
+
+
 
 if __name__ == '__main__':
     unittest.main()

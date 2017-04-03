@@ -208,24 +208,29 @@ class neurodata(Remote):
                 datasets[dataset] = [t]
         return datasets
 
-    def getURL(self, url, token=''):
+    def getURL(self, url):
         """
-        Get a response object for a given url.
+        Get the propagate status for a token/channel pair.
 
         Arguments:
             url (str): The url make a get to
-            token (str): The authentication token
 
         Returns:
             obj: The response object
         """
-        if (token == ''):
-            token = self._user_token
-
-        return requests.get(url,
-                            headers={
-                                'Authorization': 'Token {}'.format(token)},
-                            verify=False,)
+        try:
+            req = requests.get(url, headers={
+                'Authorization': 'Token {}'.format(self._user_token)
+            }, verify=False)
+            if req.status_code is 403:
+                raise ValueError("Access Denied")
+            else:
+                return req
+        except requests.exceptions.ConnectionError as e:
+            if str(e) == '403 Client Error: Forbidden':
+                raise ValueError('Access Denied')
+            else:
+                raise e
 
     def post_url(self, url, token='', json=None, data=None, headers=None):
         """
@@ -294,6 +299,114 @@ class neurodata(Remote):
             str: The name of the dataset
         """
         return self.get_proj_info(token)['dataset']['description']
+
+    ##################################
+    #TOKEN#
+    ##################################
+    def create_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name,
+                     is_public):
+        """
+        Creates a token with the given parameters.
+
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            is_public (int): 1 is public. 0 is not public
+
+        Returns:
+            bool: True if project created, false if not created.
+        """
+        url = self.url()[:-4] + '/nd/resource/dataset/{}'.format(
+            dataset_name) + '/project/{}'.format(project_name) + \
+            '/token/{}/'.format(token_name)
+
+        json = {
+            "token_name": token_name,
+            "public": is_public
+        }
+
+        req = self.post_url(url, json=json)
+
+        if req.status_code is not 201:
+            raise RemoteDataUploadError('Cout not upload {}:'.format(req.text))
+        if req.content == "" or req.content == b'':
+            return True
+        else:
+            return False
+
+    def get_token(self,
+                  token_name,
+                  project_name,
+                  dataset_name):
+        """
+        Get a token with the given parameters.
+
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+
+        Returns:
+            dict: Token info
+        """
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name)\
+            + "/token/{}/".format(token_name)
+        req = self.getURL(url)
+
+        if req.status_code is not 200:
+            raise RemoteDataUploadError('Could not find {}'.format(req.text))
+        else:
+            return req.json()
+
+    def delete_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name):
+        """
+        Delete a token with the given parameters.
+
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            channel_name (str): Channel name project is based on
+
+        Returns:
+            bool: True if project deleted, false if not deleted.
+        """
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name)\
+            + "/token/{}/".format(token_name)
+        req = self.delete_url(url)
+
+        if req.status_code is not 204:
+            raise RemoteDataUploadError("Could not delete {}".format(req.text))
+        if req.content == "" or req.content == b'':
+            return True
+        else:
+            return False
+
+    def list_tokens(self):
+        """
+        Lists a set of tokens that are public in Neurodata.
+
+        Arguments:
+
+        Returns:
+            dict: Public tokens found in Neurodata
+        """
+        url = self.url()[:-4] + "/nd/resource/public/token/"
+        req = self.getURL(url)
+
+        if req.status_code is not 200:
+            raise RemoteDataNotFoundError('Coud not find {}'.format(req.text))
+        else:
+            return req.json()
 
     def create_project(self,
                        project_name,
@@ -1205,7 +1318,8 @@ class neurodata(Remote):
         else:
             a = anno.id
 
-        req = requests.delete(self.url("{}/{}/{}/".format(token, channel, a)), verify=False)
+        req = requests.delete(self.url("{}/{}/{}/".format(token, channel, a)),
+                              verify=False)
         if req.status_code is not 200:
             raise RemoteDataNotFoundError("Could not delete id {}: {}"
                                           .format(a, req.text))
