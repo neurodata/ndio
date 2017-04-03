@@ -8,7 +8,7 @@ import test_settings
 class TestResourcesApi(unittest.TestCase):
 
     def setUp(self):
-        self.token_user = '043813bf95d9d5be2bb19448d5a9337db086c559'
+        self.token_user = test_settings.NEURODATA
         hostname = 'localhost'
         self.nd = nd(user_token=self.token_user, hostname=hostname)
 
