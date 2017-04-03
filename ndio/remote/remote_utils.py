@@ -89,3 +89,15 @@ class remote_utils:
                                headers={
                                    'Authorization': 'Token {}'.format(token)},
                                verify=False,)
+
+    def ping(self, url, endpoint=''):
+        """
+        Ping the server to make sure that you can access the base URL.
+
+        Arguments:
+            None
+        Returns:
+            `boolean` Successful access of server (or status code)
+        """
+        r = self.get_url(url + "/" + endpoint)
+        return r.status_code

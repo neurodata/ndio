@@ -114,7 +114,7 @@ class neuroRemote(Remote):
         Returns:
             int: status code
         """
-        return super(neuroRemote, self).ping(suffix)
+        return self.remote_utils.ping(super(neuroRemote, self).url(), suffix)
 
     def url(self, suffix=""):
         """

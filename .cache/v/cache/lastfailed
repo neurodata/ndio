@@ -1,1 +1,3 @@
-{}
+{
+  "tests/test_propagate.py::TestPropagate::test_kasthuri11_is_propagated": true
+}

@@ -34,7 +34,7 @@ from ndio.remote.ramon import ramon
 from .resources import resources
 
 
-class neurodata:
+class neurodata(neuroRemote):
     """
     Main neurodata class that combines all wrapper classes.
     """
@@ -80,6 +80,17 @@ class neurodata:
                                    protocol,
                                    meta_root,
                                    meta_protocol, **kwargs)
+        super(neurodata,self).__init__(user_token,
+                                   hostname,
+                                   protocol,
+                                   meta_root,
+                                   meta_protocol, **kwargs)
+
+
+    # SECTION
+    # Inherited
+
+
 
     # SECTION:
     # Data Download
