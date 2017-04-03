@@ -31,22 +31,6 @@ class TestRAMON(unittest.TestCase):
                                       dataset_name, 'timeseries',
                                       'uint8', 0, 500, 0, 0, 0)
 
-        r = {
-               "21": {
-                     "syn_weight": 0.0,
-                     "ann_type": 2,
-                     "syn_type": 0,
-                     "ann_status": 0,
-                     "postgaba": "0",
-                     "ann_confidence": 1.0,
-                     "ann_id": 21,
-                     "syn_centroid": "[]",
-                     "ann_author": "Randal Burns",
-                     "gaba": "0",
-                     "display": "0",
-                     "syn_segments": [0]
-                  }
-            }
         # self.nd.post_ramon(self.t,self.c,r)
 
 
@@ -60,12 +44,10 @@ class TestRAMON(unittest.TestCase):
         self.nd.delete_project(project_name, dataset_name)
         self.nd.delete_dataset(dataset_name)
 
-    def test_download_single_ramon(self):
-        import pdb; pdb.set_trace()
-        r = self.nd.get_ramon(self.t, self.c, "3")
-        self.assertEqual(r.id, "3")
-        # self.assertEqual(1,1)
-
+    # def test_download_single_ramon(self):
+    #     r = self.nd.get_ramon(self.t, self.c, "3")
+    #     self.assertEqual(r.id, "3")
+    #
     # def test_download_multi_ramon(self):
     #     r = self.nd.get_ramon(self.t, self.c, ["3", "4"])
     #     self.assertEqual(True, '3' in [s.id for s in r])

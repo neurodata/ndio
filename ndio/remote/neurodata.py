@@ -46,11 +46,11 @@ class neurodata:
                          protocol,
                          meta_root,
                          meta_protocol, **kwargs)
-        self.ramon = ramon(user_token,
-                           hostname,
-                           protocol,
-                           meta_root,
-                           meta_protocol, **kwargs)
+        # self.ramon = ramon(user_token,
+        #                    hostname,
+        #                    protocol,
+        #                    meta_root,
+        #                    meta_protocol, **kwargs)
         self.resources = resources(user_token,
                                    hostname,
                                    protocol,
@@ -138,144 +138,144 @@ class neurodata:
     #SECTION:
     # Ramon
 
-    def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
-        """
-        Get the bounding box for a RAMON object (specified by ID).
-
-        Arguments:
-            token (str): Project to use
-            channel (str): Channel to use
-            r_id (int): Which ID to get a bounding box
-            resolution (int : 0): The resolution at which to download
-
-        Returns:
-            (x_start, x_stop, y_start, y_stop, z_start, z_stop): ints
-        """
-        return self.ramon.get_ramon_bounding_box(token, channel, r_id,
-                                                 resolution)
-
-
-    def get_ramon_ids(self, token, channel, ramon_type=None):
-        """
-        Return a list of all IDs available for download from this token and
-        channel.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): Channel to use
-            ramon_type (int : None): Optional. If set, filters IDs and only
-                returns those of RAMON objects of the requested type.
-
-        Returns:
-            int[]: A list of the ids of the returned RAMON objects
-
-        Raises:
-            RemoteDataNotFoundError: If the channel or token is not found
-        """
-        return self.ramon.get_ramon_ids(token, channel, ramon_type)
-
-    def get_ramon(self, token, channel, ids, resolution=0,
-                  include_cutout=False, sieve=None, batch_size=100):
-        """
-        Download a RAMON object by ID.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): The channel to use
-            ids (int, str, int[], str[]): The IDs of a RAMON object to gather.
-                Can be int (3), string ("3"), int[] ([3, 4, 5]), or string
-                (["3", "4", "5"]).
-            resolution (int : None): Resolution. Defaults to the most granular
-                resolution (0 for now)
-            include_cutout (bool : False):  If True, r.cutout is populated
-            sieve (function : None): A function that accepts a single ramon
-                and returns True or False depending on whether you want that
-                ramon object to be included in your response or not.
-                For example,
-                ```
-                def is_even_id(ramon):
-                    return ramon.id % 2 == 0
-                ```
-                You can then pass this to get_ramon like this:
-                ```
-                ndio.remote.neuroRemote.get_ramon( . . . , sieve=is_even_id)
-                ```
-            batch_size (int : 100): The amount of RAMON objects to download at
-                a time. If this is greater than 100, we anticipate things going
-                very poorly for you. So if you set it <100, ndio will use it.
-                If >=100, set it to 100.
-
-        Returns:
-            ndio.ramon.RAMON[]: A list of returned RAMON objects.
-
-        Raises:
-            RemoteDataNotFoundError: If the requested ids cannot be found.
-        """
-        return self.ramon.get_ramon(token, channel, ids, resolution,
-                      include_cutout, sieve, batch_size)
-
-    def get_ramon_metadata(self, token, channel, anno_id):
-        """
-        Download a RAMON object by ID. `anno_id` can be a string `"123"`, an
-        int `123`, an array of ints `[123, 234, 345]`, an array of strings
-        `["123", "234", "345"]`, or a comma-separated string list
-        `"123,234,345"`.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): The channel to use
-            anno_id: An int, a str, or a list of ids to gather
-
-        Returns:
-            JSON. If you pass a single id in str or int, returns a single datum
-            If you pass a list of int or str or a comma-separated string, will
-            return a dict with keys from the list and the values are the JSON
-            returned from the server.
-
-        Raises:
-            RemoteDataNotFoundError: If the data cannot be found on the Remote
-        """
-        return self.ramon.get_ramon_metadata(token, channel, anno_id)
-
-    def delete_ramon(self, token, channel, anno):
-        """
-        Deletes an annotation from the server. Probably you should be careful
-        with this function, it seems dangerous.
-
-        Arguments:
-            token (str): The token to inspect
-            channel (str): The channel to inspect
-            anno (int OR list(int) OR RAMON): The annotation to delete. If a
-                RAMON object is supplied, the remote annotation will be deleted
-                by an ID lookup. If an int is supplied, the annotation will be
-                deleted for that ID. If a list of ints are provided, they will
-                all be deleted.
-
-        Returns:
-            bool: Success
-        """
-        return self.ramon.delete_ramon(token, channel, anno)
-
-
-    def post_ramon(self, token, channel, r, batch_size=100):
-        """
-        Posts a RAMON object to the Remote.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): The channel to use
-            r (RAMON or RAMON[]): The annotation(s) to upload
-            batch_size (int : 100): The number of RAMONs to post simultaneously
-                at maximum in one file. If len(r) > batch_size, the batch will
-                be split and uploaded automatically. Must be less than 100.
-
-        Returns:
-            bool: Success = True
-
-        Throws:
-            RemoteDataUploadError: if something goes wrong
-        """
-        return self.ramon.post_ramon(token, channel, r, batch_size)
+    # def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
+    #     """
+    #     Get the bounding box for a RAMON object (specified by ID).
+    #
+    #     Arguments:
+    #         token (str): Project to use
+    #         channel (str): Channel to use
+    #         r_id (int): Which ID to get a bounding box
+    #         resolution (int : 0): The resolution at which to download
+    #
+    #     Returns:
+    #         (x_start, x_stop, y_start, y_stop, z_start, z_stop): ints
+    #     """
+    #     return self.ramon.get_ramon_bounding_box(token, channel, r_id,
+    #                                              resolution)
+    #
+    #
+    # def get_ramon_ids(self, token, channel, ramon_type=None):
+    #     """
+    #     Return a list of all IDs available for download from this token and
+    #     channel.
+    #
+    #     Arguments:
+    #         token (str): Project to use
+    #         channel (str): Channel to use
+    #         ramon_type (int : None): Optional. If set, filters IDs and only
+    #             returns those of RAMON objects of the requested type.
+    #
+    #     Returns:
+    #         int[]: A list of the ids of the returned RAMON objects
+    #
+    #     Raises:
+    #         RemoteDataNotFoundError: If the channel or token is not found
+    #     """
+    #     return self.ramon.get_ramon_ids(token, channel, ramon_type)
+    #
+    # def get_ramon(self, token, channel, ids, resolution=0,
+    #               include_cutout=False, sieve=None, batch_size=100):
+    #     """
+    #     Download a RAMON object by ID.
+    #
+    #     Arguments:
+    #         token (str): Project to use
+    #         channel (str): The channel to use
+    #         ids (int, str, int[], str[]): The IDs of a RAMON object to gather.
+    #             Can be int (3), string ("3"), int[] ([3, 4, 5]), or string
+    #             (["3", "4", "5"]).
+    #         resolution (int : None): Resolution. Defaults to the most granular
+    #             resolution (0 for now)
+    #         include_cutout (bool : False):  If True, r.cutout is populated
+    #         sieve (function : None): A function that accepts a single ramon
+    #             and returns True or False depending on whether you want that
+    #             ramon object to be included in your response or not.
+    #             For example,
+    #             ```
+    #             def is_even_id(ramon):
+    #                 return ramon.id % 2 == 0
+    #             ```
+    #             You can then pass this to get_ramon like this:
+    #             ```
+    #             ndio.remote.neuroRemote.get_ramon( . . . , sieve=is_even_id)
+    #             ```
+    #         batch_size (int : 100): The amount of RAMON objects to download at
+    #             a time. If this is greater than 100, we anticipate things going
+    #             very poorly for you. So if you set it <100, ndio will use it.
+    #             If >=100, set it to 100.
+    #
+    #     Returns:
+    #         ndio.ramon.RAMON[]: A list of returned RAMON objects.
+    #
+    #     Raises:
+    #         RemoteDataNotFoundError: If the requested ids cannot be found.
+    #     """
+    #     return self.ramon.get_ramon(token, channel, ids, resolution,
+    #                   include_cutout, sieve, batch_size)
+    #
+    # def get_ramon_metadata(self, token, channel, anno_id):
+    #     """
+    #     Download a RAMON object by ID. `anno_id` can be a string `"123"`, an
+    #     int `123`, an array of ints `[123, 234, 345]`, an array of strings
+    #     `["123", "234", "345"]`, or a comma-separated string list
+    #     `"123,234,345"`.
+    #
+    #     Arguments:
+    #         token (str): Project to use
+    #         channel (str): The channel to use
+    #         anno_id: An int, a str, or a list of ids to gather
+    #
+    #     Returns:
+    #         JSON. If you pass a single id in str or int, returns a single datum
+    #         If you pass a list of int or str or a comma-separated string, will
+    #         return a dict with keys from the list and the values are the JSON
+    #         returned from the server.
+    #
+    #     Raises:
+    #         RemoteDataNotFoundError: If the data cannot be found on the Remote
+    #     """
+    #     return self.ramon.get_ramon_metadata(token, channel, anno_id)
+    #
+    # def delete_ramon(self, token, channel, anno):
+    #     """
+    #     Deletes an annotation from the server. Probably you should be careful
+    #     with this function, it seems dangerous.
+    #
+    #     Arguments:
+    #         token (str): The token to inspect
+    #         channel (str): The channel to inspect
+    #         anno (int OR list(int) OR RAMON): The annotation to delete. If a
+    #             RAMON object is supplied, the remote annotation will be deleted
+    #             by an ID lookup. If an int is supplied, the annotation will be
+    #             deleted for that ID. If a list of ints are provided, they will
+    #             all be deleted.
+    #
+    #     Returns:
+    #         bool: Success
+    #     """
+    #     return self.ramon.delete_ramon(token, channel, anno)
+    #
+    #
+    # def post_ramon(self, token, channel, r, batch_size=100):
+    #     """
+    #     Posts a RAMON object to the Remote.
+    #
+    #     Arguments:
+    #         token (str): Project to use
+    #         channel (str): The channel to use
+    #         r (RAMON or RAMON[]): The annotation(s) to upload
+    #         batch_size (int : 100): The number of RAMONs to post simultaneously
+    #             at maximum in one file. If len(r) > batch_size, the batch will
+    #             be split and uploaded automatically. Must be less than 100.
+    #
+    #     Returns:
+    #         bool: Success = True
+    #
+    #     Throws:
+    #         RemoteDataUploadError: if something goes wrong
+    #     """
+    #     return self.ramon.post_ramon(token, channel, r, batch_size)
 
     #SECTION
     #Resources: Projects
