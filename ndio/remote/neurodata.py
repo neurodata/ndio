@@ -320,7 +320,6 @@ class neurodata(Remote):
         Returns:
             bool: True if project created, false if not created.
         """
-
         url = self.url()[:-4] + '/nd/resource/dataset/{}'.format(
             dataset_name) + '/project/{}'.format(project_name) + \
             '/token/{}/'.format(token_name)
@@ -355,7 +354,8 @@ class neurodata(Remote):
             dict: Token info
         """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) + "/token/{}/".format(token_name)
+            + "/project/{}".format(project_name)\
+            + "/token/{}/".format(token_name)
         req = self.getURL(url)
 
         if req.status_code is not 200:
@@ -380,7 +380,8 @@ class neurodata(Remote):
             bool: True if project deleted, false if not deleted.
         """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) + "/token/{}/".format(token_name)
+            + "/project/{}".format(project_name)\
+            + "/token/{}/".format(token_name)
         req = self.delete_url(url)
 
         if req.status_code is not 204:
@@ -395,7 +396,7 @@ class neurodata(Remote):
         Lists a set of tokens that are public in Neurodata.
 
         Arguments:
-            
+
         Returns:
             dict: Public tokens found in Neurodata
         """
@@ -406,7 +407,6 @@ class neurodata(Remote):
             raise RemoteDataNotFoundError('Coud not find {}'.format(req.text))
         else:
             return req.json()
-
 
     def create_project(self,
                        project_name,
@@ -1318,7 +1318,8 @@ class neurodata(Remote):
         else:
             a = anno.id
 
-        req = requests.delete(self.url("{}/{}/{}/".format(token, channel, a)), verify=False)
+        req = requests.delete(self.url("{}/{}/{}/".format(token, channel, a)),
+                              verify=False)
         if req.status_code is not 200:
             raise RemoteDataNotFoundError("Could not delete id {}: {}"
                                           .format(a, req.text))

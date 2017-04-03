@@ -62,7 +62,6 @@ class TestgetURL(unittest.TestCase):
             print(e)
     
     def test_testToken(self):
-        import pdb; pdb.set_trace()
         try:
             req = self.test.getURL(self.private_project)
             self.assertEqual(req.status_code, 403)
