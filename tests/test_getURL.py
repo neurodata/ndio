@@ -64,5 +64,27 @@ class TestgetURL(unittest.TestCase):
         except ValueError as e:
             print(e)
 
+    def test_newToken(self):
+        test = neurodata(user_token=TEST, hostname='localhost')
+        test.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
+        test.create_project('testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+        test.create_token('testt', 'testp', 'test', 1)
+        new_token = neurodata(user_token='testt', hostname=HOSTNAME)
+        new_token_project = "https://{}/sd/testp/info/".format(HOSTNAME)
+        # try:
+        #     req = new_token.getURL(new_token_project)
+        #     self.assertEqual(req.status_code, 200)
+        # except ValueError as e:
+        #     print(e)
+        # try:
+        #     req2 = new_token.getURL(self.private_project)
+        #     self.assertEqual(req2.status_code, 401)
+        # except ValueError as e:
+        #     print(e)
+
+        test.delete_token('testt', 'testp', 'test')
+        test.delete_project('testp', 'test')
+        test.delete_dataset('test')
+
 if __name__ == '__main__':
     unittest.main()
