@@ -232,7 +232,7 @@ class neurodata(Remote):
             else:
                 raise e
 
-    def post_url(self, url, token='', json={}):
+    def post_url(self, url, token='', json=None, data=None, headers=None):
         """
         Returns a post resquest object taking in a url, user token, and
         possible json information.
@@ -248,11 +248,25 @@ class neurodata(Remote):
         if (token == ''):
             token = self._user_token
 
+        if headers:
+            headers.update({'Authorization': 'Token {}'.format(token)})
+        else:
+            headers = {'Authorization': 'Token {}'.format(token)}
+
+        if json:
+            return requests.post(url,
+                                 headers=headers,
+                                 json=json,
+                                 verify=False)
+        if data:
+            return requests.post(url,
+                                 headers=headers,
+                                 data=data,
+                                 verify=False)
+
         return requests.post(url,
-                             headers={
-                                 'Authorization': 'Token {}'.format(token)},
-                             json=json,
-                             verify=False,)
+                             headers=headers,
+                             verify=False)
 
     def delete_url(self, url, token=''):
         """
@@ -306,7 +320,6 @@ class neurodata(Remote):
         Returns:
             bool: True if project created, false if not created.
         """
-
         url = self.url()[:-4] + '/nd/resource/dataset/{}'.format(
             dataset_name) + '/project/{}'.format(project_name) + \
             '/token/{}/'.format(token_name)
@@ -341,7 +354,8 @@ class neurodata(Remote):
             dict: Token info
         """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) + "/token/{}/".format(token_name)
+            + "/project/{}".format(project_name)\
+            + "/token/{}/".format(token_name)
         req = self.getURL(url)
 
         if req.status_code is not 200:
@@ -366,7 +380,8 @@ class neurodata(Remote):
             bool: True if project deleted, false if not deleted.
         """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) + "/token/{}/".format(token_name)
+            + "/project/{}".format(project_name)\
+            + "/token/{}/".format(token_name)
         req = self.delete_url(url)
 
         if req.status_code is not 204:
@@ -381,7 +396,7 @@ class neurodata(Remote):
         Lists a set of tokens that are public in Neurodata.
 
         Arguments:
-            
+
         Returns:
             dict: Public tokens found in Neurodata
         """
@@ -393,15 +408,14 @@ class neurodata(Remote):
         else:
             return req.json()
 
-
     def create_project(self,
                        project_name,
                        dataset_name,
                        hostname,
-                       s3backend,
                        is_public,
-                       kvserver,
-                       kvengine,
+                       s3backend=0,
+                       kvserver='localhost',
+                       kvengine='MySQL',
                        mdengine='MySQL',
                        description=''):
         """
@@ -584,7 +598,7 @@ class neurodata(Remote):
                 there is an issue with your specified `secret` key.
         """
         req = requests.post(self.meta_url("metadata/ocp/set/" + token),
-                            json=data)
+                            json=data, verify=False)
 
         if req.status_code != 200:
             raise RemoteDataUploadError(
@@ -1010,7 +1024,7 @@ class neurodata(Remote):
             z_start, z_start + data.shape[1]
         ))
 
-        req = requests.post(url, data=compressed, headers={
+        req = post_url(url, data=compressed, headers={
             'Content-Type': 'application/octet-stream'
         })
 
@@ -1035,7 +1049,7 @@ class neurodata(Remote):
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1]
         ))
-        req = requests.post(url, data=blosc_data, headers={
+        req = post_url(url, data=blosc_data, headers={
             'Content-Type': 'application/octet-stream'
         })
 
@@ -1304,7 +1318,8 @@ class neurodata(Remote):
         else:
             a = anno.id
 
-        req = requests.delete(self.url("{}/{}/{}/".format(token, channel, a)))
+        req = requests.delete(self.url("{}/{}/{}/".format(token, channel, a)),
+                              verify=False)
         if req.status_code is not 200:
             raise RemoteDataNotFoundError("Could not delete id {}: {}"
                                           .format(a, req.text))
@@ -1580,7 +1595,7 @@ class neurodata(Remote):
             }
         req = requests.post(self.url("/{}/project/".format(dataset) +
                                      "{}".format(token)),
-                            json={"channels": {channels}})
+                            json={"channels": {channels}}, verify=False)
 
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
