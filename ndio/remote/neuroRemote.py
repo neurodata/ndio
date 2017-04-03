@@ -126,7 +126,8 @@ class neuroRemote(Remote):
         Returns:
             str: The complete URL
         """
-        return super(neuroRemote, self).url('{}/sd/'.format(self._ext) + suffix)
+        return super(neuroRemote,
+                     self).url('{}/sd/'.format(self._ext) + suffix)
 
     def meta_url(self, suffix=""):
         """
@@ -196,8 +197,8 @@ class neuroRemote(Remote):
         Returns:
             json: The ID as returned by ndstore
         """
-        req = self.remote_utils.get_url(self.url() + "/merge/{}/"
-                          .format(','.join([str(i) for i in ids])))
+        url = self.url() + "/merge/{}/".format(','.join([str(i) for i in ids]))
+        req = self.remote_utils.get_url(url)
         if req.status_code is not 200:
             raise RemoteDataUploadError('Could not merge ids {}'.format(
                                         ','.join([str(i) for i in ids])))
@@ -227,7 +228,8 @@ class neuroRemote(Remote):
 
             if channel_new.channel_type not in ['image', 'annotation']:
                 raise ValueError('Channel type must be ' +
-                                 'neuroRemote.IMAGE or neuroRemote.ANNOTATION.')
+                                 'neuroRemote.IMAGE or ' +
+                                 'neuroRemote.ANNOTATION.')
 
             if channel_new.readonly * 1 not in [0, 1]:
                 raise ValueError("readonly must be 0 (False) or 1 (True).")
@@ -246,7 +248,6 @@ class neuroRemote(Remote):
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
         else:
             return True
-
 
     # Propagation
 

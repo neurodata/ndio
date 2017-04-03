@@ -35,12 +35,36 @@ from .resources import resources
 
 
 class neurodata:
+    """
+    Main neurodata class that combines all wrapper classes.
+    """
+
     def __init__(self,
                  user_token='placeholder',
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL,
                  meta_root="http://lims.neurodata.io/",
                  meta_protocol=DEFAULT_PROTOCOL, **kwargs):
+        """
+        Initializer for the neurodata remote class.
+
+        Arguments:
+            hostname (str: "openconnecto.me"): The hostname to connect to
+            protocol (str: "http"): The protocol (http or https) to use
+            meta_root (str: "http://lims.neurodata.io/"): The metadata server
+            meta_protocol (str: "http"): The protocol to use for the md server
+            check_tokens (boolean: False): Whether functions that take `token`
+                as an argument should check for the existance of that token and
+                fail immediately if it is not found. This is a good idea for
+                functions that take more time to complete, and might not fail
+                until the very end otherwise.
+            chunk_threshold (int: 1e9 / 4): The maximum size of a numpy array
+                that will be uploaded in one HTTP request. If you find that
+                your data requests are commonly timing out, try reducing this.
+                Default is 1e9 / 4, or a 0.25GiB.
+            suffix (str: "ocp"): The URL suffix to specify ndstore/microns. If
+                you aren't sure what to do with this, don't specify one.
+        """
         self.data = data(user_token,
                          hostname,
                          protocol,
@@ -61,33 +85,74 @@ class neurodata:
     # Data Download
 
     def get_block_size(self, token, resolution=None):
+        """
+        Gets the block-size for a given token at a given resolution.
+
+        Arguments:
+            token (str): The token to inspect
+            resolution (int : None): The resolution at which to inspect data.
+                If none is specified, uses the minimum available.
+
+        Returns:
+            int[3]: The xyz blocksize.
+        """
         return self.data.get_block_size(token, resolution)
 
-
     def get_image_offset(self, token, resolution=0):
-        return self.data.get_image_offset(token,resolution)
+        """
+        Gets the image offset for a given token at a given resolution. For
+        instance, the `kasthuri11` dataset starts at (0, 0, 1), so its 1850th
+        slice is slice 1850, not 1849. When downloading a full dataset, the
+        result of this function should be your x/y/z starts.
 
+        Arguments:
+            token (str): The token to inspect
+            resolution (int : 0): The resolution at which to gather the offset
+
+        Returns:
+            int[3]: The origin of the dataset, as a list
+        """
+        return self.data.get_image_offset(token, resolution)
 
     def get_xy_slice(self, token, channel,
                      x_start, x_stop,
                      y_start, y_stop,
                      z_index,
                      resolution=0):
+        """
+        Return a binary-encoded, decompressed 2d image. You should
+        specify a 'token' and 'channel' pair.  For image data, users
+        should use the channel 'image.'
+
+        Arguments:
+            token (str): Token to identify data to download
+            channel (str): Channel
+            resolution (int): Resolution level
+            Q_start (int):` The lower bound of dimension 'Q'
+            Q_stop (int): The upper bound of dimension 'Q'
+            z_index (int): The z-slice to image
+
+        Returns:
+            str: binary image data
+        """
         return self.data.get_xy_slice(token, channel,
-                         x_start, x_stop,
-                         y_start, y_stop,
-                         z_index,
-                         resolution)
+                                      x_start, x_stop,
+                                      y_start, y_stop,
+                                      z_index,
+                                      resolution)
 
     def get_image(self, token, channel,
                   x_start, x_stop,
                   y_start, y_stop,
                   z_index,
                   resolution=0):
+        """
+        Alias for the `get_xy_slice` function for backwards compatibility.
+        """
         return self.data.get_image(token, channel,
-                      x_start, x_stop,
-                      y_start, y_stop,
-                      z_index,resolution)
+                                   x_start, x_stop,
+                                   y_start, y_stop,
+                                   z_index, resolution)
 
     def get_volume(self, token, channel,
                    x_start, x_stop,
@@ -96,11 +161,27 @@ class neurodata:
                    resolution=1,
                    block_size=DEFAULT_BLOCK_SIZE,
                    neariso=False):
+        """
+        Get a RAMONVolume volumetric cutout from the neurodata server.
+
+        Arguments:
+            token (str): Token to identify data to download
+            channel (str): Channel
+            resolution (int): Resolution level
+            Q_start (int): The lower bound of dimension 'Q'
+            Q_stop (int): The upper bound of dimension 'Q'
+            block_size (int[3]): Block size of this dataset
+            neariso (bool : False): Passes the 'neariso' param to the cutout.
+                If you don't know what this means, ignore it!
+
+        Returns:
+            ndio.ramon.RAMONVolume: Downloaded data.
+        """
         return self.data.get_volume(token, channel,
-                       x_start, x_stop,
-                       y_start, y_stop,
-                       z_start, z_stop,
-                       resolution, block_size, neariso)
+                                    x_start, x_stop,
+                                    y_start, y_stop,
+                                    z_start, z_stop,
+                                    resolution, block_size, neariso)
 
     def get_cutout(self, token, channel,
                    x_start, x_stop,
@@ -110,14 +191,33 @@ class neurodata:
                    resolution=1,
                    block_size=DEFAULT_BLOCK_SIZE,
                    neariso=False):
+        """
+        Get volumetric cutout data from the neurodata server.
+
+        Arguments:
+            token (str): Token to identify data to download
+            channel (str): Channel
+            resolution (int): Resolution level
+            Q_start (int): The lower bound of dimension 'Q'
+            Q_stop (int): The upper bound of dimension 'Q'
+            block_size (int[3]): Block size of this dataset. If not provided,
+                ndio uses the metadata of this tokenchannel to set. If you find
+                that your downloads are timing out or otherwise failing, it may
+                be wise to start off by making this smaller.
+            neariso (bool : False): Passes the 'neariso' param to the cutout.
+                If you don't know what this means, ignore it!
+
+        Returns:
+            numpy.ndarray: Downloaded data.
+        """
         return self.data.get_cutout(token, channel,
-                       x_start, x_stop,
-                       y_start, y_stop,
-                       z_start, z_stop,
-                       t_start, t_stop,
-                       resolution,
-                       block_size,
-                       neariso)
+                                    x_start, x_stop,
+                                    y_start, y_stop,
+                                    z_start, z_stop,
+                                    t_start, t_stop,
+                                    resolution,
+                                    block_size,
+                                    neariso)
 
     # SECTION:
     # Data Upload
@@ -128,157 +228,175 @@ class neurodata:
                     z_start,
                     data,
                     resolution=0):
-        return self.data.post_cutout(token, channel,
-                        x_start,
-                        y_start,
-                        z_start,
-                        data,
-                        resolution)
+        """
+        Post a cutout to the server.
 
-    #SECTION:
+        Arguments:
+            token (str)
+            channel (str)
+            x_start (int)
+            y_start (int)
+            z_start (int)
+            data (numpy.ndarray): A numpy array of data. Pass in (x, y, z)
+            resolution (int : 0): Resolution at which to insert the data
+
+        Returns:
+            bool: True on success
+
+        Raises:
+            RemoteDataUploadError: if there's an issue during upload.
+        """
+        return self.data.post_cutout(token, channel,
+                                     x_start,
+                                     y_start,
+                                     z_start,
+                                     data,
+                                     resolution)
+
+    # SECTION:
     # Ramon
 
-    # def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
-    #     """
-    #     Get the bounding box for a RAMON object (specified by ID).
-    #
-    #     Arguments:
-    #         token (str): Project to use
-    #         channel (str): Channel to use
-    #         r_id (int): Which ID to get a bounding box
-    #         resolution (int : 0): The resolution at which to download
-    #
-    #     Returns:
-    #         (x_start, x_stop, y_start, y_stop, z_start, z_stop): ints
-    #     """
-    #     return self.ramon.get_ramon_bounding_box(token, channel, r_id,
-    #                                              resolution)
-    #
-    #
-    # def get_ramon_ids(self, token, channel, ramon_type=None):
-    #     """
-    #     Return a list of all IDs available for download from this token and
-    #     channel.
-    #
-    #     Arguments:
-    #         token (str): Project to use
-    #         channel (str): Channel to use
-    #         ramon_type (int : None): Optional. If set, filters IDs and only
-    #             returns those of RAMON objects of the requested type.
-    #
-    #     Returns:
-    #         int[]: A list of the ids of the returned RAMON objects
-    #
-    #     Raises:
-    #         RemoteDataNotFoundError: If the channel or token is not found
-    #     """
-    #     return self.ramon.get_ramon_ids(token, channel, ramon_type)
-    #
-    # def get_ramon(self, token, channel, ids, resolution=0,
-    #               include_cutout=False, sieve=None, batch_size=100):
-    #     """
-    #     Download a RAMON object by ID.
-    #
-    #     Arguments:
-    #         token (str): Project to use
-    #         channel (str): The channel to use
-    #         ids (int, str, int[], str[]): The IDs of a RAMON object to gather.
-    #             Can be int (3), string ("3"), int[] ([3, 4, 5]), or string
-    #             (["3", "4", "5"]).
-    #         resolution (int : None): Resolution. Defaults to the most granular
-    #             resolution (0 for now)
-    #         include_cutout (bool : False):  If True, r.cutout is populated
-    #         sieve (function : None): A function that accepts a single ramon
-    #             and returns True or False depending on whether you want that
-    #             ramon object to be included in your response or not.
-    #             For example,
-    #             ```
-    #             def is_even_id(ramon):
-    #                 return ramon.id % 2 == 0
-    #             ```
-    #             You can then pass this to get_ramon like this:
-    #             ```
-    #             ndio.remote.neuroRemote.get_ramon( . . . , sieve=is_even_id)
-    #             ```
-    #         batch_size (int : 100): The amount of RAMON objects to download at
-    #             a time. If this is greater than 100, we anticipate things going
-    #             very poorly for you. So if you set it <100, ndio will use it.
-    #             If >=100, set it to 100.
-    #
-    #     Returns:
-    #         ndio.ramon.RAMON[]: A list of returned RAMON objects.
-    #
-    #     Raises:
-    #         RemoteDataNotFoundError: If the requested ids cannot be found.
-    #     """
-    #     return self.ramon.get_ramon(token, channel, ids, resolution,
-    #                   include_cutout, sieve, batch_size)
-    #
-    # def get_ramon_metadata(self, token, channel, anno_id):
-    #     """
-    #     Download a RAMON object by ID. `anno_id` can be a string `"123"`, an
-    #     int `123`, an array of ints `[123, 234, 345]`, an array of strings
-    #     `["123", "234", "345"]`, or a comma-separated string list
-    #     `"123,234,345"`.
-    #
-    #     Arguments:
-    #         token (str): Project to use
-    #         channel (str): The channel to use
-    #         anno_id: An int, a str, or a list of ids to gather
-    #
-    #     Returns:
-    #         JSON. If you pass a single id in str or int, returns a single datum
-    #         If you pass a list of int or str or a comma-separated string, will
-    #         return a dict with keys from the list and the values are the JSON
-    #         returned from the server.
-    #
-    #     Raises:
-    #         RemoteDataNotFoundError: If the data cannot be found on the Remote
-    #     """
-    #     return self.ramon.get_ramon_metadata(token, channel, anno_id)
-    #
-    # def delete_ramon(self, token, channel, anno):
-    #     """
-    #     Deletes an annotation from the server. Probably you should be careful
-    #     with this function, it seems dangerous.
-    #
-    #     Arguments:
-    #         token (str): The token to inspect
-    #         channel (str): The channel to inspect
-    #         anno (int OR list(int) OR RAMON): The annotation to delete. If a
-    #             RAMON object is supplied, the remote annotation will be deleted
-    #             by an ID lookup. If an int is supplied, the annotation will be
-    #             deleted for that ID. If a list of ints are provided, they will
-    #             all be deleted.
-    #
-    #     Returns:
-    #         bool: Success
-    #     """
-    #     return self.ramon.delete_ramon(token, channel, anno)
-    #
-    #
-    # def post_ramon(self, token, channel, r, batch_size=100):
-    #     """
-    #     Posts a RAMON object to the Remote.
-    #
-    #     Arguments:
-    #         token (str): Project to use
-    #         channel (str): The channel to use
-    #         r (RAMON or RAMON[]): The annotation(s) to upload
-    #         batch_size (int : 100): The number of RAMONs to post simultaneously
-    #             at maximum in one file. If len(r) > batch_size, the batch will
-    #             be split and uploaded automatically. Must be less than 100.
-    #
-    #     Returns:
-    #         bool: Success = True
-    #
-    #     Throws:
-    #         RemoteDataUploadError: if something goes wrong
-    #     """
-    #     return self.ramon.post_ramon(token, channel, r, batch_size)
+# def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
+#     """
+#     Get the bounding box for a RAMON object (specified by ID).
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): Channel to use
+#         r_id (int): Which ID to get a bounding box
+#         resolution (int : 0): The resolution at which to download
+#
+#     Returns:
+#         (x_start, x_stop, y_start, y_stop, z_start, z_stop): ints
+#     """
+#     return self.ramon.get_ramon_bounding_box(token, channel, r_id,
+#                                              resolution)
+#
+#
+# def get_ramon_ids(self, token, channel, ramon_type=None):
+#     """
+#     Return a list of all IDs available for download from this token and
+#     channel.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): Channel to use
+#         ramon_type (int : None): Optional. If set, filters IDs and only
+#             returns those of RAMON objects of the requested type.
+#
+#     Returns:
+#         int[]: A list of the ids of the returned RAMON objects
+#
+#     Raises:
+#         RemoteDataNotFoundError: If the channel or token is not found
+#     """
+#     return self.ramon.get_ramon_ids(token, channel, ramon_type)
+#
+# def get_ramon(self, token, channel, ids, resolution=0,
+#               include_cutout=False, sieve=None, batch_size=100):
+#     """
+#     Download a RAMON object by ID.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): The channel to use
+#         ids (int, str, int[], str[]): The IDs of a RAMON object to gather.
+#             Can be int (3), string ("3"), int[] ([3, 4, 5]), or string
+#             (["3", "4", "5"]).
+#         resolution (int : None): Resolution. Defaults to the most granular
+#             resolution (0 for now)
+#         include_cutout (bool : False):  If True, r.cutout is populated
+#         sieve (function : None): A function that accepts a single ramon
+#             and returns True or False depending on whether you want that
+#             ramon object to be included in your response or not.
+#             For example,
+#             ```
+#             def is_even_id(ramon):
+#                 return ramon.id % 2 == 0
+#             ```
+#             You can then pass this to get_ramon like this:
+#             ```
+#             ndio.remote.neuroRemote.get_ramon( . . . , sieve=is_even_id)
+#             ```
+#         batch_size (int : 100): The amount of RAMON objects to download at
+#             a time. If this is greater than 100, we anticipate things going
+#             very poorly for you. So if you set it <100, ndio will use it.
+#             If >=100, set it to 100.
+#
+#     Returns:
+#         ndio.ramon.RAMON[]: A list of returned RAMON objects.
+#
+#     Raises:
+#         RemoteDataNotFoundError: If the requested ids cannot be found.
+#     """
+#     return self.ramon.get_ramon(token, channel, ids, resolution,
+#                   include_cutout, sieve, batch_size)
+#
+# def get_ramon_metadata(self, token, channel, anno_id):
+#     """
+#     Download a RAMON object by ID. `anno_id` can be a string `"123"`, an
+#     int `123`, an array of ints `[123, 234, 345]`, an array of strings
+#     `["123", "234", "345"]`, or a comma-separated string list
+#     `"123,234,345"`.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): The channel to use
+#         anno_id: An int, a str, or a list of ids to gather
+#
+#     Returns:
+#         JSON. If you pass a single id in str or int, returns a single datum
+#         If you pass a list of int or str or a comma-separated string, will
+#         return a dict with keys from the list and the values are the JSON
+#         returned from the server.
+#
+#     Raises:
+#         RemoteDataNotFoundError: If the data cannot be found on the Remote
+#     """
+#     return self.ramon.get_ramon_metadata(token, channel, anno_id)
+#
+# def delete_ramon(self, token, channel, anno):
+#     """
+#     Deletes an annotation from the server. Probably you should be careful
+#     with this function, it seems dangerous.
+#
+#     Arguments:
+#         token (str): The token to inspect
+#         channel (str): The channel to inspect
+#         anno (int OR list(int) OR RAMON): The annotation to delete. If a
+#             RAMON object is supplied, the remote annotation will be deleted
+#             by an ID lookup. If an int is supplied, the annotation will be
+#             deleted for that ID. If a list of ints are provided, they will
+#             all be deleted.
+#
+#     Returns:
+#         bool: Success
+#     """
+#     return self.ramon.delete_ramon(token, channel, anno)
+#
+#
+# def post_ramon(self, token, channel, r, batch_size=100):
+#     """
+#     Posts a RAMON object to the Remote.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): The channel to use
+#         r (RAMON or RAMON[]): The annotation(s) to upload
+#         batch_size (int : 100): The number of RAMONs to post simultaneously
+#             at maximum in one file. If len(r) > batch_size, the batch will
+#             be split and uploaded automatically. Must be less than 100.
+#
+#     Returns:
+#         bool: Success = True
+#
+#     Throws:
+#         RemoteDataUploadError: if something goes wrong
+#     """
+#     return self.ramon.post_ramon(token, channel, r, batch_size)
 
-    #SECTION
-    #Resources: Projects
+    # SECTION
+    # Resources: Projects
 
     def create_project(self,
                        project_name,
@@ -371,10 +489,10 @@ class neurodata:
             bool: True if project deleted. False if not.
         """
         return self.resources.create_project_token(dataset_name, project_name,
-                                 token_name, is_public)
+                                                   token_name, is_public)
 
-    #SECTION
-    #Resources: Datasets
+    # SECTION
+    # Resources: Datasets
 
     def create_dataset(self,
                        name,
@@ -429,7 +547,6 @@ class neurodata:
                                              dataset_description,
                                              is_public)
 
-
     def get_dataset(self, name):
         """
         Returns info regarding a particular dataset.
@@ -441,7 +558,6 @@ class neurodata:
             dict: Dataset information
         """
         return self.resources.get_dataset(name)
-
 
     def list_datasets(self, get_global_public):
         """
@@ -470,8 +586,8 @@ class neurodata:
         """
         return self.resources.delete_dataset(name)
 
-    #SECTION
-    #Resources: Channels
+    # SECTION
+    # Resources: Channels
 
     def create_channel(self,
                        channel_name,

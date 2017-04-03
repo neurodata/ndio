@@ -2,9 +2,18 @@ import requests
 
 
 class remote_utils:
+    """
+    Remote Utilities class with wrappers for request methods.
+    """
 
     def __init__(self,
                  user_token):
+        """
+        Initializes for remote_utils.
+
+        Arguments:
+            user_token (str): Authentication token for user.
+        """
         self._user_token = user_token
 
     def get_url(self, url, token=''):

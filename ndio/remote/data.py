@@ -31,18 +31,43 @@ from .neuroRemote import DEFAULT_BLOCK_SIZE
 
 from .metadata import metadata
 
+
 class data(neuroRemote, metadata):
+    """
+    Data class with data wrappers for ndio.
+    """
+
     def __init__(self,
                  user_token='placeholder',
                  hostname=DEFAULT_HOSTNAME,
                  protocol=DEFAULT_PROTOCOL,
                  meta_root="http://lims.neurodata.io/",
                  meta_protocol=DEFAULT_PROTOCOL, **kwargs):
+        """
+        Initializer for the data class.
+
+        Arguments:
+            hostname (str: "openconnecto.me"): The hostname to connect to
+            protocol (str: "http"): The protocol (http or https) to use
+            meta_root (str: "http://lims.neurodata.io/"): The metadata server
+            meta_protocol (str: "http"): The protocol to use for the md server
+            check_tokens (boolean: False): Whether functions that take `token`
+                as an argument should check for the existance of that token and
+                fail immediately if it is not found. This is a good idea for
+                functions that take more time to complete, and might not fail
+                until the very end otherwise.
+            chunk_threshold (int: 1e9 / 4): The maximum size of a numpy array
+                that will be uploaded in one HTTP request. If you find that
+                your data requests are commonly timing out, try reducing this.
+                Default is 1e9 / 4, or a 0.25GiB.
+            suffix (str: "ocp"): The URL suffix to specify ndstore/microns. If
+                you aren't sure what to do with this, don't specify one.
+        """
         super(data, self).__init__(user_token,
-                                        hostname,
-                                        protocol,
-                                        meta_root,
-                                        meta_protocol, **kwargs)
+                                   hostname,
+                                   protocol,
+                                   meta_root,
+                                   meta_protocol, **kwargs)
 
     # SECTION:
     # Data Download
@@ -64,7 +89,6 @@ class data(neuroRemote, metadata):
             resolution = min(cdims.keys())
         return cdims[str(resolution)]
 
-
     def get_image_offset(self, token, resolution=0):
         """
         Gets the image offset for a given token at a given resolution. For
@@ -85,7 +109,6 @@ class data(neuroRemote, metadata):
             raise RemoteDataNotFoundError("Resolution " + res +
                                           " is not available.")
         return info['dataset']['offset'][str(resolution)]
-
 
     def get_xy_slice(self, token, channel,
                      x_start, x_stop,
@@ -115,7 +138,6 @@ class data(neuroRemote, metadata):
 
         return vol
 
-
     def get_image(self, token, channel,
                   x_start, x_stop,
                   y_start, y_stop,
@@ -129,7 +151,6 @@ class data(neuroRemote, metadata):
                                  y_start, y_stop,
                                  z_index,
                                  resolution)
-
 
     def get_volume(self, token, channel,
                    x_start, x_stop,
@@ -166,7 +187,6 @@ class data(neuroRemote, metadata):
                                         block_size=block_size,
                                         neariso=neariso)
         return volume
-
 
     def get_cutout(self, token, channel,
                    x_start, x_stop,
@@ -320,7 +340,6 @@ class data(neuroRemote, metadata):
 
     # SECTION:
     # Data Upload
-
 
     def post_cutout(self, token, channel,
                     x_start,
