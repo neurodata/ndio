@@ -86,12 +86,6 @@ class neurodata(neuroRemote):
                                    meta_root,
                                    meta_protocol, **kwargs)
 
-
-    # SECTION
-    # Inherited
-
-
-
     # SECTION:
     # Data Download
 

@@ -118,9 +118,9 @@ def convert(in_file, out_file, in_fmt="", out_fmt=""):
     # Get formats, either by explicitly naming them or by guessing.
     # TODO: It'd be neat to check here if an explicit fmt matches the guess.
     in_fmt = in_fmt.lower() or _guess_format_from_extension(
-             in_file.split('.')[-1].lower())
+        in_file.split('.')[-1].lower())
     out_fmt = out_fmt.lower() or _guess_format_from_extension(
-              out_file.split('.')[-1].lower())
+        out_file.split('.')[-1].lower())
 
     if not in_fmt or not out_fmt:
         raise ValueError("Cannot determine conversion formats.")
