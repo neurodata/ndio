@@ -10,8 +10,8 @@ import os
 class TestPropagate(unittest.TestCase):
 
     def setUp(self):
-    	hostname = test_settings.HOSTNAME
-    	self.token_user = test_settings.NEURODATA
+        hostname = test_settings.HOSTNAME
+        self.token_user = test_settings.NEURODATA
         self.nd = neurodata(user_token=self.token_user, hostname=hostname)
 
     def test_propagate_status_fails_on_bad_token(self):
