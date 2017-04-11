@@ -94,7 +94,7 @@ class resources(nd):
         Returns:
             bool: True if project created, false if not created.
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(
+        url = self.url()[:-4] + "/resource/dataset/{}".format(
             dataset_name) + "/project/{}/".format(project_name)
 
         json = {
@@ -181,23 +181,24 @@ class resources(nd):
         else:
             return req.json()
 
-    def create_project_token(self, dataset_name, project_name,
-                             token_name, is_public):
+    def create_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name,
+                     is_public):
         """
-        Creates and assigns a new token for a project.
-
+        Creates a token with the given parameters.
         Arguments:
-            dataset_name (str):
-            project_name (str):
-            token_name (str):
-            is_public (int):
-
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            is_public (int): 1 is public. 0 is not public
         Returns:
-            bool: True if project deleted. False if not.
+            bool: True if project created, false if not created.
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) \
-            + "/token/{}/".format(token_name)
+        url = self.url()[:-4] + '/nd/resource/dataset/{}'.format(
+            dataset_name) + '/project/{}'.format(project_name) + \
+            '/token/{}/'.format(token_name)
 
         json = {
             "token_name": token_name,
@@ -207,37 +208,75 @@ class resources(nd):
         req = self.remote_utils.post_url(url, json=json)
 
         if req.status_code is not 201:
-            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
+            raise RemoteDataUploadError('Cout not upload {}:'.format(req.text))
         if req.content == "" or req.content == b'':
             return True
         else:
             return False
 
-    def delete_project_token(self, dataset_name, project_name,
-                             token_name):
+    def get_token(self,
+                  token_name,
+                  project_name,
+                  dataset_name):
         """
-        Deletes project token.
-
+        Get a token with the given parameters.
         Arguments:
-            dataset_name (str):
-            project_name (str):
-            token_name (str):
-
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
         Returns:
-            bool: True if project deleted. False if not.
+            dict: Token info
         """
         url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) \
+            + "/project/{}".format(project_name)\
             + "/token/{}/".format(token_name)
+        req = self.remote_utils.get_url(url)
 
+        if req.status_code is not 200:
+            raise RemoteDataUploadError('Could not find {}'.format(req.text))
+        else:
+            return req.json()
+
+    def delete_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name):
+        """
+        Delete a token with the given parameters.
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            channel_name (str): Channel name project is based on
+        Returns:
+            bool: True if project deleted, false if not deleted.
+        """
+        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+            + "/project/{}".format(project_name)\
+            + "/token/{}/".format(token_name)
         req = self.remote_utils.delete_url(url)
 
         if req.status_code is not 204:
-            raise RemoteDataUploadError('Could not delete {}'.format(req.text))
+            raise RemoteDataUploadError("Could not delete {}".format(req.text))
         if req.content == "" or req.content == b'':
             return True
         else:
             return False
+
+    def list_tokens(self):
+        """
+        Lists a set of tokens that are public in Neurodata.
+        Arguments:
+        Returns:
+            dict: Public tokens found in Neurodata
+        """
+        url = self.url()[:-4] + "/nd/resource/public/token/"
+        req = self.remote_utils.get_url(url)
+
+        if req.status_code is not 200:
+            raise RemoteDataNotFoundError('Coud not find {}'.format(req.text))
+        else:
+            return req.json()
 
     def create_dataset(self,
                        name,
@@ -294,7 +333,6 @@ class resources(nd):
             "dataset_description": dataset_description,
             "public": is_public
         }
-
         req = self.remote_utils.post_url(url, json=json)
 
         if req.status_code is not 201:

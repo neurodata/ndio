@@ -67,7 +67,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_create_project(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         result = self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 0)
         self.assertEqual(result, True)
         self.nd.delete_project('testp', 'test')
         self.nd.delete_dataset('test')

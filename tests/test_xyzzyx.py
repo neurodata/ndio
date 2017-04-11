@@ -24,8 +24,8 @@ class TestXYZZYX(unittest.TestCase):
         self.resources.create_project(project_name, dataset_name,
                                       'localhost',
                                       1, 1, 'localhost', 'Redis')
-        self.resources.create_project_token(dataset_name, project_name,
-                                            project_token, 1)
+        self.resources.create_token(project_token, project_name,
+                                    dataset_name, 1)
         self.resources.create_channel(channel_name, project_name,
                                       dataset_name, 'timeseries',
                                       'uint8', 0, 500, 0, 0, 0)

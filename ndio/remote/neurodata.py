@@ -467,6 +467,71 @@ class neurodata(neuroRemote):
         """
         return self.resources.delete_project(project_name, dataset_name)
 
+
+    def create_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name,
+                     is_public):
+        """
+        Creates a token with the given parameters.
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            is_public (int): 1 is public. 0 is not public
+        Returns:
+            bool: True if project created, false if not created.
+        """
+        return self.resources.create_token(token_name,
+                                           project_name,
+                                           dataset_name,
+                                           is_public)
+
+    def get_token(self,
+                  token_name,
+                  project_name,
+                  dataset_name):
+        """
+        Get a token with the given parameters.
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+        Returns:
+            dict: Token info
+        """
+        return self.resources.get_token(token_name,
+                                        project_name,
+                                        dataset_name)
+
+    def delete_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name):
+        """
+        Delete a token with the given parameters.
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            channel_name (str): Channel name project is based on
+        Returns:
+            bool: True if project deleted, false if not deleted.
+        """
+        return self.resources.delete_token(token_name,
+                                           project_name,
+                                           dataset_name)
+
+    def list_tokens(self):
+        """
+        Lists a set of tokens that are public in Neurodata.
+        Arguments:
+        Returns:
+            dict: Public tokens found in Neurodata
+        """
+        return self.resources.list_tokens()
+
     def list_projects(self, dataset_name):
         """
         Lists a set of projects related to a dataset.
@@ -478,23 +543,6 @@ class neurodata(neuroRemote):
             dict: Projects found based on dataset query
         """
         return self.resources.list_projects(dataset_name)
-
-    def create_project_token(self, dataset_name, project_name,
-                             token_name, is_public):
-        """
-        Creates and assigns a new token for a project.
-
-        Arguments:
-            dataset_name (str):
-            project_name (str):
-            token_name (str):
-            is_public (int):
-
-        Returns:
-            bool: True if project deleted. False if not.
-        """
-        return self.resources.create_project_token(dataset_name, project_name,
-                                                   token_name, is_public)
 
     # SECTION
     # Resources: Datasets
