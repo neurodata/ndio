@@ -5,6 +5,7 @@ import ndio.ramon
 import ndio.convert.png as ndpng
 import ndio.convert.tiff as ndtiff
 import numpy as np
+import os
 
 
 class TestDownload(unittest.TestCase):
@@ -20,32 +21,32 @@ class TestDownload(unittest.TestCase):
     def test_export_load_png(self):
 
         # if returns string, successful export
-        # python remove
         self.assertEqual(
-                ndpng.save("trash/download.png", self.image_data),
-                "trash/download.png")
+                ndpng.save("download.png", self.image_data),
+                "download.png")
 
         # now confirm import works too
-        self.assertEqual(ndpng.load("trash/download.png")[0][0],
+        self.assertEqual(ndpng.load("download.png")[0][0],
                          self.image_data[0][0])
-        self.assertEqual(ndpng.load("trash/download.png")[10][10],
+        self.assertEqual(ndpng.load("download.png")[10][10],
                          self.image_data[10][10])
-
+        os.system("rm ./download.png")
 
     def test_export_load_tiff(self):
         # if returns string, successful export
         self.assertEqual(
-                         ndtiff.save("trash/download-1.tiff",
+                         ndtiff.save("download-1.tiff",
                                      self.image_data),
-                         "trash/download-1.tiff")
+                         "download-1.tiff")
 
         # now confirm import works too
         self.assertEqual(
-                         ndtiff.load("trash/download-1.tiff")[0][0],
+                         ndtiff.load("download-1.tiff")[0][0],
                          self.image_data[0][0])
         self.assertEqual(
-                         ndtiff.load("trash/download-1.tiff")[10][10],
+                         ndtiff.load("download-1.tiff")[10][10],
                          self.image_data[10][10])
+       	os.system("rm ./download-1.tiff")
 
 if __name__ == '__main__':
     unittest.main()
