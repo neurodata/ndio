@@ -20,6 +20,7 @@ class TestDownload(unittest.TestCase):
     def test_export_load_png(self):
 
         # if returns string, successful export
+        # python remove
         self.assertEqual(
                 ndpng.save("trash/download.png", self.image_data),
                 "trash/download.png")
