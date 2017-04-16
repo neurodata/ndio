@@ -4,12 +4,11 @@ import numpy
 import json
 import test_settings
 
-
 class TestResourcesApi(unittest.TestCase):
 
     def setUp(self):
         self.token_user = test_settings.NEURODATA
-        hostname = 'localhost'
+        hostname = test_settings.HOSTNAME
         self.nd = nd(user_token=self.token_user, hostname=hostname)
 
     def test_create_dataset(self):

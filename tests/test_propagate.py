@@ -6,12 +6,15 @@ import h5py
 import os
 import test_settings
 
+HOSTNAME = test_settings.HOSTNAME
+NEURODATA = test_settings.NEURODATA
+TEST = test_settings.TEST
 
 class TestPropagate(unittest.TestCase):
 
     def setUp(self):
-        self.token_user = '043813bf95d9d5be2bb19448d5a9337db086c559'
-        hostname = test_settings.HOSTNAME
+        self.token_user = NEURODATA
+        hostname = HOSTNAME
         self.nd = neurodata(self.token_user,
                             hostname=hostname,
                             check_tokens=True)
