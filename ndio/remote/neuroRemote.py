@@ -82,10 +82,18 @@ class neuroRemote(Remote):
         self.remote_utils = remote_utils(self._user_token)
         super(neuroRemote, self).__init__(hostname, protocol)
 
-
     # SECTION:
     # Legacy code
     def getURL(self, url):
+        """
+        Old getURL method. Use remote_utils.get_url() instead.
+
+        Arguments:
+            url (str): The url to send get request to.
+
+        Returns:
+            str: result
+        """
         return self.remote_utils.get_url(url)
 
     # SECTION:
