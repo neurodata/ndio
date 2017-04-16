@@ -26,14 +26,12 @@ class TestPropagate(unittest.TestCase):
         self.nd.create_project(project_name, dataset_name,
                                       'localhost',
                                       1, 1, 'localhost', 'Redis')
-        self.nd.create_project_token(dataset_name, project_name,
-                                            self.t, 1)
+        self.nd.create_token(self.t, project_name, dataset_name, 1)
         self.nd.create_channel(self.c, project_name,
-                                      dataset_name, 'timeseries',
-                                      'uint8', 0, 500, 0, 0, 0)
+                               dataset_name, 'timeseries',
+                               'uint8', 0, 500, propagate=1)
 
     def tearDown(self):
-        print 'tearing down'
         dataset_name = 'demo1'
         project_name = 'ndio_demos'
         channel_name = 'image1'
@@ -44,12 +42,12 @@ class TestPropagate(unittest.TestCase):
 
     def test_propagate_status_fails_on_bad_token(self):
         token = 'this is not a token'
-        with self.assertRaises(ndio.remote.errors.RemoteDataNotFoundError):
+        with self.assertRaises(ValueError):
             self.nd.get_propagate_status(token, self.c)
 
     def test_kasthuri11_is_propagated(self):
         # token = 'kasthuri11'
-        self.assertEqual(self.nd.get_propagate_status(self.t, self.c), '2')
+        self.assertEqual(self.nd.get_propagate_status(self.t, self.c), '1')
 
 
 if __name__ == '__main__':

@@ -1,7 +1,1 @@
-{
-  "tests/test_getURL.py::TestgetURL::test_masterToken": true, 
-  "tests/test_getURL.py::TestgetURL::test_publicToken": true, 
-  "tests/test_getURL.py::TestgetURL::test_testToken": true, 
-  "tests/test_propagate.py::TestPropagate::test_kasthuri11_is_propagated": true, 
-  "tests/test_propagate.py::TestPropagate::test_propagate_status_fails_on_bad_token": true
-}
+{}

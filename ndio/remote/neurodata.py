@@ -80,11 +80,11 @@ class neurodata(neuroRemote):
                                    protocol,
                                    meta_root,
                                    meta_protocol, **kwargs)
-        super(neurodata,self).__init__(user_token,
-                                   hostname,
-                                   protocol,
-                                   meta_root,
-                                   meta_protocol, **kwargs)
+        super(neurodata, self).__init__(user_token,
+                                        hostname,
+                                        protocol,
+                                        meta_root,
+                                        meta_protocol, **kwargs)
 
     # SECTION:
     # Data Download
@@ -466,7 +466,6 @@ class neurodata(neuroRemote):
             bool: True if project deleted, False if not.
         """
         return self.resources.delete_project(project_name, dataset_name)
-
 
     def create_token(self,
                      token_name,

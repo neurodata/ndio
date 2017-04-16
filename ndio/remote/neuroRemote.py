@@ -251,7 +251,7 @@ class neuroRemote(Remote):
 
     # Propagation
 
-    #@_check_token
+    # @_check_token
     def propagate(self, token, channel):
         """
         Kick off the propagate function on the remote server.
@@ -271,7 +271,7 @@ class neuroRemote(Remote):
             raise RemoteDataUploadError('Propagate fail: {}'.format(req.text))
         return True
 
-    #@_check_token
+    # @_check_token
     def get_propagate_status(self, token, channel):
         """
         Get the propagate status for a token/channel pair.
