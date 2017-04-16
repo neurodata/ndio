@@ -85,7 +85,7 @@ class neuroRemote(Remote):
 
     # SECTION:
     # Legacy code
-    def getURL(url):
+    def getURL(self, url):
         return self.remote_utils.get_url(url)
 
     # SECTION:
