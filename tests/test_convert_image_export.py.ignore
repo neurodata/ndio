@@ -1,0 +1,78 @@
+import unittest
+import ndio.remote.neurodata as neurodata
+import ndio.ramon
+import ndio.convert.png as ndpng
+import ndio.convert.tiff as ndtiff
+import numpy
+import test_settings
+
+
+class TestDownload(unittest.TestCase):
+
+    def setUp(self):
+        self.token_user = '043813bf95d9d5be2bb19448d5a9337db086c559'
+        hostname = test_settings.HOSTNAME
+        self.oo = neurodata(self.token_user, hostname=hostname)
+
+        # dataset_name = 'demo1'
+        # project_name = 'ndio_demos'
+        # project_token = 'test_token'
+        # channel_name = 'image1'
+        # self.resources.create_dataset(dataset_name, 100, 100, 100, 1.0,
+        #                               1.0,
+        #                               1.0)
+        # self.resources.create_project(project_name, dataset_name,
+        #                               'localhost',
+        #                               1, 1, 'localhost', 'Redis')
+        # self.resources.create_project_token(dataset_name, project_name,
+        #                                     project_token, 1)
+        # self.resources.create_channel(channel_name, project_name,
+        #                               dataset_name, 'timeseries',
+        #                               'uint8', 0, 500, 0, 0, 0)
+
+    # def tearDown(self):
+
+
+    def test_export_load_png(self):
+        # kasthuri11/image/xy/3/1000,1100/1000,1100/1000/
+        image_download = self.oo.get_image('kasthuri11', 'image',
+                                           1000, 1100,
+                                           1000, 1100,
+                                           1000,
+                                           resolution=3)
+
+        # if returns string, successful export
+        self.assertEqual(
+                ndpng.export_png("tests/trash/download.png", image_download),
+                "tests/trash/download.png")
+
+        # now confirm import works too
+        self.assertEqual(ndpng.load("tests/trash/download.png")[0][0],
+                         image_download[0][0])
+        self.assertEqual(ndpng.load("tests/trash/download.png")[10][10],
+                         image_download[10][10])
+
+    # def test_export_load_tiff(self):
+    #     # kasthuri11/image/xy/3/1000,1100/1000,1100/1000/
+    #     image_download = self.oo.get_image('kasthuri11', 'image',
+    #                                        1000, 1100,
+    #                                        1000, 1100,
+    #                                        1000,
+    #                                        resolution=3)
+    #
+    #     # if returns string, successful export
+    #     self.assertEqual(
+    #                      ndtiff.save("tests/trash/download-1.tiff",
+    #                                  image_download),
+    #                      "tests/trash/download-1.tiff")
+    #
+    #     # now confirm import works too
+    #     self.assertEqual(
+    #                      ndtiff.load("tests/trash/download-1.tiff")[0][0],
+    #                      image_download[0][0])
+    #     self.assertEqual(
+    #                      ndtiff.load("tests/trash/download-1.tiff")[10][10],
+    #                      image_download[10][10])
+
+if __name__ == '__main__':
+    unittest.main()
