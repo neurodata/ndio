@@ -1,1 +1,5 @@
-{}
+{
+  "tests/test_getURL.py::TestgetURL::test_masterToken": true, 
+  "tests/test_getURL.py::TestgetURL::test_publicToken": true, 
+  "tests/test_getURL.py::TestgetURL::test_testToken": true
+}

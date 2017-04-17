@@ -13,50 +13,50 @@ class TestgetURL(unittest.TestCase):
         self.neurodata = neurodata(user_token=NEURODATA, hostname=HOSTNAME)
         self.public = neurodata(hostname=HOSTNAME)
         self.test = neurodata(user_token=TEST, hostname=HOSTNAME)
-        self.private_project = "https://{}/nd/sd/private_neuro/info/".format(
+        self.private_project = "https://{}/nd/sd/pn/info/".format(
             HOSTNAME)
-        self.public_project = "https://{}/nd/sd/public_neuro/info/".format(
+        self.public_project = "https://{}/nd/sd/pubn/info/".format(
             HOSTNAME)
         self.private_test_project = "https://{}/nd/sd/".format(HOSTNAME)\
-                                    + "private_test_neuro/info/"
+                                    + "ptn/info/"
 
         # Create the projects/tokens that are required for this
-        self.neurodata.create_dataset('private_neuro', 10, 10, 10, 1, 1, 1)
+        self.neurodata.create_dataset('pn', 10, 10, 10, 1, 1, 1)
         self.neurodata.create_project(
-            'private_neuro_proj', 'private_neuro', 'localhost', 0)
+            'pn', 'pn', 'localhost', 0)
         self.neurodata.create_token(
-            'private_neuro_proj', 'private_neuro_proj', 'private_neuro', 0)
+            'pn', 'pn', 'pn', 0)
 
-        self.neurodata.create_dataset('public_neuro', 10, 10, 10, 1, 1, 1)
+        self.neurodata.create_dataset('pubn', 10, 10, 10, 1, 1, 1)
         self.neurodata.create_project(
-            'public_neuro_proj', 'public_neuro', 'localhost', 1)
+            'pubn', 'pubn', 'localhost', 1)
         self.neurodata.create_token(
-            'public_neuro_proj', 'public_neuro_proj', 'public_neuro', 1)
+            'pubn', 'pubn', 'pubn', 1)
 
-        self.test.create_dataset('private_test_neuro', 10, 10, 10, 1, 1, 1)
-        self.test.create_project('private_test_neuro_proj',
-                                 'private_test_neuro', 'localhost', 0)
-        self.test.create_token('private_test_neuro_proj',
-                               'private_test_neuro_proj',
-                               'private_test_neuro', 0)
+        self.test.create_dataset('ptn', 10, 10, 10, 1, 1, 1)
+        self.test.create_project('ptn',
+                                 'ptn', 'localhost', 0)
+        self.test.create_token('ptn',
+                               'ptn',
+                               'ptn', 0)
 
     def tearDown(self):
         self.neurodata.delete_token(
-            'private_neuro_proj', 'private_neuro_proj', 'private_neuro')
-        self.neurodata.delete_project('private_neuro_proj', 'private_neuro')
-        self.neurodata.delete_dataset('private_neuro')
+            'pn', 'pn', 'pn')
+        self.neurodata.delete_project('pn', 'pn')
+        self.neurodata.delete_dataset('pn')
 
         self.neurodata.delete_token(
-            'public_neuro_proj', 'public_neuro_proj', 'public_neuro')
-        self.neurodata.delete_project('public_neuro_proj', 'public_neuro')
-        self.neurodata.delete_dataset('public_neuro')
+            'pubn', 'pubn', 'pubn')
+        self.neurodata.delete_project('pubn', 'pubn')
+        self.neurodata.delete_dataset('pubn')
 
         self.neurodata.delete_token(
-            'private_test_neuro_proj', 'private_test_neuro_proj',
-            'private_test_neuro')
+            'ptn', 'ptn',
+            'ptn')
         self.neurodata.delete_project(
-            'private_test_neuro_proj', 'private_test_neuro')
-        self.neurodata.delete_dataset('private_test_neuro')
+            'ptn', 'ptn')
+        self.neurodata.delete_dataset('ptn')
 
     def test_masterToken(self):
         try:

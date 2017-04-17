@@ -111,7 +111,7 @@ class resources(nd):
         req = self.remote_utils.post_url(url, json=json)
 
         if req.status_code is not 201:
-            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
+            raise RemoteDataUploadError('Could not upload {}'.format(req))
         if req.content == "" or req.content == b'':
 
             return True
