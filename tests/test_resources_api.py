@@ -1,15 +1,14 @@
 import unittest
-import ndio.remote.neurodata as nd
+from ndio.remote.neurodata import neurodata as nd
 import numpy
 import json
 import test_settings
-
 
 class TestResourcesApi(unittest.TestCase):
 
     def setUp(self):
         self.token_user = test_settings.NEURODATA
-        hostname = 'localhost'
+        hostname = test_settings.HOSTNAME
         self.nd = nd(user_token=self.token_user, hostname=hostname)
 
     def test_create_dataset(self):
@@ -67,7 +66,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_create_project(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         result = self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 0)
         self.assertEqual(result, True)
         self.nd.delete_project('testp', 'test')
         self.nd.delete_dataset('test')
