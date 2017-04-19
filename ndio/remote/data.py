@@ -72,6 +72,9 @@ class data(neuroRemote, metadata):
     # SECTION:
     # Data Download
 
+    def url(self, suffix=""):
+        return super(data, self).url() + '/sd/' + suffix
+
     def get_block_size(self, token, resolution=None):
         """
         Gets the block-size for a given token at a given resolution.
