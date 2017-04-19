@@ -1,13 +1,6 @@
 import unittest
 import ndio.remote.neurodata as neurodata
 import ndio.remote.errors
-<<<<<<< HEAD
-import test_settings
-import numpy
-import h5py
-import os
-
-=======
 import numpy
 import h5py
 import os
@@ -16,16 +9,10 @@ import test_settings
 HOSTNAME = test_settings.HOSTNAME
 NEURODATA = test_settings.NEURODATA
 TEST = test_settings.TEST
->>>>>>> master
 
 class TestPropagate(unittest.TestCase):
 
     def setUp(self):
-<<<<<<< HEAD
-        hostname = test_settings.HOSTNAME
-        self.token_user = test_settings.NEURODATA
-        self.nd = neurodata(user_token=self.token_user, hostname=hostname)
-=======
         self.token_user = NEURODATA
         hostname = HOSTNAME
         self.nd = neurodata(self.token_user,
@@ -55,13 +42,11 @@ class TestPropagate(unittest.TestCase):
                                       dataset_name)
         self.nd.delete_project(project_name, dataset_name)
         self.nd.delete_dataset(dataset_name)
->>>>>>> master
 
     def test_propagate_status_fails_on_bad_token(self):
         token = 'this is not a token'
         with self.assertRaises(ValueError):
-<<<<<<< HEAD
-            self.nd.get_propagate_status(token, 'channel')
+            self.nd.get_propagate_status(token, self.c)
 
 
     #Channel is by default not allowed to be propagated. But pass the test
@@ -82,13 +67,9 @@ class TestPropagate(unittest.TestCase):
         self.nd.delete_project('testp', 'test')
         self.nd.delete_dataset('test')
 
-=======
-            self.nd.get_propagate_status(token, self.c)
-
     def test_kasthuri11_is_propagated(self):
         # token = 'kasthuri11'
         self.assertEqual(self.nd.get_propagate_status(self.t, self.c), '1')
->>>>>>> master
 
 
 if __name__ == '__main__':
