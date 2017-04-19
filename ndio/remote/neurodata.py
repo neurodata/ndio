@@ -8,10 +8,11 @@ import zlib
 import tempfile
 import blosc
 import h5py
+from .remote_utils import remote_utils
 
 from .Remote import Remote
 from .errors import *
-import ndio.ramon as ramon
+# import ndio.ramon as ramon
 from six.moves import range
 import six
 
@@ -22,21 +23,21 @@ try:
 except ImportError:
     import urllib2
 
-DEFAULT_HOSTNAME = "openconnecto.me"
-DEFAULT_SUFFIX = "nd"
-DEFAULT_PROTOCOL = "https"  # originally was https in master
-DEFAULT_BLOCK_SIZE = (1024, 1024, 16)
+from .neuroRemote import neuroRemote
+from .neuroRemote import DEFAULT_HOSTNAME
+from .neuroRemote import DEFAULT_SUFFIX
+from .neuroRemote import DEFAULT_PROTOCOL
+from .neuroRemote import DEFAULT_BLOCK_SIZE
+
+from .data import data
+# from ndio.remote.ramon import ramon
+from .resources import resources
 
 
-class neurodata(Remote):
+class neurodata(neuroRemote):
     """
-    The NeuroData remote, for interfacing with ndstore, ndlims, and friends.
+    Main neurodata class that combines all wrapper classes.
     """
-
-    # SECTION:
-    # Enumerables
-    IMAGE = IMG = 'image'
-    ANNOTATION = ANNO = 'annotation'
 
     def __init__(self,
                  user_token='placeholder',
@@ -64,6 +65,7 @@ class neurodata(Remote):
             suffix (str: "ocp"): The URL suffix to specify ndstore/microns. If
                 you aren't sure what to do with this, don't specify one.
         """
+
         self._check_tokens = kwargs.get('check_tokens', False)
         self._chunk_threshold = kwargs.get('chunk_threshold', 1E9 / 4)
         self._ext = kwargs.get('suffix', DEFAULT_SUFFIX)
@@ -450,7 +452,7 @@ class neurodata(Remote):
         }
 
         req = self.post_url(url, json=json)
-
+        import pdb; pdb.set_trace()
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
         if req.content == "" or req.content == b'':
@@ -672,10 +674,32 @@ class neurodata(Remote):
             'secret': secret,
             'subvolumes': subvols
         })
+=======
+        self.data = data(user_token,
+                         hostname,
+                         protocol,
+                         meta_root,
+                         meta_protocol, **kwargs)
+        # self.ramon = ramon(user_token,
+        #                    hostname,
+        #                    protocol,
+        #                    meta_root,
+        #                    meta_protocol, **kwargs)
+        self.resources = resources(user_token,
+                                   hostname,
+                                   protocol,
+                                   meta_root,
+                                   meta_protocol, **kwargs)
+        super(neurodata, self).__init__(user_token,
+                                        hostname,
+                                        protocol,
+                                        meta_root,
+                                        meta_protocol, **kwargs)
+>>>>>>> 071c7cab971b6269b9a398c3bf6a773e8eee9370
 
     # SECTION:
     # Data Download
-    @_check_token
+
     def get_block_size(self, token, resolution=None):
         """
         Gets the block-size for a given token at a given resolution.
@@ -688,12 +712,8 @@ class neurodata(Remote):
         Returns:
             int[3]: The xyz blocksize.
         """
-        cdims = self.get_metadata(token)['dataset']['cube_dimension']
-        if resolution is None:
-            resolution = min(cdims.keys())
-        return cdims[str(resolution)]
+        return self.data.get_block_size(token, resolution)
 
-    @_check_token
     def get_image_offset(self, token, resolution=0):
         """
         Gets the image offset for a given token at a given resolution. For
@@ -708,14 +728,8 @@ class neurodata(Remote):
         Returns:
             int[3]: The origin of the dataset, as a list
         """
-        info = self.get_proj_info(token)
-        res = str(resolution)
-        if res not in info['dataset']['offset']:
-            raise RemoteDataNotFoundError("Resolution " + res +
-                                          " is not available.")
-        return info['dataset']['offset'][str(resolution)]
+        return self.data.get_image_offset(token, resolution)
 
-    @_check_token
     def get_xy_slice(self, token, channel,
                      x_start, x_stop,
                      y_start, y_stop,
@@ -737,14 +751,12 @@ class neurodata(Remote):
         Returns:
             str: binary image data
         """
-        vol = self.get_cutout(token, channel, x_start, x_stop, y_start,
-                              y_stop, z_index, z_index + 1, resolution)
+        return self.data.get_xy_slice(token, channel,
+                                      x_start, x_stop,
+                                      y_start, y_stop,
+                                      z_index,
+                                      resolution)
 
-        vol = numpy.squeeze(vol)  # 3D volume to 2D slice
-
-        return vol
-
-    @_check_token
     def get_image(self, token, channel,
                   x_start, x_stop,
                   y_start, y_stop,
@@ -753,13 +765,11 @@ class neurodata(Remote):
         """
         Alias for the `get_xy_slice` function for backwards compatibility.
         """
-        return self.get_xy_slice(token, channel,
-                                 x_start, x_stop,
-                                 y_start, y_stop,
-                                 z_index,
-                                 resolution)
+        return self.data.get_image(token, channel,
+                                   x_start, x_stop,
+                                   y_start, y_stop,
+                                   z_index, resolution)
 
-    @_check_token
     def get_volume(self, token, channel,
                    x_start, x_stop,
                    y_start, y_stop,
@@ -783,24 +793,17 @@ class neurodata(Remote):
         Returns:
             ndio.ramon.RAMONVolume: Downloaded data.
         """
-        size = (x_stop - x_start) * (y_stop - y_start) * (z_stop - z_start)
-        volume = ramon.RAMONVolume()
-        volume.xyz_offset = [x_start, y_start, z_start]
-        volume.resolution = resolution
+        return self.data.get_volume(token, channel,
+                                    x_start, x_stop,
+                                    y_start, y_stop,
+                                    z_start, z_stop,
+                                    resolution, block_size, neariso)
 
-        volume.cutout = self.get_cutout(token, channel, x_start,
-                                        x_stop, y_start, y_stop,
-                                        z_start, z_stop,
-                                        resolution=resolution,
-                                        block_size=block_size,
-                                        neariso=neariso)
-        return volume
-
-    @_check_token
     def get_cutout(self, token, channel,
                    x_start, x_stop,
                    y_start, y_stop,
                    z_start, z_stop,
+                   t_start=0, t_stop=1,
                    resolution=1,
                    block_size=DEFAULT_BLOCK_SIZE,
                    neariso=False):
@@ -823,125 +826,18 @@ class neurodata(Remote):
         Returns:
             numpy.ndarray: Downloaded data.
         """
-        if block_size is None:
-            # look up block size from metadata
-            block_size = self.get_block_size(token, resolution)
-
-        origin = self.get_image_offset(token, resolution)
-
-        # If z_stop - z_start is < 16, backend still pulls minimum 16 slices
-        if (z_stop - z_start) < 16:
-            z_slices = 16
-        else:
-            z_slices = z_stop - z_start
-
-        # Calculate size of the data to be downloaded.
-        size = (x_stop - x_start) * (y_stop - y_start) * z_slices * 4
-
-        # Switch which download function to use based on which libraries are
-        # available in this version of python.
-        if six.PY2:
-            dl_func = self._get_cutout_blosc_no_chunking
-        elif six.PY3:
-            dl_func = self._get_cutout_no_chunking
-        else:
-            raise ValueError("Invalid Python version.")
-
-        if size < self._chunk_threshold:
-            vol = dl_func(token, channel, resolution,
-                          x_start, x_stop,
-                          y_start, y_stop,
-                          z_start, z_stop, neariso=neariso)
-            vol = numpy.rollaxis(vol, 1)
-            vol = numpy.rollaxis(vol, 2)
-            return vol
-        else:
-            from ndio.utils.parallel import block_compute
-            blocks = block_compute(x_start, x_stop,
-                                   y_start, y_stop,
-                                   z_start, z_stop,
-                                   origin, block_size)
-
-            vol = numpy.zeros(((z_stop - z_start),
-                               (y_stop - y_start),
-                               (x_stop - x_start)))
-            for b in blocks:
-
-                data = dl_func(token, channel, resolution,
-                               b[0][0], b[0][1],
-                               b[1][0], b[1][1],
-                               b[2][0], b[2][1], neariso=neariso)
-
-                if b == blocks[0]:  # first block
-                    vol = numpy.zeros(((z_stop - z_start),
-                                       (y_stop - y_start),
-                                       (x_stop - x_start)), dtype=data.dtype)
-
-                vol[b[2][0] - z_start: b[2][1] - z_start,
-                    b[1][0] - y_start: b[1][1] - y_start,
-                    b[0][0] - x_start: b[0][1] - x_start] = data
-
-            vol = numpy.rollaxis(vol, 1)
-            vol = numpy.rollaxis(vol, 2)
-            return vol
-
-    def _get_cutout_no_chunking(self, token, channel, resolution,
-                                x_start, x_stop, y_start, y_stop,
-                                z_start, z_stop, neariso=False):
-        url = self.url() + "{}/{}/hdf5/{}/{},{}/{},{}/{},{}/".format(
-            token, channel, resolution,
-            x_start, x_stop,
-            y_start, y_stop,
-            z_start, z_stop
-        )
-
-        if neariso:
-            url += "neariso/"
-
-        req = self.getURL(url)
-        if req.status_code is not 200:
-            raise IOError("Bad server response for {}: {}: {}".format(
-                          url,
-                          req.status_code,
-                          req.text))
-
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(req.content)
-            tmpfile.seek(0)
-            h5file = h5py.File(tmpfile.name, "r")
-            return h5file.get(channel).get('CUTOUT')[:]
-        raise IOError("Failed to make tempfile.")
-
-    def _get_cutout_blosc_no_chunking(self, token, channel, resolution,
-                                      x_start, x_stop, y_start, y_stop,
-                                      z_start, z_stop, neariso=False):
-
-        url = self.url() + "{}/{}/blosc/{}/{},{}/{},{}/{},{}/".format(
-            token, channel, resolution,
-            x_start, x_stop,
-            y_start, y_stop,
-            z_start, z_stop
-        )
-
-        if neariso:
-            url += "neariso/"
-
-        req = self.getURL(url)
-        if req.status_code is not 200:
-            raise IOError("Bad server response for {}: {}: {}".format(
-                          url,
-                          req.status_code,
-                          req.text))
-
-        # This will need modification for >3D blocks
-        return blosc.unpack_array(req.content)[0]
-
-        raise IOError("Failed to retrieve blosc cutout.")
+        return self.data.get_cutout(token, channel,
+                                    x_start, x_stop,
+                                    y_start, y_stop,
+                                    z_start, z_stop,
+                                    t_start, t_stop,
+                                    resolution,
+                                    block_size,
+                                    neariso)
 
     # SECTION:
     # Data Upload
 
-    @_check_token
     def post_cutout(self, token, channel,
                     x_start,
                     y_start,
@@ -966,645 +862,301 @@ class neurodata(Remote):
         Raises:
             RemoteDataUploadError: if there's an issue during upload.
         """
-        datatype = self.get_proj_info(token)['channels'][channel]['datatype']
-        if data.dtype.name != datatype:
-            data = data.astype(datatype)
-
-        data = numpy.rollaxis(data, 1)
-        data = numpy.rollaxis(data, 2)
-
-        if six.PY3 or data.nbytes > 1.5e9:
-            ul_func = self._post_cutout_no_chunking_npz
-        else:
-            ul_func = self._post_cutout_no_chunking_blosc
-
-        if data.size < self._chunk_threshold:
-            return ul_func(token, channel, x_start,
-                           y_start, z_start, data,
-                           resolution)
-
-        return self._post_cutout_with_chunking(token, channel,
-                                               x_start, y_start, z_start, data,
-                                               resolution, ul_func)
-
-    def _post_cutout_with_chunking(self, token, channel, x_start,
-                                   y_start, z_start, data,
-                                   resolution, ul_func):
-        # must chunk first
-        from ndio.utils.parallel import block_compute
-        blocks = block_compute(x_start, x_start + data.shape[2],
-                               y_start, y_start + data.shape[1],
-                               z_start, z_start + data.shape[0])
-        for b in blocks:
-            # data coordinate relative to the size of the arra
-            subvol = data[b[2][0] - z_start: b[2][1] - z_start,
-                          b[1][0] - y_start: b[1][1] - y_start,
-                          b[0][0] - x_start: b[0][1] - x_start]
-            # upload the chunk:
-            # upload coordinate relative to x_start, y_start, z_start
-            ul_func(token, channel, b[0][0],
-                    b[1][0], b[2][0], subvol,
-                    resolution)
-        return True
-
-    def _post_cutout_no_chunking_npz(self, token, channel,
-                                     x_start, y_start, z_start,
-                                     data, resolution):
-
-        data = numpy.expand_dims(data, axis=0)
-        tempfile = BytesIO()
-        numpy.save(tempfile, data)
-        compressed = zlib.compress(tempfile.getvalue())
-
-        url = self.url("{}/{}/npz/{}/{},{}/{},{}/{},{}/".format(
-            token, channel,
-            resolution,
-            x_start, x_start + data.shape[3],
-            y_start, y_start + data.shape[2],
-            z_start, z_start + data.shape[1]
-        ))
-
-        req = post_url(url, data=compressed, headers={
-            'Content-Type': 'application/octet-stream'
-        })
-
-        if req.status_code is not 200:
-            raise RemoteDataUploadError(req.text)
-        else:
-            return True
-
-    def _post_cutout_no_chunking_blosc(self, token, channel,
-                                       x_start, y_start, z_start,
-                                       data, resolution):
-        """
-        Accepts data in zyx. !!!
-        """
-        data = numpy.expand_dims(data, axis=0)
-        blosc_data = blosc.pack_array(data)
-
-        url = self.url("{}/{}/blosc/{}/{},{}/{},{}/{},{}/".format(
-            token, channel,
-            resolution,
-            x_start, x_start + data.shape[3],
-            y_start, y_start + data.shape[2],
-            z_start, z_start + data.shape[1]
-        ))
-        req = post_url(url, data=blosc_data, headers={
-            'Content-Type': 'application/octet-stream'
-        })
-
-        if req.status_code is not 200:
-            raise RemoteDataUploadError(req.text)
-        else:
-            return True
+        return self.data.post_cutout(token, channel,
+                                     x_start,
+                                     y_start,
+                                     z_start,
+                                     data,
+                                     resolution)
 
     # SECTION:
-    # RAMON Download
+    # Ramon
 
-    @_check_token
-    def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
-        """
-        Get the bounding box for a RAMON object (specified by ID).
+# def get_ramon_bounding_box(self, token, channel, r_id, resolution=0):
+#     """
+#     Get the bounding box for a RAMON object (specified by ID).
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): Channel to use
+#         r_id (int): Which ID to get a bounding box
+#         resolution (int : 0): The resolution at which to download
+#
+#     Returns:
+#         (x_start, x_stop, y_start, y_stop, z_start, z_stop): ints
+#     """
+#     return self.ramon.get_ramon_bounding_box(token, channel, r_id,
+#                                              resolution)
+#
+#
+# def get_ramon_ids(self, token, channel, ramon_type=None):
+#     """
+#     Return a list of all IDs available for download from this token and
+#     channel.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): Channel to use
+#         ramon_type (int : None): Optional. If set, filters IDs and only
+#             returns those of RAMON objects of the requested type.
+#
+#     Returns:
+#         int[]: A list of the ids of the returned RAMON objects
+#
+#     Raises:
+#         RemoteDataNotFoundError: If the channel or token is not found
+#     """
+#     return self.ramon.get_ramon_ids(token, channel, ramon_type)
+#
+# def get_ramon(self, token, channel, ids, resolution=0,
+#               include_cutout=False, sieve=None, batch_size=100):
+#     """
+#     Download a RAMON object by ID.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): The channel to use
+#         ids (int, str, int[], str[]): The IDs of a RAMON object to gather.
+#             Can be int (3), string ("3"), int[] ([3, 4, 5]), or string
+#             (["3", "4", "5"]).
+#         resolution (int : None): Resolution. Defaults to the most granular
+#             resolution (0 for now)
+#         include_cutout (bool : False):  If True, r.cutout is populated
+#         sieve (function : None): A function that accepts a single ramon
+#             and returns True or False depending on whether you want that
+#             ramon object to be included in your response or not.
+#             For example,
+#             ```
+#             def is_even_id(ramon):
+#                 return ramon.id % 2 == 0
+#             ```
+#             You can then pass this to get_ramon like this:
+#             ```
+#             ndio.remote.neuroRemote.get_ramon( . . . , sieve=is_even_id)
+#             ```
+#         batch_size (int : 100): The amount of RAMON objects to download at
+#             a time. If this is greater than 100, we anticipate things going
+#             very poorly for you. So if you set it <100, ndio will use it.
+#             If >=100, set it to 100.
+#
+#     Returns:
+#         ndio.ramon.RAMON[]: A list of returned RAMON objects.
+#
+#     Raises:
+#         RemoteDataNotFoundError: If the requested ids cannot be found.
+#     """
+#     return self.ramon.get_ramon(token, channel, ids, resolution,
+#                   include_cutout, sieve, batch_size)
+#
+# def get_ramon_metadata(self, token, channel, anno_id):
+#     """
+#     Download a RAMON object by ID. `anno_id` can be a string `"123"`, an
+#     int `123`, an array of ints `[123, 234, 345]`, an array of strings
+#     `["123", "234", "345"]`, or a comma-separated string list
+#     `"123,234,345"`.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): The channel to use
+#         anno_id: An int, a str, or a list of ids to gather
+#
+#     Returns:
+#         JSON. If you pass a single id in str or int, returns a single datum
+#         If you pass a list of int or str or a comma-separated string, will
+#         return a dict with keys from the list and the values are the JSON
+#         returned from the server.
+#
+#     Raises:
+#         RemoteDataNotFoundError: If the data cannot be found on the Remote
+#     """
+#     return self.ramon.get_ramon_metadata(token, channel, anno_id)
+#
+# def delete_ramon(self, token, channel, anno):
+#     """
+#     Deletes an annotation from the server. Probably you should be careful
+#     with this function, it seems dangerous.
+#
+#     Arguments:
+#         token (str): The token to inspect
+#         channel (str): The channel to inspect
+#         anno (int OR list(int) OR RAMON): The annotation to delete. If a
+#             RAMON object is supplied, the remote annotation will be deleted
+#             by an ID lookup. If an int is supplied, the annotation will be
+#             deleted for that ID. If a list of ints are provided, they will
+#             all be deleted.
+#
+#     Returns:
+#         bool: Success
+#     """
+#     return self.ramon.delete_ramon(token, channel, anno)
+#
+#
+# def post_ramon(self, token, channel, r, batch_size=100):
+#     """
+#     Posts a RAMON object to the Remote.
+#
+#     Arguments:
+#         token (str): Project to use
+#         channel (str): The channel to use
+#         r (RAMON or RAMON[]): The annotation(s) to upload
+#         batch_size (int : 100): The number of RAMONs to post simultaneously
+#             at maximum in one file. If len(r) > batch_size, the batch will
+#             be split and uploaded automatically. Must be less than 100.
+#
+#     Returns:
+#         bool: Success = True
+#
+#     Throws:
+#         RemoteDataUploadError: if something goes wrong
+#     """
+#     return self.ramon.post_ramon(token, channel, r, batch_size)
 
-        Arguments:
-            token (str): Project to use
-            channel (str): Channel to use
-            r_id (int): Which ID to get a bounding box
-            resolution (int : 0): The resolution at which to download
+    # SECTION
+    # Resources: Projects
 
-        Returns:
-            (x_start, x_stop, y_start, y_stop, z_start, z_stop): ints
-        """
-        url = self.url('{}/{}/{}/boundingbox/{}/'.format(token, channel,
-                                                         r_id, resolution))
-
-        r_id = str(r_id)
-        res = self.getURL(url)
-
-        if res.status_code != 200:
-            rt = self.get_ramon_metadata(token, channel, r_id)[r_id]['type']
-            if rt in ['neuron']:
-                raise ValueError("ID {} is of type '{}'".format(r_id, rt))
-            raise RemoteDataNotFoundError("No such ID {}".format(r_id))
-
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(res.content)
-            tmpfile.seek(0)
-            h5file = h5py.File(tmpfile.name, "r")
-            origin = h5file["{}/XYZOFFSET".format(r_id)][()]
-            size = h5file["{}/XYZDIMENSION".format(r_id)][()]
-            return (origin[0], origin[0] + size[0],
-                    origin[1], origin[1] + size[1],
-                    origin[2], origin[2] + size[2])
-
-    @_check_token
-    def get_ramon_ids(self, token, channel, ramon_type=None):
-        """
-        Return a list of all IDs available for download from this token and
-        channel.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): Channel to use
-            ramon_type (int : None): Optional. If set, filters IDs and only
-                returns those of RAMON objects of the requested type.
-
-        Returns:
-            int[]: A list of the ids of the returned RAMON objects
-
-        Raises:
-            RemoteDataNotFoundError: If the channel or token is not found
-        """
-        url = self.url("{}/{}/query/".format(token, channel))
-        if ramon_type is not None:
-            # User is requesting a specific ramon_type.
-            if type(ramon_type) is not int:
-                ramon_type = ramon.AnnotationType.get_int(ramon_type)
-            url += "type/{}/".format(str(ramon_type))
-
-        req = self.getURL(url)
-
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError('No query results for token {}.'
-                                          .format(token))
-        else:
-            with tempfile.NamedTemporaryFile() as tmpfile:
-                tmpfile.write(req.content)
-                tmpfile.seek(0)
-                h5file = h5py.File(tmpfile.name, "r")
-                if 'ANNOIDS' not in h5file:
-                    return []
-                return [i for i in h5file['ANNOIDS']]
-            raise IOError("Could not successfully mock HDF5 file for parsing.")
-
-    @_check_token
-    def get_ramon(self, token, channel, ids, resolution=0,
-                  include_cutout=False, sieve=None, batch_size=100):
-        """
-        Download a RAMON object by ID.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): The channel to use
-            ids (int, str, int[], str[]): The IDs of a RAMON object to gather.
-                Can be int (3), string ("3"), int[] ([3, 4, 5]), or string
-                (["3", "4", "5"]).
-            resolution (int : None): Resolution. Defaults to the most granular
-                resolution (0 for now)
-            include_cutout (bool : False):  If True, r.cutout is populated
-            sieve (function : None): A function that accepts a single ramon
-                and returns True or False depending on whether you want that
-                ramon object to be included in your response or not.
-                For example,
-                ```
-                def is_even_id(ramon):
-                    return ramon.id % 2 == 0
-                ```
-                You can then pass this to get_ramon like this:
-                ```
-                ndio.remote.neurodata.get_ramon( . . . , sieve=is_even_id)
-                ```
-            batch_size (int : 100): The amount of RAMON objects to download at
-                a time. If this is greater than 100, we anticipate things going
-                very poorly for you. So if you set it <100, ndio will use it.
-                If >=100, set it to 100.
-
-        Returns:
-            ndio.ramon.RAMON[]: A list of returned RAMON objects.
-
-        Raises:
-            RemoteDataNotFoundError: If the requested ids cannot be found.
-        """
-        b_size = min(100, batch_size)
-
-        _return_first_only = False
-        if type(ids) is not list:
-            _return_first_only = True
-            ids = [ids]
-        ids = [str(i) for i in ids]
-
-        rs = []
-        id_batches = [ids[i:i + b_size] for i in range(0, len(ids), b_size)]
-        for batch in id_batches:
-            rs.extend(self._get_ramon_batch(token, channel, batch, resolution))
-
-        rs = self._filter_ramon(rs, sieve)
-
-        if include_cutout:
-            rs = [self._add_ramon_cutout(token, channel, r, resolution)
-                  for r in rs]
-
-        if _return_first_only:
-            return rs[0]
-
-        return sorted(rs, key=lambda x: ids.index(x.id))
-
-    def _filter_ramon(self, rs, sieve):
-        if sieve is not None:
-            return [r for r in rs if sieve(r)]
-        return rs
-
-    def _add_ramon_cutout(self, token, channel, ramon, resolution):
-        origin = ramon.xyz_offset
-        # Get the bounding box (cube-aligned)
-        bbox = self.get_ramon_bounding_box(token, channel,
-                                           ramon.id, resolution=resolution)
-        # Get the cutout (cube-aligned)
-        cutout = self.get_cutout(token, channel,
-                                 *bbox, resolution=resolution)
-        cutout[cutout != int(ramon.id)] = 0
-
-        # Compute upper offset and crop
-        bounds = numpy.argwhere(cutout)
-        mins = [min([i[dim] for i in bounds]) for dim in range(3)]
-        maxs = [max([i[dim] for i in bounds]) for dim in range(3)]
-
-        ramon.cutout = cutout[
-            mins[0]:maxs[0],
-            mins[1]:maxs[1],
-            mins[2]:maxs[2]
-        ]
-
-        return ramon
-
-    def _get_ramon_batch(self, token, channel, ids, resolution):
-        ids = [str(i) for i in ids]
-        url = self.url("{}/{}/{}/json/".format(token, channel, ",".join(ids)))
-        req = self.getURL(url)
-
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError('No data for id {}.'.format(ids))
-        else:
-            return ramon.from_json(req.json())
-
-    @_check_token
-    def get_ramon_metadata(self, token, channel, anno_id):
-        """
-        Download a RAMON object by ID. `anno_id` can be a string `"123"`, an
-        int `123`, an array of ints `[123, 234, 345]`, an array of strings
-        `["123", "234", "345"]`, or a comma-separated string list
-        `"123,234,345"`.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): The channel to use
-            anno_id: An int, a str, or a list of ids to gather
-
-        Returns:
-            JSON. If you pass a single id in str or int, returns a single datum
-            If you pass a list of int or str or a comma-separated string, will
-            return a dict with keys from the list and the values are the JSON
-            returned from the server.
-
-        Raises:
-            RemoteDataNotFoundError: If the data cannot be found on the Remote
-        """
-        if type(anno_id) in [int, numpy.uint32]:
-            # there's just one ID to download
-            return self._get_single_ramon_metadata(token, channel,
-                                                   str(anno_id))
-        elif type(anno_id) is str:
-            # either "id" or "id,id,id":
-            if (len(anno_id.split(',')) > 1):
-                results = {}
-                for i in anno_id.split(','):
-                    results[i] = self._get_single_ramon_metadata(
-                        token, channel, anno_id.strip()
-                    )
-                return results
-            else:
-                # "id"
-                return self._get_single_ramon_metadata(token, channel,
-                                                       anno_id.strip())
-        elif type(anno_id) is list:
-            # [id, id] or ['id', 'id']
-            results = []
-            for i in anno_id:
-                results.append(self._get_single_ramon_metadata(token, channel,
-                                                               str(i)))
-            return results
-
-    def _get_single_ramon_metadata(self, token, channel, anno_id):
-        req = self.getURL(self.url() +
-                          "{}/{}/{}/json/".format(token, channel, anno_id))
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError('No data for id {}.'.format(anno_id))
-        return req.json()
-
-    @_check_token
-    def delete_ramon(self, token, channel, anno):
-        """
-        Deletes an annotation from the server. Probably you should be careful
-        with this function, it seems dangerous.
-
-        Arguments:
-            token (str): The token to inspect
-            channel (str): The channel to inspect
-            anno (int OR list(int) OR RAMON): The annotation to delete. If a
-                RAMON object is supplied, the remote annotation will be deleted
-                by an ID lookup. If an int is supplied, the annotation will be
-                deleted for that ID. If a list of ints are provided, they will
-                all be deleted.
-
-        Returns:
-            bool: Success
-        """
-        if type(anno) is int:
-            a = anno
-        if type(anno) is str:
-            a = int(anno)
-        if type(anno) is list:
-            a = ",".join(anno)
-        else:
-            a = anno.id
-
-        req = requests.delete(self.url("{}/{}/{}/".format(token, channel, a)),
-                              verify=False)
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError("Could not delete id {}: {}"
-                                          .format(a, req.text))
-        else:
-            return True
-
-    @_check_token
-    def post_ramon(self, token, channel, r, batch_size=100):
-        """
-        Posts a RAMON object to the Remote.
-
-        Arguments:
-            token (str): Project to use
-            channel (str): The channel to use
-            r (RAMON or RAMON[]): The annotation(s) to upload
-            batch_size (int : 100): The number of RAMONs to post simultaneously
-                at maximum in one file. If len(r) > batch_size, the batch will
-                be split and uploaded automatically. Must be less than 100.
-
-        Returns:
-            bool: Success = True
-
-        Throws:
-            RemoteDataUploadError: if something goes wrong
-        """
-        # Max out batch-size at 100.
-        b_size = min(100, batch_size)
-
-        # Coerce incoming IDs to a list.
-        if type(r) is not list:
-            r = [r]
-
-        # If there are too many to fit in one batch, split here and call this
-        # function recursively.
-        if len(r) > batch_size:
-            batches = [r[i:i + b_size] for i in range(0, len(r), b_size)]
-            for batch in batches:
-                self.post_ramon(token, channel, batch, b_size)
-            return
-
-        with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
-            for i in r:
-                tmpfile = ramon.to_hdf5(i, tmpfile)
-
-            url = self.url("{}/{}/overwrite/".format(token, channel))
-            req = urllib2.Request(url, tmpfile.read())
-            res = urllib2.urlopen(req)
-
-            if res.code != 200:
-                raise RemoteDataUploadError('[{}] Could not upload {}'
-                                            .format(res.code, str(r)))
-
-            rets = res.read()
-            if six.PY3:
-                rets = rets.decode()
-            return_ids = [int(rid) for rid in rets.split(',')]
-
-            # Now post the cutout separately:
-            for ri in r:
-                if 'cutout' in dir(ri) and ri.cutout is not None:
-                    orig = ri.xyz_offset
-                    self.post_cutout(token, channel,
-                                     orig[0], orig[1], orig[2],
-                                     ri.cutout, resolution=r.resolution)
-            return return_ids
-        return True
-
-    # SECTION:
-    # ID Manipulation
-
-    @_check_token
-    def reserve_ids(self, token, channel, quantity):
-        """
-        Requests a list of next-available-IDs from the server.
-
-        Arguments:
-            quantity (int): The number of IDs to reserve
-
-        Returns:
-            int[quantity]: List of IDs you've been granted
-        """
-        quantity = str(quantity)
-        url = self.url("{}/{}/reserve/{}/".format(token, channel, quantity))
-        req = self.getURL(url)
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError('Invalid req: ' + req.status_code)
-        out = req.json()
-        return [out[0] + i for i in range(out[1])]
-
-    @_check_token
-    def merge_ids(self, token, channel, ids, delete=False):
-        """
-        Call the restful endpoint to merge two RAMON objects into one.
-
-        Arguments:
-            token (str): The token to inspect
-            channel (str): The channel to inspect
-            ids (int[]): the list of the IDs to merge
-            delete (bool : False): Whether to delete after merging.
-
-        Returns:
-            json: The ID as returned by ndstore
-        """
-        req = self.getURL(self.url() + "/merge/{}/"
-                          .format(','.join([str(i) for i in ids])))
-        if req.status_code is not 200:
-            raise RemoteDataUploadError('Could not merge ids {}'.format(
-                                        ','.join([str(i) for i in ids])))
-        if delete:
-            self.delete_ramon(token, channel, ids[1:])
-        return True
-
-    # SECTION:
-    # Channels
-
-    def _check_channel(self, channel):
-        for c in channel:
-            if not c.isalnum():
-                raise ValueError(
-                    "Channel name cannot contain character {}.".format(c)
-                )
-        return True
-
-    @_check_token
-    def create_channel(self,
-                       channel_name,
+    def create_project(self,
                        project_name,
                        dataset_name,
-                       channel_type,
-                       dtype,
-                       startwindow,
-                       endwindow,
-                       readonly,
-                       propagate=0,
-                       resolution=0,
-                       channel_description=''):
+                       hostname,
+                       is_public,
+                       s3backend=0,
+                       kvserver='localhost',
+                       kvengine='MySQL',
+                       mdengine='MySQL',
+                       description=''):
         """
-        Create a new channel on the Remote, using channel_data.
+        Creates a project with the given parameters.
 
         Arguments:
-            channel_name (str): Channel name
             project_name (str): Project name
-            dataset_name (str): Dataset name
-            channel_type (str): Type of the channel (e.g. `neurodata.IMAGE`)
-            dtype (str): The datatype of the channel's data (e.g. `uint8`)
-            startwindow (int): Window to start in
-            endwindow (int): Window to end in
-            readonly (bool): Can others write to this channel?
-            propagate (int): Allow propogation? 1 is True, 0 is False
-            resolution (int): Resolution scaling
-            channel_description (str): Your description of the channel
+            dataset_name (str): Dataset name project is based on
+            hostname (str): Hostname
+            s3backend (str): S3 region to save the data in
+            is_public (int): 1 is public. 0 is not public.
+            kvserver (str): Server to store key value pairs in
+            kvengine (str): Database to store key value pairs in
+            mdengine (str): ???
+            description (str): Description for your project
 
         Returns:
-            bool: `True` if successful, `False` otherwise.
-
-        Raises:
-            ValueError: If your args were bad :(
-            RemoteDataUploadError: If the channel data is valid but upload
-                fails for some other reason.
+            bool: True if project created, false if not created.
         """
-        self._check_channel(channel_name)
+        return self.resources.create_project(project_name,
+                                             dataset_name,
+                                             hostname,
+                                             is_public,
+                                             s3backend,
+                                             kvserver,
+                                             kvengine,
+                                             mdengine,
+                                             description)
 
-        if channel_type not in ['image', 'annotation']:
-            raise ValueError('Channel type must be ' +
-                             'neurodata.IMAGE or neurodata.ANNOTATION.')
-
-        if readonly * 1 not in [0, 1]:
-            raise ValueError("readonly must be 0 (False) or 1 (True).")
-
-        # Good job! You supplied very nice arguments.
-
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) + \
-            "/channel/{}/".format(channel_name)
-        json = {
-            "channel_name": channel_name,
-            "channel_type": channel_type,
-            "channel_datatype": dtype,
-            "startwindow": startwindow,
-            "endwindow": endwindow,
-        }
-        req = self.post_url(url, json=json)
-
-        if req.status_code is not 201:
-            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
-        if req.content == "" or req.content == b'':
-            return True
-        else:
-            return False
-
-    def get_channel(self, channel_name, project_name, dataset_name):
+    def get_project(self, project_name, dataset_name):
         """
-        Gets info about a channel given its name, name of its project
-        , and name of its dataset.
+        Get details regarding a project given its name and dataset its linked
+        to.
 
         Arguments:
-            channel_name (str): Channel name
             project_name (str): Project name
-            dataset_name (str): Dataset name
+            dataset_name (str): Dataset name project is based on
 
         Returns:
-            dict: Channel info
+            dict: Project info
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) + \
-            "/channel/{}/".format(channel_name)
+        return self.resources.get_project(project_name, dataset_name)
 
-        req = self.getURL(url)
-
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError('Could not find {}'.format(req.text))
-        else:
-            return req.json()
-
-    def delete_channel(self, channel_name, project_name, dataset_name):
+    def delete_project(self, project_name, dataset_name):
         """
-        Deletes a channel given its name, name of its project
-        , and name of its dataset.
+        Deletes a project once given its name and its related dataset.
 
         Arguments:
-            channel_name (str): Channel name
             project_name (str): Project name
-            dataset_name (str): Dataset name
+            dataset_name (str): Dataset name project is based on
 
         Returns:
-            bool: True if channel deleted, False if not
+            bool: True if project deleted, False if not.
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
-            + "/project/{}".format(project_name) + \
-            "/channel/{}/".format(channel_name)
+        return self.resources.delete_project(project_name, dataset_name)
 
-        req = self.delete_url(url)
-
-        if req.status_code is not 204:
-            raise RemoteDataUploadError('Could not delete {}'.format(req.text))
-        if req.content == "" or req.content == b'':
-            return True
-        else:
-            return False
-
-    @_check_token
-    def create_channels(self, dataset, token, new_channels_data):
+    def create_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name,
+                     is_public):
         """
-        Creates channels given a dictionary in 'new_channels_data'
-        , 'dataset' name, and 'token' (project) name.
+        Creates a token with the given parameters.
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            is_public (int): 1 is public. 0 is not public
+        Returns:
+            bool: True if project created, false if not created.
+        """
+        return self.resources.create_token(token_name,
+                                           project_name,
+                                           dataset_name,
+                                           is_public)
+
+    def get_token(self,
+                  token_name,
+                  project_name,
+                  dataset_name):
+        """
+        Get a token with the given parameters.
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+        Returns:
+            dict: Token info
+        """
+        return self.resources.get_token(token_name,
+                                        project_name,
+                                        dataset_name)
+
+    def delete_token(self,
+                     token_name,
+                     project_name,
+                     dataset_name):
+        """
+        Delete a token with the given parameters.
+        Arguments:
+            project_name (str): Project name
+            dataset_name (str): Dataset name project is based on
+            token_name (str): Token name
+            channel_name (str): Channel name project is based on
+        Returns:
+            bool: True if project deleted, false if not deleted.
+        """
+        return self.resources.delete_token(token_name,
+                                           project_name,
+                                           dataset_name)
+
+    def list_tokens(self):
+        """
+        Lists a set of tokens that are public in Neurodata.
+        Arguments:
+        Returns:
+            dict: Public tokens found in Neurodata
+        """
+        return self.resources.list_tokens()
+
+    def list_projects(self, dataset_name):
+        """
+        Lists a set of projects related to a dataset.
 
         Arguments:
-            token (str): Token to identify project
-            dataset (str): Dataset name to identify dataset to download from
-            new_channels_data (dict): New channel data to upload into new
-                channels
+            dataset_name (str): Dataset name to search projects for
 
         Returns:
-            bool: Process completed succesfully or not
+            dict: Projects found based on dataset query
         """
-        channels = {}
-        for channel_new in new_channels_data:
+        return self.resources.list_projects(dataset_name)
 
-            self._check_channel(channel_new.name)
+    # SECTION
+    # Resources: Datasets
 
-            if channel_new.channel_type not in ['image', 'annotation']:
-                raise ValueError('Channel type must be ' +
-                                 'neurodata.IMAGE or neurodata.ANNOTATION.')
-
-            if channel_new.readonly * 1 not in [0, 1]:
-                raise ValueError("readonly must be 0 (False) or 1 (True).")
-
-            channels[channel_new.name] = {
-                "channel_name": channel_new.name,
-                "channel_type": channel_new.channel_type,
-                "datatype": channel_new.dtype,
-                "readonly": channel_new.readonly * 1
-            }
-        req = requests.post(self.url("/{}/project/".format(dataset) +
-                                     "{}".format(token)),
-                            json={"channels": {channels}}, verify=False)
-
-        if req.status_code is not 201:
-            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
-        else:
-            return True
-
-    # Resources API
-
-    @_check_token
     def create_dataset(self,
                        name,
                        x_img_size,
@@ -1643,32 +1195,20 @@ class neurodata(Remote):
         Returns:
             bool: True if dataset created, False if not
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(name)
-        json = {
-            "dataset_name": name,
-            "ximagesize": x_img_size,
-            "yimagesize": y_img_size,
-            "zimagesize": z_img_size,
-            "xvoxelres": x_vox_res,
-            "yvoxelres": y_vox_res,
-            "zvoxelres": z_vox_res,
-            "xoffset": x_offset,
-            "yoffset": y_offset,
-            "zoffset": z_offset,
-            "scalinglevels": scaling_levels,
-            "scalingoption": scaling_option,
-            "dataset_description": dataset_description,
-            "public": is_public
-        }
-
-        req = self.post_url(url, json=json)
-
-        if req.status_code is not 201:
-            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
-        if req.content == "" or req.content == b'':
-            return True
-        else:
-            return False
+        return self.resources.create_dataset(name,
+                                             x_img_size,
+                                             y_img_size,
+                                             z_img_size,
+                                             x_vox_res,
+                                             y_vox_res,
+                                             z_vox_res,
+                                             x_offset,
+                                             y_offset,
+                                             z_offset,
+                                             scaling_levels,
+                                             scaling_option,
+                                             dataset_description,
+                                             is_public)
 
     def get_dataset(self, name):
         """
@@ -1680,13 +1220,7 @@ class neurodata(Remote):
         Returns:
             dict: Dataset information
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(name)
-        req = self.getURL(url)
-
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError('Could not find {}'.format(req.text))
-        else:
-            return req.json()
+        return self.resources.get_dataset(name)
 
     def list_datasets(self, get_global_public):
         """
@@ -1703,16 +1237,7 @@ class neurodata(Remote):
             dict: Returns datasets in JSON format
 
         """
-        appending = ""
-        if get_global_public:
-            appending = "public"
-        url = self.url()[:-4] + "/resource/{}dataset/".format(appending)
-        req = self.getURL(url)
-
-        if req.status_code is not 200:
-            raise RemoteDataNotFoundError('Could not find {}'.format(req.text))
-        else:
-            return req.json()
+        return self.resources.list_datasets(get_global_public)
 
     def delete_dataset(self, name):
         """
@@ -1722,52 +1247,91 @@ class neurodata(Remote):
         Returns:
             bool: True if dataset deleted, False if not
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(name)
-        req = self.delete_url(url)
+        return self.resources.delete_dataset(name)
 
-        if req.status_code is not 204:
-            raise RemoteDataUploadError('Could not delete {}'.format(req.text))
-        if req.content == "" or req.content == b'':
-            return True
-        else:
-            return False
+    # SECTION
+    # Resources: Channels
 
-    # Propagation
-
-    @_check_token
-    def propagate(self, token, channel):
+    def create_channel(self,
+                       channel_name,
+                       project_name,
+                       dataset_name,
+                       channel_type,
+                       dtype,
+                       startwindow,
+                       endwindow,
+                       readonly=0,
+                       start_time=0,
+                       end_time=0,
+                       propagate=0,
+                       resolution=0,
+                       channel_description=''):
         """
-        Kick off the propagate function on the remote server.
+        Create a new channel on the Remote, using channel_data.
 
         Arguments:
-            token (str): The token to propagate
-            channel (str): The channel to propagate
+            channel_name (str): Channel name
+            project_name (str): Project name
+            dataset_name (str): Dataset name
+            channel_type (str): Type of the channel (e.g. `neurodata.IMAGE`)
+            dtype (str): The datatype of the channel's data (e.g. `uint8`)
+            startwindow (int): Window to start in
+            endwindow (int): Window to end in
+            readonly (int): Can others write to this channel?
+            propagate (int): Allow propogation? 1 is True, 0 is False
+            resolution (int): Resolution scaling
+            channel_description (str): Your description of the channel
 
         Returns:
-            boolean: Success
-        """
-        if self.get_propagate_status(token, channel) != u'0':
-            return
-        url = self.url('{}/{}/setPropagate/1/'.format(token, channel))
-        req = self.getURL(url)
-        if req.status_code is not 200:
-            raise RemoteDataUploadError('Propagate fail: {}'.format(req.text))
-        return True
+            bool: `True` if successful, `False` otherwise.
 
-    @_check_token
-    def get_propagate_status(self, token, channel):
+        Raises:
+            ValueError: If your args were bad :(
+            RemoteDataUploadError: If the channel data is valid but upload
+                fails for some other reason.
         """
-        Get the propagate status for a token/channel pair.
+        return self.resources.create_channel(channel_name,
+                                             project_name,
+                                             dataset_name,
+                                             channel_type,
+                                             dtype,
+                                             startwindow,
+                                             endwindow,
+                                             readonly,
+                                             start_time,
+                                             end_time,
+                                             propagate,
+                                             resolution,
+                                             channel_description)
+
+    def get_channel(self, channel_name, project_name, dataset_name):
+        """
+        Gets info about a channel given its name, name of its project
+        , and name of its dataset.
 
         Arguments:
-            token (str): The token to check
-            channel (str): The channel to check
+            channel_name (str): Channel name
+            project_name (str): Project name
+            dataset_name (str): Dataset name
 
         Returns:
-            str: The status code
+            dict: Channel info
         """
-        url = self.url('{}/{}/getPropagate/'.format(token, channel))
-        req = self.getURL(url)
-        if req.status_code is not 200:
-            raise ValueError('Bad pair: {}/{}'.format(token, channel))
-        return req.text
+        return self.resources.get_channel(channel_name, project_name,
+                                          dataset_name)
+
+    def delete_channel(self, channel_name, project_name, dataset_name):
+        """
+        Deletes a channel given its name, name of its project
+        , and name of its dataset.
+
+        Arguments:
+            channel_name (str): Channel name
+            project_name (str): Project name
+            dataset_name (str): Dataset name
+
+        Returns:
+            bool: True if channel deleted, False if not
+        """
+        return self.resources.delete_channel(channel_name, project_name,
+                                             dataset_name)
