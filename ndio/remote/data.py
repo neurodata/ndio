@@ -345,6 +345,7 @@ class data(neuroRemote, metadata):
                     x_start,
                     y_start,
                     z_start,
+                    t_start=0,
                     data,
                     resolution=0):
         """
@@ -371,6 +372,7 @@ class data(neuroRemote, metadata):
 
         data = numpy.rollaxis(data, 1)
         data = numpy.rollaxis(data, 2)
+        data = numpy.rollaxis(data, 3)
 
         if six.PY3 or data.nbytes > 1.5e9:
             ul_func = self._post_cutout_no_chunking_npz
@@ -379,48 +381,51 @@ class data(neuroRemote, metadata):
 
         if data.size < self._chunk_threshold:
             return ul_func(token, channel, x_start,
-                           y_start, z_start, data,
-                           resolution)
+                           y_start, z_start, t_start,
+                           data, resolution)
 
         return self._post_cutout_with_chunking(token, channel,
-                                               x_start, y_start, z_start, data,
-                                               resolution, ul_func)
+                                               x_start, y_start, z_start, t_start, 
+                                               data, resolution, ul_func)
 
     def _post_cutout_with_chunking(self, token, channel, x_start,
-                                   y_start, z_start, data,
+                                   y_start, z_start, t_start, data,
                                    resolution, ul_func):
         # must chunk first
         from ndio.utils.parallel import block_compute
-        blocks = block_compute(x_start, x_start + data.shape[2],
-                               y_start, y_start + data.shape[1],
-                               z_start, z_start + data.shape[0])
+        blocks = block_compute(x_start, x_start + data.shape[3],
+                               y_start, y_start + data.shape[2],
+                               z_start, z_start + data.shape[1],
+                               t_start, t_start + data.shape[0])
         for b in blocks:
             # data coordinate relative to the size of the arra
-            subvol = data[b[2][0] - z_start: b[2][1] - z_start,
+            subvol = data[b[3][0] - t_start: b[3][1] - t_start,
+                          b[2][0] - z_start: b[2][1] - z_start,
                           b[1][0] - y_start: b[1][1] - y_start,
                           b[0][0] - x_start: b[0][1] - x_start]
             # upload the chunk:
             # upload coordinate relative to x_start, y_start, z_start
             ul_func(token, channel, b[0][0],
-                    b[1][0], b[2][0], subvol,
-                    resolution)
+                    b[1][0], b[2][0], b[3][0], 
+                    subvol, resolution)
         return True
 
     def _post_cutout_no_chunking_npz(self, token, channel,
                                      x_start, y_start, z_start,
-                                     data, resolution):
+                                     t_start, data, resolution):
 
         data = numpy.expand_dims(data, axis=0)
         tempfile = BytesIO()
         numpy.save(tempfile, data)
         compressed = zlib.compress(tempfile.getvalue())
 
-        url = self.url("{}/{}/npz/{}/{},{}/{},{}/{},{}/".format(
+        url = self.url("{}/{}/npz/{}/{},{}/{},{}/{},{}/{},{}/".format(
             token, channel,
             resolution,
             x_start, x_start + data.shape[3],
             y_start, y_start + data.shape[2],
-            z_start, z_start + data.shape[1]
+            z_start, z_start + data.shape[1],
+            t_start, t_start + data.shape[0]
         ))
 
         req = self.remote_utils.post_url(url, data=compressed, headers={
@@ -434,18 +439,19 @@ class data(neuroRemote, metadata):
 
     def _post_cutout_no_chunking_blosc(self, token, channel,
                                        x_start, y_start, z_start,
-                                       data, resolution):
+                                       t_start, data, resolution):
         """
         Accepts data in zyx. !!!
         """
         data = numpy.expand_dims(data, axis=0)
         blosc_data = blosc.pack_array(data)
-        url = self.url("{}/{}/blosc/{}/{},{}/{},{}/{},{}/0,0/".format(
+        url = self.url("{}/{}/blosc/{}/{},{}/{},{}/{},{}/{},{}/0,0/".format(
             token, channel,
             resolution,
             x_start, x_start + data.shape[3],
             y_start, y_start + data.shape[2],
-            z_start, z_start + data.shape[1]
+            z_start, z_start + data.shape[1],
+            t_start, t_start + data.shape[0]
         ))
 
         req = self.remote_utils.post_url(url, data=blosc_data, headers={
