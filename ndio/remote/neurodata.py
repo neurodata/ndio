@@ -450,7 +450,7 @@ class neurodata(Remote):
         }
 
         req = self.post_url(url, json=json)
-
+        import pdb; pdb.set_trace()
         if req.status_code is not 201:
             raise RemoteDataUploadError('Could not upload {}'.format(req.text))
         if req.content == "" or req.content == b'':
