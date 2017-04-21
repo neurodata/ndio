@@ -73,6 +73,15 @@ class data(neuroRemote, metadata):
     # Data Download
 
     def url(self, suffix=""):
+        """
+        Overloaded url method from neuroRemote.
+
+        Arugments:
+            suffix (str): url extension
+
+        Returns:
+            str: properly formatted url
+        """
         return super(data, self).url() + '/sd/' + suffix
 
     def get_block_size(self, token, resolution=None):

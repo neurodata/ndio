@@ -14,7 +14,7 @@ import test_settings
 # S3_SITE = 'http://ndios3test.s3.amazonaws.com/'
 
 SERVER_SITE = test_settings.HOSTNAME
-DATA_SITE = '/tmp/'
+DATA_SITE = 'localhost:/tmp/'
 
 
 class TestNDIngest(unittest.TestCase):
@@ -47,7 +47,18 @@ class TestNDIngest(unittest.TestCase):
         ai_7.add_metadata('')
         self.assertRaises(ValueError, ai_7.output_json)
 
-    
+    def test_good_name(self):
+        # Test a forbidden character
+        data_name_10 = 'ndiotest01'
+        ai_10 = NDIngest.NDIngest()
+        ai_10.add_channel(data_name_10, 'uint8', 'image', DATA_SITE,
+                          'SLICE', 'tif')
+        ai_10.add_project(data_name_10, data_name_10, 1)
+        ai_10.add_dataset(data_name_10, (512, 512, 1), (1.0, 1.0, 10.0))
+        ai_10.add_metadata('')
+        # import pdb; pdb.set_trace()
+
+        self.assertEqual(ai_10.output_json(), None)
 
 if __name__ == '__main__':
     unittest.main()
