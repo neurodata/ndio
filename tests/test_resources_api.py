@@ -74,7 +74,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_get_project(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         result = self.nd.get_project('testp', 'test')
         compare_dict = {u'kvengine': u'Redis',
                         u'mdengine': u'MySQL',
@@ -96,7 +96,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_delete_project(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         result = self.nd.delete_project('testp', 'test')
         self.assertEqual(result, True)
         self.nd.delete_dataset('test')
@@ -105,11 +105,11 @@ class TestResourcesApi(unittest.TestCase):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         test_project_names = [u'test1p', u'test2p', u'test3p']
         self.nd.create_project(
-            'test1p', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'test1p', 'test', 'localhost', 1)
         self.nd.create_project(
-            'test2p', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'test2p', 'test', 'localhost', 1)
         self.nd.create_project(
-            'test3p', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'test3p', 'test', 'localhost', 1)
         test_project_list = self.nd.list_projects('test')
         for name in test_project_names:
             self.assertEqual(name in test_project_list, True)
@@ -121,7 +121,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_create_channel(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         result = self.nd.create_channel(
             'testc', 'testp', 'test', 'image', 'uint8', 0, 500, 0)
         self.assertEqual(result, True)
@@ -132,7 +132,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_get_channel(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         self.nd.create_channel('testc', 'testp', 'test',
                                'image', 'uint8', 0, 500, 0)
         result = self.nd.get_channel('testc', 'testp', 'test')
@@ -160,7 +160,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_delete_channel(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         self.nd.create_channel('testc', 'testp', 'test',
                                'image', 'uint8', 0, 500, 0)
         result = self.nd.delete_channel('testc', 'testp', 'test')
@@ -171,7 +171,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_create_token(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         result = self.nd.create_token('testt', 'testp', 'test', 1)
         self.assertEqual(result, True)
         self.nd.delete_token('testt', 'testp', 'test')
@@ -181,7 +181,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_get_token(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         self.nd.create_token('testt', 'testp', 'test', 1)
         result = self.nd.get_token('testt', 'testp', 'test')
         compare_dict = {u'token_name': 'testt',
@@ -195,7 +195,7 @@ class TestResourcesApi(unittest.TestCase):
     def test_delete_token(self):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         self.nd.create_project(
-            'testp', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'testp', 'test', 'localhost', 1)
         self.nd.create_token('testt', 'testp', 'test', 1)
         result = self.nd.delete_token('testt', 'testp', 'test')
         self.assertEqual(result, True)
@@ -206,9 +206,9 @@ class TestResourcesApi(unittest.TestCase):
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
         test_token_names = [u'test1t', u'test2t', u'test3t']
         self.nd.create_project(
-            'test1p', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'test1p', 'test', 'localhost', 1)
         self.nd.create_project(
-            'test2p', 'test', 'localhost', 1, 1, 'localhost', 'Redis')
+            'test2p', 'test', 'localhost', 1)
         self.nd.create_token('test1t', 'test1p', 'test', 1)
         self.nd.create_token('test2t', 'test1p', 'test', 1)
         self.nd.create_token('test3t', 'test2p', 'test', 1)
