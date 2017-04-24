@@ -76,7 +76,7 @@ class TestResourcesApi(unittest.TestCase):
         self.nd.create_project(
             'testp', 'test', 'localhost', 1)
         result = self.nd.get_project('testp', 'test')
-        compare_dict = {u'kvengine': u'Redis',
+        compare_dict = {u'kvengine': u'MySQL',
                         u'mdengine': u'MySQL',
                         u'project_name': u'testp',
                         u'nd_version': u'1.0',
