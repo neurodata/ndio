@@ -86,8 +86,7 @@ class TestResourcesApi(unittest.TestCase):
                         u'project_description': u'',
                         u'user': 1,
                         u'public': 1,
-                        u'kvserver': u'localhost',
-                        u's3backend': 1}
+                        u'kvserver': u'localhost'}
         for key in compare_dict:
             self.assertEqual(result[key], compare_dict[key])
         self.nd.delete_project('testp', 'test')
