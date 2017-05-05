@@ -14,7 +14,7 @@ import test_settings
 # S3_SITE = 'http://ndios3test.s3.amazonaws.com/'
 
 SERVER_SITE = test_settings.HOSTNAME
-DATA_SITE = 'localhost:/tmp/'
+DATA_SITE = 'https://localhost/testserver'
 
 
 class TestNDIngest(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestNDIngest(unittest.TestCase):
         ai_10.add_project(data_name_10, data_name_10, 1)
         ai_10.add_dataset(data_name_10, (512, 512, 1), (1.0, 1.0, 10.0))
         ai_10.add_metadata('')
-        with self.assertRaises(ValueError):
+        with self.assertRaises(OSError):
             ai_10.output_json()
 
     def test_bad_url(self):
@@ -52,12 +52,14 @@ class TestNDIngest(unittest.TestCase):
         data_name_10 = 'ndiotest01'
         ai_10 = NDIngest.NDIngest()
         ai_10.add_channel(data_name_10, 'uint8', 'image', DATA_SITE,
-                          'SLICE', 'tif')
+                          'SLICE', 'tiff')
         ai_10.add_project(data_name_10, data_name_10, 1)
-        ai_10.add_dataset(data_name_10, (512, 512, 1), (1.0, 1.0, 10.0))
+        # import pdb; pdb.set_trace()
+        print 'yee'
+        ai_10.add_dataset(data_name_10, (512,512,1), (1.0, 1.0, 10.0))
         ai_10.add_metadata('')
         # import pdb; pdb.set_trace()
-
+        ai_10.output_json()
         self.assertEqual(ai_10.output_json(), None)
 
 if __name__ == '__main__':

@@ -1,1 +1,3 @@
-{}
+{
+  "tests/test_remote_ndingest.py::TestNDIngest::test_good_name": true
+}
