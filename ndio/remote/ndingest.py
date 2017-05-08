@@ -351,7 +351,8 @@ specify the time steps?')
                             resp = requests.head(work_path)
                             assert(resp.status_code == 200)
                         elif (verifytype == VERIFY_BY_SLICE):
-                            resp = requests.get(work_path, stream=True)
+                            resp = requests.get(
+                                work_path, stream=True, verify=False)
                             with open('/tmp/img.{}'.format(file_type),
                                       'wb') as out_file:
                                 shutil.copyfileobj(resp.raw, out_file)
