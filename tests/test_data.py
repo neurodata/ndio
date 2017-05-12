@@ -1,5 +1,5 @@
 import unittest
-from ndio.remote.neurodata import neurodata as neurodata
+import ndio.remote.neurodata as neurodata
 import ndio.remote.errors
 import numpy
 import h5py
