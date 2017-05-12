@@ -345,7 +345,7 @@ class data(neuroRemote, metadata):
                     x_start,
                     y_start,
                     z_start,
-                    t_start=0,
+                    t_start,
                     data,
                     resolution=0):
         """
@@ -372,7 +372,6 @@ class data(neuroRemote, metadata):
 
         data = numpy.rollaxis(data, 1)
         data = numpy.rollaxis(data, 2)
-        data = numpy.rollaxis(data, 3)
 
         if six.PY3 or data.nbytes > 1.5e9:
             ul_func = self._post_cutout_no_chunking_npz
@@ -393,21 +392,21 @@ class data(neuroRemote, metadata):
                                    resolution, ul_func):
         # must chunk first
         from ndio.utils.parallel import block_compute
-        blocks = block_compute(x_start, x_start + data.shape[3],
-                               y_start, y_start + data.shape[2],
-                               z_start, z_start + data.shape[1],
-                               t_start, t_start + data.shape[0])
+        blocks = block_compute(x_start, x_start + data.shape[2],
+                               y_start, y_start + data.shape[1],
+                               z_start, z_start + data.shape[0])
+        t_interval = 0
         for b in blocks:
             # data coordinate relative to the size of the arra
-            subvol = data[b[3][0] - t_start: b[3][1] - t_start,
-                          b[2][0] - z_start: b[2][1] - z_start,
+            subvol = data[b[2][0] - z_start: b[2][1] - z_start,
                           b[1][0] - y_start: b[1][1] - y_start,
                           b[0][0] - x_start: b[0][1] - x_start]
             # upload the chunk:
             # upload coordinate relative to x_start, y_start, z_start
             ul_func(token, channel, b[0][0],
-                    b[1][0], b[2][0], b[3][0], 
+                    b[1][0], b[2][0], t_interval, 
                     subvol, resolution)
+            t_interval += 1
         return True
 
     def _post_cutout_no_chunking_npz(self, token, channel,
@@ -425,7 +424,7 @@ class data(neuroRemote, metadata):
             x_start, x_start + data.shape[3],
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1],
-            t_start, t_start + data.shape[0]
+            t_start, t_start + 1
         ))
 
         req = self.remote_utils.post_url(url, data=compressed, headers={
@@ -451,7 +450,7 @@ class data(neuroRemote, metadata):
             x_start, x_start + data.shape[3],
             y_start, y_start + data.shape[2],
             z_start, z_start + data.shape[1],
-            t_start, t_start + data.shape[0]
+            t_start, t_start + 1
         ))
 
         req = self.remote_utils.post_url(url, data=blosc_data, headers={
