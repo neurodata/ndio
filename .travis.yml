@@ -35,7 +35,7 @@ install:
     - pip install json-spec jsonschema
     - echo "Branch $TRAVIS_BRANCH"
     - git clone http://github.com/neurodata/ndstore
-    - sudo ndstore/setup/ndstore_install.sh
+    - sudo ndstore/setup/ndstore_install.sh stable-dev
     - git clone https://github.com/neurodata/ndingest
     - sudo ndingest/setup/ndingest_run.sh
     - cd /home/neurodata/ndstore/test
