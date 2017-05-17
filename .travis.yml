@@ -15,6 +15,7 @@ before_install:
     - sudo apt-get update -y;
 
 install:
+    - git branch
     - sudo pwd
     - sudo ls
     - sudo ls ./tests
