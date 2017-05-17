@@ -15,8 +15,6 @@
 # Data
 *.hdf5
 *.png
-*.tif
-*.tiff
 
 # Temp Files
 *.swp
@@ -26,6 +24,3 @@
 ./ndio/remote/testND.py
 .idea/*
 build/*
-
-!./ndio/tests/data/test_ingest_pics/*.tif
-!./ndio/tests/data/test_ingest_pics/*.tiff
