@@ -36,6 +36,7 @@ install:
     - echo "Branch $TRAVIS_BRANCH"
     - git clone http://github.com/neurodata/ndstore
     - sudo ndstore/setup/ndstore_install.sh
+    - sudo pwd
     - sudo ./ndingest_test_setup.sh
     - sudo service nginx restart
     - git clone https://github.com/neurodata/ndingest
