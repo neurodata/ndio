@@ -17,6 +17,9 @@ before_install:
 install:
     - sudo pwd
     - sudo ls
+    - sudo ls ./tests
+    - sudo ls ./tests/data
+    - sudo ls ./tests/data/test_ingest_pics
     - sudo apt-get autoremove
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
