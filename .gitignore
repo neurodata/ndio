@@ -26,3 +26,5 @@
 ./ndio/remote/testND.py
 .idea/*
 build/*
+
+!./ndio/tests/data/test_ingest_pics/*
