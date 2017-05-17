@@ -16,6 +16,7 @@ before_install:
 
 install:
     - sudo pwd
+    - sudo ls
     - sudo apt-get autoremove
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
