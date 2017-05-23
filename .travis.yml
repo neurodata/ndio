@@ -37,7 +37,7 @@ install:
     - sudo pip install --install-option='--no-cython-compile' cython
     - pip install .
     - pip install pep8
-    - pip install pydocstyle
+    - pip install pydocstyle pytest
     - pip install json-spec jsonschema
     - echo "Branch $TRAVIS_BRANCH"
     - git clone http://github.com/neurodata/ndstore
