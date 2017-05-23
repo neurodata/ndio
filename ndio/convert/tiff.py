@@ -145,6 +145,7 @@ def load_collection(tiff_filename_base):
         tiff_filename_base:     An asterisk-wildcard string that should refer
                                 to all TIFFs in the stack. All * are replaced
                                 according to command-line expansion rules.
+
     Returns:
         A numpy array holding a 3D dataset
     """

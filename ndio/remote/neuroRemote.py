@@ -141,7 +141,7 @@ class neuroRemote(Remote):
             str: The complete URL
         """
         return super(neuroRemote,
-                     self).url('{}/sd/'.format(self._ext) + suffix)
+                     self).url('{}/'.format(self._ext) + suffix)
 
     def meta_url(self, suffix=""):
         """
@@ -279,7 +279,7 @@ class neuroRemote(Remote):
         """
         if self.get_propagate_status(token, channel) != u'0':
             return
-        url = self.url('{}/{}/setPropagate/1/'.format(token, channel))
+        url = self.url('sd/{}/{}/setPropagate/1/'.format(token, channel))
         req = self.remote_utils.get_url(url)
         if req.status_code is not 200:
             raise RemoteDataUploadError('Propagate fail: {}'.format(req.text))
@@ -297,7 +297,7 @@ class neuroRemote(Remote):
         Returns:
             str: The status code
         """
-        url = self.url('{}/{}/getPropagate/'.format(token, channel))
+        url = self.url('sd/{}/{}/getPropagate/'.format(token, channel))
         req = self.remote_utils.get_url(url)
         if req.status_code is not 200:
             raise ValueError('Bad pair: {}/{}'.format(token, channel))
