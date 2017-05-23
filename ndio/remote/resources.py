@@ -94,7 +94,7 @@ class resources(nd):
         Returns:
             bool: True if project created, false if not created.
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(
+        url = self.url() + "/resource/dataset/{}".format(
             dataset_name) + "/project/{}/".format(project_name)
 
         json = {
@@ -111,7 +111,7 @@ class resources(nd):
         req = self.remote_utils.post_url(url, json=json)
 
         if req.status_code is not 201:
-            raise RemoteDataUploadError('Could not upload {}'.format(req.text))
+            raise RemoteDataUploadError('Could not upload {}'.format(req))
         if req.content == "" or req.content == b'':
 
             return True
@@ -130,7 +130,7 @@ class resources(nd):
         Returns:
             dict: Project info
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}/".format(project_name)
         req = self.remote_utils.get_url(url)
 
@@ -150,7 +150,7 @@ class resources(nd):
         Returns:
             bool: True if project deleted, False if not.
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}/".format(project_name)
         req = self.remote_utils.delete_url(url)
 
@@ -171,7 +171,7 @@ class resources(nd):
         Returns:
             dict: Projects found based on dataset query
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/"
 
         req = self.remote_utils.get_url(url)
@@ -196,7 +196,7 @@ class resources(nd):
         Returns:
             bool: True if project created, false if not created.
         """
-        url = self.url()[:-4] + '/nd/resource/dataset/{}'.format(
+        url = self.url() + '/nd/resource/dataset/{}'.format(
             dataset_name) + '/project/{}'.format(project_name) + \
             '/token/{}/'.format(token_name)
 
@@ -227,7 +227,7 @@ class resources(nd):
         Returns:
             dict: Token info
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name)\
             + "/token/{}/".format(token_name)
         req = self.remote_utils.get_url(url)
@@ -251,7 +251,7 @@ class resources(nd):
         Returns:
             bool: True if project deleted, false if not deleted.
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name)\
             + "/token/{}/".format(token_name)
         req = self.remote_utils.delete_url(url)
@@ -270,7 +270,7 @@ class resources(nd):
         Returns:
             dict: Public tokens found in Neurodata
         """
-        url = self.url()[:-4] + "/nd/resource/public/token/"
+        url = self.url() + "/nd/resource/public/token/"
         req = self.remote_utils.get_url(url)
 
         if req.status_code is not 200:
@@ -316,7 +316,7 @@ class resources(nd):
         Returns:
             bool: True if dataset created, False if not
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(name)
+        url = self.url() + "/resource/dataset/{}".format(name)
         json = {
             "dataset_name": name,
             "ximagesize": x_img_size,
@@ -352,7 +352,7 @@ class resources(nd):
         Returns:
             dict: Dataset information
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(name)
+        url = self.url() + "/resource/dataset/{}".format(name)
         req = self.remote_utils.get_url(url)
 
         if req.status_code is not 200:
@@ -378,7 +378,7 @@ class resources(nd):
         appending = ""
         if get_global_public:
             appending = "public"
-        url = self.url()[:-4] + "/resource/{}dataset/".format(appending)
+        url = self.url() + "/resource/{}dataset/".format(appending)
         req = self.remote_utils.get_url(url)
 
         if req.status_code is not 200:
@@ -394,7 +394,7 @@ class resources(nd):
         Returns:
             bool: True if dataset deleted, False if not
         """
-        url = self.url()[:-4] + "/resource/dataset/{}".format(name)
+        url = self.url() + "/resource/dataset/{}".format(name)
         req = self.remote_utils.delete_url(url)
 
         if req.status_code is not 204:
@@ -461,7 +461,7 @@ class resources(nd):
 
         # Good job! You supplied very nice arguments.
 
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
         json = {
@@ -499,7 +499,7 @@ class resources(nd):
         Returns:
             dict: Channel info
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
 
@@ -523,7 +523,7 @@ class resources(nd):
         Returns:
             bool: True if channel deleted, False if not
         """
-        url = self.url()[:-4] + "/nd/resource/dataset/{}".format(dataset_name)\
+        url = self.url() + "/nd/resource/dataset/{}".format(dataset_name)\
             + "/project/{}".format(project_name) + \
             "/channel/{}/".format(channel_name)
 

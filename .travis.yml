@@ -6,7 +6,7 @@ notifications:
 python:
     - "2.7"
     - "3.5"
-    
+
 sudo: required
 dist: trusty
 before_install:
@@ -15,6 +15,12 @@ before_install:
     - sudo apt-get update -y;
 
 install:
+    - git branch
+    - sudo pwd
+    - sudo ls
+    - sudo ls ./tests
+    - sudo ls ./tests/data
+    - sudo ls ./tests/data/test_ingest_pics
     - sudo apt-get autoremove
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
@@ -36,6 +42,10 @@ install:
     - echo "Branch $TRAVIS_BRANCH"
     - git clone http://github.com/neurodata/ndstore
     - sudo ndstore/setup/ndstore_install.sh
+    - sudo pwd
+    - sudo ls
+    - sudo ./ndingest_test_setup.sh
+    - sudo service nginx restart
     - git clone https://github.com/neurodata/ndingest
     - sudo ndingest/setup/ndingest_run.sh
     - cd /home/neurodata/ndstore/test
