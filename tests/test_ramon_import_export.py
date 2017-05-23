@@ -22,7 +22,6 @@ class TestRAMON(unittest.TestCase):
         r = ramon.AnnotationType.get_class(anno_type)()
         # print json.loads(ramon.to_json(r))
         self.nd.create_dataset('test', 1, 1, 1, 1.0, 1.0, 1.0, 0)
-        import pdb; pdb.set_trace()
         self.nd.create_project(
             'testp', 'test', 'localhost', 1, 1, 'localhost', 'MySQL')
         self.nd.delete_channel('testc', 'testp', 'test')
