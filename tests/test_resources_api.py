@@ -79,8 +79,6 @@ class TestResourcesApi(unittest.TestCase):
         compare_dict = {u'kvengine': u'MySQL',
                         u'mdengine': u'MySQL',
                         u'project_name': u'testp',
-                        u'nd_version': u'1.0',
-                        u'schema_version': u'0.7',
                         u'dataset': u'test',
                         u'host': u'localhost',
                         u'project_description': u'',
