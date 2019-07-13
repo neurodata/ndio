@@ -1,4 +1,4 @@
-![Downloads shield](https://img.shields.io/pypi/dm/ndio.svg)
+![Downloads shield](https://img.shields.io/pypi/dm/neuroglancer.svg)
 
 # ndio
 
