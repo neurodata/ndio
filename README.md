@@ -1,3 +1,5 @@
+![Downloads shield](https://img.shields.io/pypi/dm/ndio.svg)
+
 # ndio
 
 [![](https://img.shields.io/pypi/v/ndio.svg)](https://pypi.python.org/pypi/ndio)
